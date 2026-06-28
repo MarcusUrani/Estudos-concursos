@@ -52,6 +52,40 @@ html.light {
   --color-slate-800: oklch(0.929 0.013 255.508); /* era 200 */
   --color-slate-900: oklch(0.968 0.007 247.896); /* era 100 */
   --color-slate-950: oklch(0.984 0.003 247.858); /* era 50 */
+
+  /* Acentos: os tons claros (50-400) dos acentos sao usados como TEXTO/icone
+     (sobre fundos claros ou tintas suaves) e ficam ilegiveis no tema claro.
+     Apontamos esses tons para tons ESCUROS do mesmo acento, melhorando o
+     contraste. Nenhum fundo solido usa esses tons, entao e seguro. */
+  --color-indigo-50: var(--color-indigo-700);
+  --color-indigo-100: var(--color-indigo-700);
+  --color-indigo-200: var(--color-indigo-700);
+  --color-indigo-300: var(--color-indigo-700);
+  --color-indigo-400: var(--color-indigo-600);
+
+  --color-emerald-50: var(--color-emerald-700);
+  --color-emerald-100: var(--color-emerald-700);
+  --color-emerald-200: var(--color-emerald-700);
+  --color-emerald-300: var(--color-emerald-700);
+  --color-emerald-400: var(--color-emerald-600);
+
+  --color-amber-50: var(--color-amber-700);
+  --color-amber-100: var(--color-amber-700);
+  --color-amber-200: var(--color-amber-700);
+  --color-amber-300: var(--color-amber-700);
+  --color-amber-400: var(--color-amber-600);
+
+  --color-rose-50: var(--color-rose-700);
+  --color-rose-100: var(--color-rose-700);
+  --color-rose-200: var(--color-rose-700);
+  --color-rose-300: var(--color-rose-700);
+  --color-rose-400: var(--color-rose-600);
+
+  --color-violet-50: var(--color-violet-700);
+  --color-violet-100: var(--color-violet-700);
+  --color-violet-200: var(--color-violet-700);
+  --color-violet-300: var(--color-violet-700);
+  --color-violet-400: var(--color-violet-600);
 }
 
 html.light body {
