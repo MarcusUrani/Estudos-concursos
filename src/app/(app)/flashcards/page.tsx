@@ -27,7 +27,7 @@ export default async function FlashcardsPage({
 
       <FlashcardsClient
         assuntos={assuntos.map((a) => ({ id: a.id, nome: a.nome, total: a._count.questoes }))}
-        assuntoInicial={assunto ?? ""}
+        assuntosIniciais={assunto ? [assunto] : []}
       />
     </div>
   );

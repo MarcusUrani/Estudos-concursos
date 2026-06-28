@@ -12,23 +12,29 @@ type Assunto = { id: string; nome: string; total: number };
 
 export function FlashcardsClient({
   assuntos,
-  assuntoInicial,
+  assuntosIniciais,
 }: {
   assuntos: Assunto[];
-  assuntoInicial: string;
+  assuntosIniciais: string[];
 }) {
-  const [assuntoId, setAssuntoId] = useState(assuntoInicial);
+  const [assuntoIds, setAssuntoIds] = useState<string[]>(assuntosIniciais);
   const [vencidos, setVencidos] = useState(false);
   const [quantidade, setQuantidade] = useState(20);
   const [deck, setDeck] = useState<FlashcardDTO[] | null>(null);
   const [vazio, setVazio] = useState(false);
   const [pending, startTransition] = useTransition();
 
+  function alternarAssunto(id: string) {
+    setAssuntoIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }
+
   function iniciar() {
     setVazio(false);
     startTransition(async () => {
       const cards = await gerarFlashcards({
-        assuntoId: assuntoId || undefined,
+        assuntoIds,
         quantidade,
         vencidos,
       });
@@ -45,13 +51,19 @@ export function FlashcardsClient({
     <Card>
       <CardContent className="space-y-5 p-6">
         <div>
-          <p className="mb-2 text-sm font-medium text-slate-300">Assunto</p>
+          <p className="mb-2 text-sm font-medium text-slate-300">
+            Assuntos <span className="text-slate-500">(um ou mais)</span>
+          </p>
           <div className="flex flex-wrap gap-2">
-            <Chip ativo={assuntoId === ""} onClick={() => setAssuntoId("")}>
+            <Chip ativo={assuntoIds.length === 0} onClick={() => setAssuntoIds([])}>
               Todos
             </Chip>
             {assuntos.map((a) => (
-              <Chip key={a.id} ativo={assuntoId === a.id} onClick={() => setAssuntoId(a.id)}>
+              <Chip
+                key={a.id}
+                ativo={assuntoIds.includes(a.id)}
+                onClick={() => alternarAssunto(a.id)}
+              >
                 {a.nome}
               </Chip>
             ))}

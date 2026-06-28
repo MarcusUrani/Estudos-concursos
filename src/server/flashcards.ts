@@ -41,7 +41,7 @@ function embaralhar<T>(arr: T[]): T[] {
  * assunto; `vencidos` limita as questoes ja na fila de revisao para hoje.
  */
 export async function gerarFlashcards(opts?: {
-  assuntoId?: string;
+  assuntoIds?: string[];
   quantidade?: number;
   vencidos?: boolean;
 }): Promise<FlashcardDTO[]> {
@@ -49,7 +49,9 @@ export async function gerarFlashcards(opts?: {
   const quantidade = Math.min(Math.max(opts?.quantidade ?? 20, 1), 60);
 
   const where: Prisma.QuestaoWhereInput = {};
-  if (opts?.assuntoId) where.assuntoId = opts.assuntoId;
+  if (opts?.assuntoIds && opts.assuntoIds.length > 0) {
+    where.assuntoId = { in: opts.assuntoIds };
+  }
   if (opts?.vencidos) {
     where.revisoes = { some: { userId, proximaData: { lte: new Date() } } };
   }
