@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { BotaoReporte } from "@/components/botao-reporte";
 import { cn } from "@/lib/utils";
 import {
   Star,
@@ -167,14 +168,17 @@ function Questao({
               {questao.subassunto && <Badge variant="neutral">{questao.subassunto}</Badge>}
               <Badge variant="neutral">{questao.banca}</Badge>
             </div>
-            <button
-              onClick={toggleFav}
-              disabled={pending}
-              title="Favoritar"
-              className="text-slate-400 transition-colors hover:text-amber-300"
-            >
-              <Star className={cn("h-5 w-5", favorito && "fill-amber-400 text-amber-400")} />
-            </button>
+            <div className="flex items-center gap-3">
+              <BotaoReporte questaoId={questao.id} />
+              <button
+                onClick={toggleFav}
+                disabled={pending}
+                title="Favoritar"
+                className="text-slate-400 transition-colors hover:text-amber-300"
+              >
+                <Star className={cn("h-5 w-5", favorito && "fill-amber-400 text-amber-400")} />
+              </button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

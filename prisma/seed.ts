@@ -28,6 +28,17 @@ async function main() {
   });
   console.log("Usuario garantido: jadelinda@linda.com");
 
+  // Usuario administrador (ve o relatorio de reportes). Mesma logica: senha so
+  // na criacao (ou via SEED_ADMIN_PASSWORD); o role e sempre garantido.
+  const senhaAdmin = process.env.SEED_ADMIN_PASSWORD ?? "admin123";
+  const senhaAdminHash = await bcrypt.hash(senhaAdmin, 10);
+  await prisma.user.upsert({
+    where: { email: "admin@sedes.df" },
+    update: { nome: "Administrador", role: "admin" },
+    create: { nome: "Administrador", email: "admin@sedes.df", senha: senhaAdminHash, role: "admin" },
+  });
+  console.log("Admin garantido: admin@sedes.df (role admin)");
+
   // Assuntos + subassuntos
   const assuntoMap = new Map<string, string>();
   const subassuntoMap = new Map<string, string>();

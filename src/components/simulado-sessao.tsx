@@ -7,6 +7,7 @@ import type { RespostaSimulado } from "@/server/simulado";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BotaoReporte } from "@/components/botao-reporte";
 import { cn } from "@/lib/utils";
 import {
   Clock,
@@ -137,12 +138,15 @@ export function SimuladoSessao({
       >
         <Card>
           <CardHeader>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-medium text-slate-400">
-                Questão {indice + 1} de {questoes.length}
-              </span>
-              <Badge>{atual.assunto}</Badge>
-              {atual.subassunto && <Badge variant="neutral">{atual.subassunto}</Badge>}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-medium text-slate-400">
+                  Questão {indice + 1} de {questoes.length}
+                </span>
+                <Badge>{atual.assunto}</Badge>
+                {atual.subassunto && <Badge variant="neutral">{atual.subassunto}</Badge>}
+              </div>
+              <BotaoReporte questaoId={atual.id} />
             </div>
           </CardHeader>
           <CardContent className="space-y-4">

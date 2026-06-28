@@ -12,7 +12,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
-      <Nav nome={session.user.name ?? "Estudante"} />
+      <Nav nome={session.user.name ?? "Estudante"} isAdmin={session.user.role === "admin"} />
       <main className="flex-1 overflow-y-auto p-4 md:h-screen md:p-8">{children}</main>
     </div>
   );

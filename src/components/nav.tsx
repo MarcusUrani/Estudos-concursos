@@ -18,6 +18,7 @@ import {
   BookText,
   Menu,
   X,
+  ShieldAlert,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { sair } from "@/server/auth-actions";
@@ -94,9 +95,13 @@ function BotaoSair({ className }: { className?: string }) {
   );
 }
 
-export function Nav({ nome }: { nome: string }) {
+export function Nav({ nome, isAdmin }: { nome: string; isAdmin?: boolean }) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
+
+  const itens = isAdmin
+    ? [...links, { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert }]
+    : links;
 
   return (
     <>
@@ -118,7 +123,7 @@ export function Nav({ nome }: { nome: string }) {
         {aberto && (
           <div className="max-h-[75vh] overflow-y-auto border-t border-slate-800 px-3 pb-3 pt-2">
             <nav className="flex flex-col gap-1">
-              {links.map(({ href, label, icon: Icon }) => (
+              {itens.map(({ href, label, icon: Icon }) => (
                 <ItemLink
                   key={href}
                   href={href}
@@ -144,7 +149,7 @@ export function Nav({ nome }: { nome: string }) {
         </div>
 
         <nav className="flex flex-1 flex-col gap-1">
-          {links.map(({ href, label, icon: Icon }) => (
+          {itens.map(({ href, label, icon: Icon }) => (
             <ItemLink
               key={href}
               href={href}

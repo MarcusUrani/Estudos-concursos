@@ -15,6 +15,7 @@ model User {
   nome      String
   email     String   @unique
   senha     String
+  role      String   @default("user") // "user" | "admin"
   createdAt DateTime @default(now())
 
   respostas Resposta[]
@@ -22,6 +23,7 @@ model User {
   favoritos Favorito[]
   metas     Meta[]
   simulados Simulado[]
+  reportes  Reporte[]
 }
 
 model Assunto {
@@ -66,6 +68,7 @@ model Questao {
   respostas    Resposta[]
   revisoes     Revisao[]
   favoritos    Favorito[]
+  reportes     Reporte[]
 
   @@index([assuntoId])
 }
@@ -148,4 +151,23 @@ model Simulado {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// Reporte de uma questao feito por um usuario (ex.: gabarito errado, comentario
+// errado). `motivos` e um CSV de ids de motivo (ver src/lib/reportes.ts);
+// `comentario` e o texto livre opcional.
+model Reporte {
+  id         String   @id @default(cuid())
+  motivos    String // CSV de ids de motivo
+  comentario String?
+  status     String   @default("aberto") // "aberto" | "resolvido"
+  criadoEm   DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questaoId String
+  questao   Questao @relation(fields: [questaoId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([questaoId])
 }

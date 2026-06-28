@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { BotaoReporte } from "@/components/botao-reporte";
 import {
   RotateCcw,
   Eye,
@@ -90,9 +91,12 @@ export function FlashcardSessao({
 
       <Card className="min-h-72">
         <CardContent className="space-y-4 p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{card.assunto}</Badge>
-            {card.subassunto && <Badge variant="neutral">{card.subassunto}</Badge>}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge>{card.assunto}</Badge>
+              {card.subassunto && <Badge variant="neutral">{card.subassunto}</Badge>}
+            </div>
+            <BotaoReporte questaoId={card.questaoId} />
           </div>
 
           <p className="text-base leading-relaxed text-slate-100">{card.frente}</p>
