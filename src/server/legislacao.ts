@@ -85,12 +85,18 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
   }));
 }
 
-/** Pega a primeira frase "limpa" de uma explicacao, truncada. */
-function primeiraFrase(texto: string): string {
+/**
+ * Normaliza uma explicacao para virar um "ponto" do resumo. Usa o texto
+ * completo (nao tenta cortar na 1a frase: o texto juridico tem muitas
+ * abreviacoes com ponto — "art.", "LC", "§", "8.742" — que quebrariam a frase
+ * no meio). So trunca se ficar muito longo, sempre no fim de uma palavra.
+ */
+function resumirPonto(texto: string): string {
   const limpo = texto.replace(/\s+/g, " ").trim();
-  const corte = limpo.search(/(?<=\.)\s/); // fim da 1a frase
-  const frase = corte > 0 ? limpo.slice(0, corte) : limpo;
-  return frase.length > 240 ? frase.slice(0, 237).trimEnd() + "…" : frase;
+  const MAX = 360;
+  if (limpo.length <= MAX) return limpo;
+  const corte = limpo.lastIndexOf(" ", MAX);
+  return limpo.slice(0, corte > 0 ? corte : MAX).trimEnd() + "…";
 }
 
 /** Monta o resumo derivado + dados de leitura de uma legislacao (assunto). */
@@ -121,7 +127,7 @@ export async function getLegislacao(assuntoId: string): Promise<LegislacaoDetalh
     const titulo = q.subassunto?.nome ?? "Visão geral";
     if (!grupos.has(titulo)) grupos.set(titulo, { pontos: new Set(), fontes: new Set() });
     const g = grupos.get(titulo)!;
-    if (q.explicacao) g.pontos.add(primeiraFrase(q.explicacao));
+    if (q.explicacao) g.pontos.add(resumirPonto(q.explicacao));
     if (q.fonteLegal) {
       g.fontes.add(q.fonteLegal.trim());
       fontesGerais.add(q.fonteLegal.trim());
