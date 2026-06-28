@@ -62,7 +62,12 @@ export async function listarRevisaoDoDia(): Promise<ListaRevisao> {
 
   const [revisoes, favoritos] = await Promise.all([
     prisma.revisao.findMany({
-      where: { userId, proximaData: { lte: new Date() } },
+      where: {
+        userId,
+        proximaData: { lte: new Date() },
+        // Oculta as questoes que o usuario reportou (ainda nao resolvidas).
+        questao: { reportes: { none: { userId, status: { not: "resolvido" } } } },
+      },
       orderBy: { proximaData: "asc" },
       take: 50,
       include: {
@@ -107,10 +112,12 @@ export async function listarRevisao(
   if (!session?.user?.id) throw new Error("Nao autenticado");
   const userId = session.user.id;
 
+  // Oculta as questoes que o usuario reportou (ainda nao resolvidas).
+  const semReportados = { reportes: { none: { userId, status: { not: "resolvido" } } } };
   const where =
     status === "favoritas"
-      ? { favoritos: { some: { userId } } }
-      : { respostas: { some: { userId, acertou: false } } };
+      ? { favoritos: { some: { userId } }, ...semReportados }
+      : { respostas: { some: { userId, acertou: false } }, ...semReportados };
 
   const [questoes, favoritos] = await Promise.all([
     prisma.questao.findMany({

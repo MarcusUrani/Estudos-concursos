@@ -56,6 +56,10 @@ export async function montarTreino(filtro: FiltroTreino): Promise<QuestaoDTO[]> 
     where.favoritos = { some: { userId } };
   }
 
+  // Oculta do proprio usuario as questoes que ELE reportou enquanto o reporte
+  // nao for resolvido por um admin.
+  where.reportes = { none: { userId, status: { not: "resolvido" } } };
+
   // Sorteia entre TODAS as questoes que batem com o filtro. Sem isso, o
   // `take` pegaria sempre as primeiras por data de criacao — e como o seed
   // insere as questoes agrupadas por assunto, um treino multi-tema acabaria

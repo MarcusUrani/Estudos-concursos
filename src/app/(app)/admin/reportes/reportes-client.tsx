@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { alternarStatusReporte, type ReporteDTO } from "@/server/reportes";
 import { rotuloMotivo } from "@/lib/reportes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Flag, CheckCircle2, RotateCcw, MessageSquare, ClipboardCheck } from "lucide-react";
+import { Flag, CheckCircle2, RotateCcw, MessageSquare, ClipboardCheck, Pencil } from "lucide-react";
 
 export function ReportesClient({ reportes }: { reportes: ReporteDTO[] }) {
   const [itens, setItens] = useState(reportes);
@@ -83,28 +84,36 @@ export function ReportesClient({ reportes }: { reportes: ReporteDTO[] }) {
                 </div>
               )}
 
-              <div className="flex items-center justify-between gap-2 pt-1">
+              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                 <span className="text-xs text-slate-500">
                   Reportado por <span className="text-slate-400">{r.reportadoPor}</span>
                 </span>
-                <Button
-                  size="sm"
-                  variant={resolvido ? "ghost" : "secondary"}
-                  onClick={() => alternar(r.id)}
-                  disabled={pendingId === r.id}
-                >
-                  {resolvido ? (
-                    <>
-                      <RotateCcw className="h-3.5 w-3.5" />
-                      Reabrir
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Marcar como resolvido
-                    </>
-                  )}
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Link href={`/admin/questoes/${r.questao.id}`}>
+                    <Button size="sm" variant="secondary">
+                      <Pencil className="h-3.5 w-3.5" />
+                      Editar questão
+                    </Button>
+                  </Link>
+                  <Button
+                    size="sm"
+                    variant={resolvido ? "ghost" : "secondary"}
+                    onClick={() => alternar(r.id)}
+                    disabled={pendingId === r.id}
+                  >
+                    {resolvido ? (
+                      <>
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Reabrir
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        Marcar como resolvido
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

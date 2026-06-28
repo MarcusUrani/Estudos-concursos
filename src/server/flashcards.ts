@@ -55,6 +55,8 @@ export async function gerarFlashcards(opts?: {
   if (opts?.vencidos) {
     where.revisoes = { some: { userId, proximaData: { lte: new Date() } } };
   }
+  // Oculta as questoes que o usuario reportou (reporte ainda nao resolvido).
+  where.reportes = { none: { userId, status: { not: "resolvido" } } };
 
   const ids = await prisma.questao.findMany({ where, select: { id: true } });
   const sorteados = embaralhar(ids.map((q) => q.id)).slice(0, quantidade);
