@@ -23,6 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import { sair } from "@/server/auth-actions";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { BotaoFeedback } from "@/components/botao-feedback";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -134,9 +135,12 @@ export function Nav({ nome, isAdmin }: { nome: string; isAdmin?: boolean }) {
                 />
               ))}
             </nav>
-            <div className="mt-2 flex items-center justify-between gap-2 border-t border-slate-800 pt-2">
-              <ThemeToggle />
-              <BotaoSair />
+            <div className="mt-2 space-y-1 border-t border-slate-800 pt-2">
+              <BotaoFeedback className="w-full justify-start" />
+              <div className="flex items-center justify-between gap-2">
+                <ThemeToggle />
+                <BotaoSair />
+              </div>
             </div>
           </div>
         )}
@@ -165,6 +169,7 @@ export function Nav({ nome, isAdmin }: { nome: string; isAdmin?: boolean }) {
             <p className="text-xs text-slate-500">Conectada como</p>
             <p className="truncate text-sm font-medium text-slate-200">{nome}</p>
           </div>
+          <BotaoFeedback className="justify-start" />
           <ThemeToggle className="justify-start" />
           <BotaoSair />
         </div>
