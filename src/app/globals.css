@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ===================== Tema ESCURO (padrao) ===================== */
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(99, 102, 241, 0.12), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(139, 92, 246, 0.1), transparent 55%),
+    #020617;
+  color: #e2e8f0;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Scrollbar discreta */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* ===================== Tema CLARO ===================== */
+/* O app inteiro usa a paleta `slate` (superficies escuras + texto claro). Em vez
+   de reescrever centenas de classes, invertemos a rampa `slate` aqui: as
+   utilities do Tailwind v4 leem `var(--color-slate-*)`, entao trocar essas
+   variaveis sob `html.light` vira todo o tema de uma vez. Os acentos
+   (indigo/emerald/amber/rose) permanecem e funcionam bem sobre fundo claro. */
+html.light {
+  color-scheme: light;
+
+  --color-slate-50: oklch(0.129 0.042 264.695); /* era 950 */
+  --color-slate-100: oklch(0.208 0.042 265.755); /* era 900 */
+  --color-slate-200: oklch(0.279 0.041 260.031); /* era 800 */
+  --color-slate-300: oklch(0.372 0.044 257.287); /* era 700 */
+  --color-slate-400: oklch(0.446 0.043 257.281); /* era 600 */
+  --color-slate-500: oklch(0.554 0.046 257.417); /* 500 (eixo) */
+  --color-slate-600: oklch(0.704 0.04 256.788); /* era 400 */
+  --color-slate-700: oklch(0.869 0.022 252.894); /* era 300 */
+  --color-slate-800: oklch(0.929 0.013 255.508); /* era 200 */
+  --color-slate-900: oklch(0.968 0.007 247.896); /* era 100 */
+  --color-slate-950: oklch(0.984 0.003 247.858); /* era 50 */
+}
+
+html.light body {
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(99, 102, 241, 0.1), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(139, 92, 246, 0.08), transparent 55%),
+    #f8fafc;
+  color: #0f172a;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

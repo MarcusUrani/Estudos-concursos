@@ -1,0 +1,92 @@
+"use server";
+
+import { Prisma } from "@prisma/client";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { atualizarRevisao } from "@/server/revisao";
+
+// Flashcards "automaticos": derivados das proprias questoes. Frente = enunciado;
+// verso = alternativa correta + comentario + base legal. A auto-avaliacao
+// ("sabia" / "nao sabia") alimenta a MESMA fila de revisao espacada das
+// questoes (modelo Revisao), sem criar tabela nova.
+
+export type FlashcardDTO = {
+  questaoId: string;
+  frente: string;
+  verso: string;
+  explicacao: string;
+  fonteLegal: string | null;
+  assunto: string;
+  subassunto: string | null;
+  nivel: string;
+};
+
+async function getUserId() {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Nao autenticado");
+  return session.user.id;
+}
+
+function embaralhar<T>(arr: T[]): T[] {
+  const c = [...arr];
+  for (let i = c.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [c[i], c[j]] = [c[j], c[i]];
+  }
+  return c;
+}
+
+/**
+ * Gera um baralho de flashcards. Se `assuntoId` for informado, limita ao
+ * assunto; `vencidos` limita as questoes ja na fila de revisao para hoje.
+ */
+export async function gerarFlashcards(opts?: {
+  assuntoId?: string;
+  quantidade?: number;
+  vencidos?: boolean;
+}): Promise<FlashcardDTO[]> {
+  const userId = await getUserId();
+  const quantidade = Math.min(Math.max(opts?.quantidade ?? 20, 1), 60);
+
+  const where: Prisma.QuestaoWhereInput = {};
+  if (opts?.assuntoId) where.assuntoId = opts.assuntoId;
+  if (opts?.vencidos) {
+    where.revisoes = { some: { userId, proximaData: { lte: new Date() } } };
+  }
+
+  const ids = await prisma.questao.findMany({ where, select: { id: true } });
+  const sorteados = embaralhar(ids.map((q) => q.id)).slice(0, quantidade);
+
+  const questoes = await prisma.questao.findMany({
+    where: { id: { in: sorteados } },
+    include: {
+      assunto: true,
+      subassunto: true,
+      alternativas: { where: { correta: true }, take: 1 },
+    },
+  });
+
+  const porId = new Map(questoes.map((q) => [q.id, q]));
+  return sorteados
+    .map((id) => porId.get(id))
+    .filter((q): q is NonNullable<typeof q> => q != null)
+    .map((q) => ({
+      questaoId: q.id,
+      frente: q.enunciado,
+      verso: q.alternativas[0]?.texto ?? "—",
+      explicacao: q.explicacao,
+      fonteLegal: q.fonteLegal,
+      assunto: q.assunto.nome,
+      subassunto: q.subassunto?.nome ?? null,
+      nivel: q.nivel,
+    }));
+}
+
+/**
+ * Auto-avaliacao de um flashcard. Reaproveita a fila de revisao espacada:
+ * "sabia" avanca o intervalo; "nao sabia" volta ao inicio.
+ */
+export async function avaliarFlashcard(questaoId: string, sabia: boolean): Promise<void> {
+  const userId = await getUserId();
+  await atualizarRevisao(userId, questaoId, sabia);
+}

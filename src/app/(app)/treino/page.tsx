@@ -1,0 +1,23 @@
+import { prisma } from "@/lib/prisma";
+import { TreinoClient } from "./treino-client";
+
+export const dynamic = "force-dynamic";
+
+export default async function TreinoPage() {
+  const assuntos = await prisma.assunto.findMany({
+    orderBy: { ordem: "asc" },
+    select: { id: true, nome: true, _count: { select: { questoes: true } } },
+  });
+
+  return (
+    <div className="mx-auto max-w-3xl">
+      <TreinoClient
+        assuntos={assuntos.map((a) => ({
+          id: a.id,
+          nome: a.nome,
+          total: a._count.questoes,
+        }))}
+      />
+    </div>
+  );
+}

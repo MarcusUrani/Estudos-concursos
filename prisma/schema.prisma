@@ -1,0 +1,151 @@
+// Prisma schema — SEDES-DF study platform
+// Dev: SQLite (zero setup). Prod: trocar provider para "postgresql" e ajustar DATABASE_URL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  senha     String
+  createdAt DateTime @default(now())
+
+  respostas Resposta[]
+  revisoes  Revisao[]
+  favoritos Favorito[]
+  metas     Meta[]
+  simulados Simulado[]
+}
+
+model Assunto {
+  id        String   @id @default(cuid())
+  nome      String   @unique
+  descricao String?
+  ordem     Int      @default(0)
+
+  subassuntos Subassunto[]
+  questoes    Questao[]
+}
+
+model Subassunto {
+  id        String  @id @default(cuid())
+  nome      String
+  assuntoId String
+  assunto   Assunto @relation(fields: [assuntoId], references: [id], onDelete: Cascade)
+
+  questoes Questao[]
+
+  @@unique([assuntoId, nome])
+}
+
+model Questao {
+  id            String   @id @default(cuid())
+  enunciado     String
+  nivel         String   @default("Medio") // "Facil" | "Medio" | "Dificil"
+  banca         String   @default("QUADRIX")
+  explicacao    String
+  fonteLegal    String?
+  palavrasChave String?  // CSV (SQLite nao tem arrays nativos)
+  dificuldade   Int      @default(3) // 1..5
+  tempoMedio    Int      @default(60) // segundos
+  createdAt     DateTime @default(now())
+
+  assuntoId    String
+  assunto      Assunto     @relation(fields: [assuntoId], references: [id], onDelete: Cascade)
+  subassuntoId String?
+  subassunto   Subassunto? @relation(fields: [subassuntoId], references: [id], onDelete: SetNull)
+
+  alternativas Alternativa[]
+  respostas    Resposta[]
+  revisoes     Revisao[]
+  favoritos    Favorito[]
+
+  @@index([assuntoId])
+}
+
+model Alternativa {
+  id        String  @id @default(cuid())
+  texto     String
+  correta   Boolean @default(false)
+  ordem     Int     @default(0)
+  questaoId String
+  questao   Questao @relation(fields: [questaoId], references: [id], onDelete: Cascade)
+
+  respostas Resposta[]
+}
+
+model Resposta {
+  id            String   @id @default(cuid())
+  acertou       Boolean
+  tempo         Int      @default(0) // segundos gastos
+  respondidaEm  DateTime @default(now())
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questaoId     String
+  questao       Questao     @relation(fields: [questaoId], references: [id], onDelete: Cascade)
+  alternativaId String
+  alternativa   Alternativa @relation(fields: [alternativaId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([questaoId])
+}
+
+model Revisao {
+  id          String   @id @default(cuid())
+  proximaData DateTime
+  nivel       Int      @default(0) // 0->1d, 1->3d, 2->7d, 3->15d, 4->30d
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questaoId   String
+  questao     Questao  @relation(fields: [questaoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questaoId])
+}
+
+model Favorito {
+  id        String   @id @default(cuid())
+  criadoEm  DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questaoId String
+  questao   Questao  @relation(fields: [questaoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questaoId])
+}
+
+model Meta {
+  id        String   @id @default(cuid())
+  data      DateTime @default(now())
+  questoes  Int      @default(30)
+  acerto    Int      @default(80) // % alvo
+  minutos   Int      @default(60)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Resultado agregado de um simulado cronometrado. As respostas individuais
+// continuam gravadas em Resposta (alimentam stats/historico/revisao); aqui
+// guardamos so o resumo para o historico de simulados.
+model Simulado {
+  id           String   @id @default(cuid())
+  total        Int // numero de questoes
+  acertos      Int
+  tempo        Int // segundos efetivamente gastos
+  duracao      Int // limite de tempo escolhido (segundos)
+  finalizadoEm DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
