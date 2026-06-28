@@ -1,12 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { autenticar } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, LogIn } from "lucide-react";
+import { AlertCircle, LogIn, Eye, EyeOff } from "lucide-react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -20,6 +20,7 @@ function SubmitButton() {
 
 export function LoginForm() {
   const [erro, formAction] = useActionState(autenticar, undefined);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -36,14 +37,26 @@ export function LoginForm() {
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="senha">Senha</Label>
-        <Input
-          id="senha"
-          name="senha"
-          type="password"
-          placeholder="••••••••"
-          required
-          autoComplete="current-password"
-        />
+        <div className="relative">
+          <Input
+            id="senha"
+            name="senha"
+            type={mostrarSenha ? "text" : "password"}
+            placeholder="••••••••"
+            required
+            autoComplete="current-password"
+            className="pr-11"
+          />
+          <button
+            type="button"
+            onClick={() => setMostrarSenha((v) => !v)}
+            aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+            title={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+            className="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-slate-400 transition-colors hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          >
+            {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
       {erro && (
