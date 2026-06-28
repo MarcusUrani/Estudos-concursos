@@ -93,13 +93,6 @@ export function FlashcardSessao({
           <div className="flex flex-wrap items-center gap-2">
             <Badge>{card.assunto}</Badge>
             {card.subassunto && <Badge variant="neutral">{card.subassunto}</Badge>}
-            <Badge
-              variant={
-                card.nivel === "Dificil" ? "danger" : card.nivel === "Facil" ? "success" : "warning"
-              }
-            >
-              {card.nivel}
-            </Badge>
           </div>
 
           <p className="text-base leading-relaxed text-slate-100">{card.frente}</p>

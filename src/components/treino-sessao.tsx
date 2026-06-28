@@ -166,17 +166,6 @@ function Questao({
               <Badge>{questao.assunto}</Badge>
               {questao.subassunto && <Badge variant="neutral">{questao.subassunto}</Badge>}
               <Badge variant="neutral">{questao.banca}</Badge>
-              <Badge
-                variant={
-                  questao.nivel === "Dificil"
-                    ? "danger"
-                    : questao.nivel === "Facil"
-                    ? "success"
-                    : "warning"
-                }
-              >
-                {questao.nivel}
-              </Badge>
             </div>
             <button
               onClick={toggleFav}

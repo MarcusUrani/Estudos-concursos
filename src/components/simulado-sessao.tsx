@@ -143,17 +143,6 @@ export function SimuladoSessao({
               </span>
               <Badge>{atual.assunto}</Badge>
               {atual.subassunto && <Badge variant="neutral">{atual.subassunto}</Badge>}
-              <Badge
-                variant={
-                  atual.nivel === "Dificil"
-                    ? "danger"
-                    : atual.nivel === "Facil"
-                    ? "success"
-                    : "warning"
-                }
-              >
-                {atual.nivel}
-              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
