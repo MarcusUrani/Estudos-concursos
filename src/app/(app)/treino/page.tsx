@@ -5,8 +5,13 @@ export const dynamic = "force-dynamic";
 
 export default async function TreinoPage() {
   const assuntos = await prisma.assunto.findMany({
-    orderBy: { ordem: "asc" },
-    select: { id: true, nome: true, _count: { select: { questoes: true } } },
+    orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
+    select: {
+      id: true,
+      nome: true,
+      materia: { select: { nome: true } },
+      _count: { select: { questoes: true } },
+    },
   });
 
   return (
@@ -16,6 +21,7 @@ export default async function TreinoPage() {
           id: a.id,
           nome: a.nome,
           total: a._count.questoes,
+          materia: a.materia?.nome ?? "Outros",
         }))}
       />
     </div>

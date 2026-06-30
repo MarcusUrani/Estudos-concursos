@@ -10,6 +10,7 @@ export type LegislacaoResumo = {
   id: string;
   nome: string;
   descricao: string | null;
+  materia: string;
   totalQuestoes: number;
   respondidas: number;
   revisoesPendentes: number;
@@ -42,11 +43,12 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
   const agora = new Date();
 
   const assuntos = await prisma.assunto.findMany({
-    orderBy: { ordem: "asc" },
+    orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
     select: {
       id: true,
       nome: true,
       descricao: true,
+      materia: { select: { nome: true } },
       _count: { select: { questoes: true } },
     },
   });
@@ -79,6 +81,7 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
     id: a.id,
     nome: a.nome,
     descricao: a.descricao,
+    materia: a.materia?.nome ?? "Outros",
     totalQuestoes: a._count.questoes,
     respondidas: respPorAssunto.get(a.id) ?? 0,
     revisoesPendentes: revPorAssunto.get(a.id) ?? 0,

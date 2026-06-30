@@ -8,7 +8,20 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Layers, AlertCircle } from "lucide-react";
 
-type Assunto = { id: string; nome: string; total: number };
+type Assunto = { id: string; nome: string; total: number; materia: string };
+
+function agruparPorMateria(assuntos: Assunto[]): { materia: string; itens: Assunto[] }[] {
+  const grupos: { materia: string; itens: Assunto[] }[] = [];
+  for (const a of assuntos) {
+    let g = grupos.find((x) => x.materia === a.materia);
+    if (!g) {
+      g = { materia: a.materia, itens: [] };
+      grupos.push(g);
+    }
+    g.itens.push(a);
+  }
+  return grupos;
+}
 
 export function FlashcardsClient({
   assuntos,
@@ -54,18 +67,27 @@ export function FlashcardsClient({
           <p className="mb-2 text-sm font-medium text-slate-300">
             Assuntos <span className="text-slate-500">(um ou mais)</span>
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="space-y-4">
             <Chip ativo={assuntoIds.length === 0} onClick={() => setAssuntoIds([])}>
               Todos
             </Chip>
-            {assuntos.map((a) => (
-              <Chip
-                key={a.id}
-                ativo={assuntoIds.includes(a.id)}
-                onClick={() => alternarAssunto(a.id)}
-              >
-                {a.nome}
-              </Chip>
+            {agruparPorMateria(assuntos).map((g) => (
+              <div key={g.materia}>
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-300">
+                  {g.materia}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {g.itens.map((a) => (
+                    <Chip
+                      key={a.id}
+                      ativo={assuntoIds.includes(a.id)}
+                      onClick={() => alternarAssunto(a.id)}
+                    >
+                      {a.nome}
+                    </Chip>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>

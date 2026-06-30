@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { ASSUNTOS, TODAS_QUESTOES } from "./seed-data";
+import { ASSUNTOS, MATERIAS, TODAS_QUESTOES } from "./seed-data";
 
 const prisma = new PrismaClient();
 
@@ -13,6 +13,7 @@ async function main() {
   await prisma.questao.deleteMany();
   await prisma.subassunto.deleteMany();
   await prisma.assunto.deleteMany();
+  await prisma.materia.deleteMany();
   await prisma.meta.deleteMany();
 
   // Usuario inicial: upsert por e-mail mantem o MESMO id entre re-seeds,
@@ -39,13 +40,24 @@ async function main() {
   });
   console.log("Admin garantido: admin@sedes.df (role admin)");
 
+  // Materias (disciplinas que agrupam os assuntos)
+  const materiaMap = new Map<string, string>();
+  for (let i = 0; i < MATERIAS.length; i++) {
+    const m = MATERIAS[i];
+    const materia = await prisma.materia.create({
+      data: { nome: m.nome, descricao: m.descricao, ordem: i },
+    });
+    materiaMap.set(m.nome, materia.id);
+  }
+  console.log(`Materias criadas: ${materiaMap.size}`);
+
   // Assuntos + subassuntos
   const assuntoMap = new Map<string, string>();
   const subassuntoMap = new Map<string, string>();
   for (let i = 0; i < ASSUNTOS.length; i++) {
     const a = ASSUNTOS[i];
     const assunto = await prisma.assunto.create({
-      data: { nome: a.nome, descricao: a.descricao, ordem: i },
+      data: { nome: a.nome, descricao: a.descricao, ordem: i, materiaId: materiaMap.get(a.materia) },
     });
     assuntoMap.set(a.nome, assunto.id);
     for (const sub of a.subassuntos) {

@@ -1,7 +1,8 @@
 import type { QSeed } from "./tipos";
-import questoes, { ASSUNTOS_BASE } from "./from-json";
+import questoes, { ASSUNTOS_BASE, MATERIAS } from "./from-json";
 
 export type { QSeed } from "./tipos";
+export { MATERIAS };
 
 export const TODAS_QUESTOES: QSeed[] = questoes;
 
@@ -15,9 +16,14 @@ for (const q of TODAS_QUESTOES) {
   subsPorAssunto.get(q.assunto)!.add(q.subassunto);
 }
 
-export const ASSUNTOS: { nome: string; descricao: string; subassuntos: string[] }[] =
-  ASSUNTOS_BASE.map((a) => ({
-    nome: a.nome,
-    descricao: a.descricao,
-    subassuntos: [...(subsPorAssunto.get(a.nome) ?? [])].sort((x, y) => x.localeCompare(y, "pt")),
-  }));
+export const ASSUNTOS: {
+  nome: string;
+  descricao: string;
+  materia: string;
+  subassuntos: string[];
+}[] = ASSUNTOS_BASE.map((a) => ({
+  nome: a.nome,
+  descricao: a.descricao,
+  materia: a.materia,
+  subassuntos: [...(subsPorAssunto.get(a.nome) ?? [])].sort((x, y) => x.localeCompare(y, "pt")),
+}));

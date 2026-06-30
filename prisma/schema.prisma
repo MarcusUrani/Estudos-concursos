@@ -26,11 +26,24 @@ model User {
   reportes  Reporte[]
 }
 
+// Materia = disciplina/area (ex.: "Beneficios e Programas Sociais do DF") que
+// agrupa varios Assuntos (cada assunto = uma lei/programa/tema).
+model Materia {
+  id        String    @id @default(cuid())
+  nome      String    @unique
+  descricao String?
+  ordem     Int       @default(0)
+  assuntos  Assunto[]
+}
+
 model Assunto {
   id        String   @id @default(cuid())
   nome      String   @unique
   descricao String?
   ordem     Int      @default(0)
+
+  materiaId String?
+  materia   Materia? @relation(fields: [materiaId], references: [id], onDelete: SetNull)
 
   subassuntos Subassunto[]
   questoes    Questao[]
