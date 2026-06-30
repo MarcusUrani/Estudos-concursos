@@ -53,6 +53,7 @@ CLAUDE.md
 
 # lista de questoes
 questoes.json
+questoes-2.json
 
 # tooling do agente (nao faz parte do app)
 .agents/

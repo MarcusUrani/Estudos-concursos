@@ -22,7 +22,6 @@ type Raw = {
 
 // Lista canonica de assuntos (nome + descricao), na ordem de exibicao.
 export const ASSUNTOS_BASE: { nome: string; descricao: string }[] = [
-  { nome: "Fundamentos", descricao: "LOAS, conceitos, objetivos, principios e diretrizes da assistencia social." },
   { nome: "PNAS", descricao: "Politica Nacional de Assistencia Social: protecoes, segurancas e territorializacao." },
   { nome: "NOB SUAS", descricao: "Gestao, financiamento, instancias e vigilancia socioassistencial do SUAS." },
   { nome: "Lei 840", descricao: "Lei Complementar nº 840/2011 - regime juridico dos servidores do DF." },
@@ -103,6 +102,9 @@ const questoes: QSeed[] = load()
     explicacao: q.explicacao,
     fonteLegal: q.fonteLegal,
     palavrasChave: q.palavrasChave,
-  }));
+  }))
+  // O assunto "Fundamentos" foi removido do banco: descarta as questoes que
+  // caem nele (LOAS/BPC/principios/diretrizes/fallback) para o seed nao recria-lo.
+  .filter((q) => q.assunto !== "Fundamentos");
 
 export default questoes;
