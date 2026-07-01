@@ -7,8 +7,13 @@ export const dynamic = "force-dynamic";
 export default async function SimuladoPage() {
   const [assuntos, historico] = await Promise.all([
     prisma.assunto.findMany({
-      orderBy: { ordem: "asc" },
-      select: { id: true, nome: true, _count: { select: { questoes: true } } },
+      orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
+      select: {
+        id: true,
+        nome: true,
+        materia: { select: { nome: true } },
+        _count: { select: { questoes: true } },
+      },
     }),
     listarSimulados(),
   ]);
@@ -16,7 +21,12 @@ export default async function SimuladoPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <SimuladoClient
-        assuntos={assuntos.map((a) => ({ id: a.id, nome: a.nome, total: a._count.questoes }))}
+        assuntos={assuntos.map((a) => ({
+          id: a.id,
+          nome: a.nome,
+          total: a._count.questoes,
+          materia: a.materia?.nome ?? "Outros",
+        }))}
         historico={historico}
       />
     </div>

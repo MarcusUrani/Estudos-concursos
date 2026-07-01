@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { sair } from "@/server/auth-actions";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BotaoFeedback } from "@/components/botao-feedback";
+import { ConcursoSelector } from "@/components/concurso-selector";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -45,8 +46,8 @@ function Marca() {
         <GraduationCap className="h-5 w-5 text-white" />
       </div>
       <div>
-        <p className="text-sm font-semibold leading-tight text-slate-100">Estuda</p>
-        <p className="text-xs leading-tight text-indigo-400">SEDES-DF</p>
+        <p className="text-sm font-semibold leading-tight text-slate-100">Jade Study</p>
+        <ConcursoSelector />
       </div>
     </div>
   );

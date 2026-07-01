@@ -7,8 +7,8 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Estuda SEDES-DF",
-  description: "Plataforma de estudos focada no concurso da SEDES-DF, estilo QUADRIX.",
+  title: "Jade Study",
+  description: "Plataforma de estudos para concursos — treino, simulados, flashcards e revisão espaçada.",
 };
 
 // Aplica o tema salvo ANTES da pintura para evitar flash (FOUC). Padrao: escuro.

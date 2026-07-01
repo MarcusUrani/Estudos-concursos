@@ -32,7 +32,7 @@ export async function enviarFeedback(input: FeedbackInput): Promise<ResultadoFee
     return { ok: false, erro: "Envio de feedback não configurado no servidor." };
   }
 
-  const from = process.env.MAILGUN_FROM || `Estuda SEDES-DF <postmaster@${domain}>`;
+  const from = process.env.MAILGUN_FROM || `Jade Study <postmaster@${domain}>`;
   const nome = session.user.name || "Usuário";
   const email = session.user.email || "—";
   const quando = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
@@ -53,7 +53,7 @@ export async function enviarFeedback(input: FeedbackInput): Promise<ResultadoFee
   params.set("from", from);
   params.set("to", DESTINO);
   params.set("h:Reply-To", email);
-  params.set("subject", `[Estuda SEDES-DF] ${tipo} — ${nome}`);
+  params.set("subject", `[Jade Study] ${tipo} — ${nome}`);
   params.set("text", corpo);
 
   try {

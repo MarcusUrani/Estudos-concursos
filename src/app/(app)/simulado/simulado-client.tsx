@@ -9,6 +9,7 @@ import {
   type SimuladoResumo,
 } from "@/server/simulado";
 import { SimuladoSessao } from "@/components/simulado-sessao";
+import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,6 @@ import { cn, formatDuracao } from "@/lib/utils";
 import {
   TimerReset,
   ArrowRight,
-  Check,
   Trophy,
   RotateCcw,
   CheckCircle2,
@@ -28,7 +28,7 @@ import {
   History,
 } from "lucide-react";
 
-type Assunto = { id: string; nome: string; total: number };
+type Assunto = AssuntoSel;
 
 const NIVEIS = [
   { value: "", label: "Todos os níveis" },
@@ -130,36 +130,15 @@ export function SimuladoClient({
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          <Campo
-            titulo="Temas"
-            dica={
-              assuntoIds.length
-                ? `${assuntoIds.length} selecionado(s)`
-                : "Selecione um ou mais (vazio = todos)"
-            }
-          >
-            <div className="flex flex-wrap gap-2">
-              {assuntoIds.length > 0 && (
-                <Chip ativo={false} onClick={() => setAssuntoIds([])}>
-                  Limpar
-                </Chip>
-              )}
-              {assuntos.map((a) => {
-                const ativo = assuntoIds.includes(a.id);
-                return (
-                  <Chip
-                    key={a.id}
-                    ativo={ativo}
-                    onClick={() => toggleAssunto(a.id)}
-                    disabled={a.total === 0}
-                  >
-                    {ativo && <Check className="mr-1 inline h-3.5 w-3.5" />}
-                    {a.nome}
-                    <span className="ml-1 text-xs opacity-60">{a.total}</span>
-                  </Chip>
-                );
-              })}
-            </div>
+          <Campo titulo="Temas">
+            <SeletorAssuntos
+              assuntos={assuntos}
+              selecionados={assuntoIds}
+              onAlternar={toggleAssunto}
+              onLimpar={() => setAssuntoIds([])}
+              desabilitarVazios
+              mostrarTotal
+            />
           </Campo>
 
           <Campo titulo="Nível">
