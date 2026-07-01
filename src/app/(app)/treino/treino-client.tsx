@@ -7,12 +7,13 @@ import {
   type QuestaoDTO,
 } from "@/server/treino";
 import { TreinoSessao } from "@/components/treino-sessao";
+import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Dumbbell, ArrowRight, Check } from "lucide-react";
+import { Dumbbell, ArrowRight } from "lucide-react";
 
-type Assunto = { id: string; nome: string; total: number; materia: string };
+type Assunto = AssuntoSel;
 
 const NIVEIS = [
   { value: "", label: "Todos os níveis" },
@@ -89,45 +90,15 @@ export function TreinoClient({ assuntos }: { assuntos: Assunto[] }) {
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Campo
-          titulo="Temas"
-          dica={
-            assuntoIds.length
-              ? `${assuntoIds.length} selecionado(s)`
-              : "Selecione um ou mais (vazio = todos)"
-          }
-        >
-          <div className="space-y-4">
-            {assuntoIds.length > 0 && (
-              <Chip ativo={false} onClick={() => setAssuntoIds([])}>
-                Limpar seleção
-              </Chip>
-            )}
-            {agruparPorMateria(assuntos).map((g) => (
-              <div key={g.materia}>
-                <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-300">
-                  {g.materia}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {g.itens.map((a) => {
-                    const ativo = assuntoIds.includes(a.id);
-                    return (
-                      <Chip
-                        key={a.id}
-                        ativo={ativo}
-                        onClick={() => toggleAssunto(a.id)}
-                        disabled={a.total === 0}
-                      >
-                        {ativo && <Check className="mr-1 inline h-3.5 w-3.5" />}
-                        {a.nome}
-                        <span className="ml-1 text-xs opacity-60">{a.total}</span>
-                      </Chip>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
+        <Campo titulo="Temas">
+          <SeletorAssuntos
+            assuntos={assuntos}
+            selecionados={assuntoIds}
+            onAlternar={toggleAssunto}
+            onLimpar={() => setAssuntoIds([])}
+            desabilitarVazios
+            mostrarTotal
+          />
         </Campo>
 
         <Campo titulo="Nível">
@@ -173,20 +144,6 @@ export function TreinoClient({ assuntos }: { assuntos: Assunto[] }) {
       </CardContent>
     </Card>
   );
-}
-
-// Agrupa os assuntos por materia preservando a ordem recebida (ja vem ordenada).
-function agruparPorMateria(assuntos: Assunto[]): { materia: string; itens: Assunto[] }[] {
-  const grupos: { materia: string; itens: Assunto[] }[] = [];
-  for (const a of assuntos) {
-    let g = grupos.find((x) => x.materia === a.materia);
-    if (!g) {
-      g = { materia: a.materia, itens: [] };
-      grupos.push(g);
-    }
-    g.itens.push(a);
-  }
-  return grupos;
 }
 
 function Campo({

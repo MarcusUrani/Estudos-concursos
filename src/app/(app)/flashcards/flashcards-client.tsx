@@ -3,25 +3,13 @@
 import { useState, useTransition } from "react";
 import { gerarFlashcards, type FlashcardDTO } from "@/server/flashcards";
 import { FlashcardSessao } from "@/components/flashcard-sessao";
+import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Layers, AlertCircle } from "lucide-react";
 
-type Assunto = { id: string; nome: string; total: number; materia: string };
-
-function agruparPorMateria(assuntos: Assunto[]): { materia: string; itens: Assunto[] }[] {
-  const grupos: { materia: string; itens: Assunto[] }[] = [];
-  for (const a of assuntos) {
-    let g = grupos.find((x) => x.materia === a.materia);
-    if (!g) {
-      g = { materia: a.materia, itens: [] };
-      grupos.push(g);
-    }
-    g.itens.push(a);
-  }
-  return grupos;
-}
+type Assunto = AssuntoSel;
 
 export function FlashcardsClient({
   assuntos,
@@ -64,32 +52,13 @@ export function FlashcardsClient({
     <Card>
       <CardContent className="space-y-5 p-6">
         <div>
-          <p className="mb-2 text-sm font-medium text-slate-300">
-            Assuntos <span className="text-slate-500">(um ou mais)</span>
-          </p>
-          <div className="space-y-4">
-            <Chip ativo={assuntoIds.length === 0} onClick={() => setAssuntoIds([])}>
-              Todos
-            </Chip>
-            {agruparPorMateria(assuntos).map((g) => (
-              <div key={g.materia}>
-                <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-300">
-                  {g.materia}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {g.itens.map((a) => (
-                    <Chip
-                      key={a.id}
-                      ativo={assuntoIds.includes(a.id)}
-                      onClick={() => alternarAssunto(a.id)}
-                    >
-                      {a.nome}
-                    </Chip>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="mb-2 text-sm font-medium text-slate-300">Assuntos</p>
+          <SeletorAssuntos
+            assuntos={assuntos}
+            selecionados={assuntoIds}
+            onAlternar={alternarAssunto}
+            onLimpar={() => setAssuntoIds([])}
+          />
         </div>
 
         <div>
