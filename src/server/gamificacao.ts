@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getConcursoAtualId } from "@/server/concurso";
 
 export type Conquista = {
   id: string;
@@ -66,14 +67,15 @@ export async function getGamificacao(): Promise<Gamificacao> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Nao autenticado");
   const userId = session.user.id;
+  const concursoId = await getConcursoAtualId();
 
   const [respostas, simulados] = await Promise.all([
     prisma.resposta.findMany({
-      where: { userId },
+      where: { userId, questao: { concursoId } },
       select: { acertou: true, respondidaEm: true },
     }),
     prisma.simulado.findMany({
-      where: { userId },
+      where: { userId, concursoId },
       select: { total: true, acertos: true },
     }),
   ]);
