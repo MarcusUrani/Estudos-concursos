@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getConcursoAtualId } from "@/server/concurso";
 
 // "Resumos por legislacao" e "modo de leitura da lei com questoes relacionadas".
 // Cada Assunto representa uma legislacao/tema. O resumo NAO e fixo no banco: e
@@ -41,8 +42,10 @@ async function getUserId() {
 export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
   const userId = await getUserId();
   const agora = new Date();
+  const concursoId = await getConcursoAtualId();
 
   const assuntos = await prisma.assunto.findMany({
+    where: { concursoId },
     orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
     select: {
       id: true,
@@ -56,12 +59,12 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
   // Progresso por assunto: questoes distintas respondidas e revisoes vencidas.
   const [respostas, revisoes] = await Promise.all([
     prisma.resposta.findMany({
-      where: { userId },
+      where: { userId, questao: { concursoId } },
       select: { questaoId: true, questao: { select: { assuntoId: true } } },
       distinct: ["questaoId"],
     }),
     prisma.revisao.findMany({
-      where: { userId, proximaData: { lte: agora } },
+      where: { userId, proximaData: { lte: agora }, questao: { concursoId } },
       select: { questao: { select: { assuntoId: true } } },
     }),
   ]);

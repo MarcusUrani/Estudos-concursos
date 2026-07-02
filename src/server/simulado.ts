@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { atualizarRevisao } from "@/server/revisao";
+import { getConcursoAtualId } from "@/server/concurso";
 
 async function getUserId() {
   const session = await auth();
@@ -139,6 +140,7 @@ export async function finalizarSimulado(
       acertos,
       tempo: Math.max(0, Math.min(tempoGasto, duracao)),
       duracao,
+      concursoId: await getConcursoAtualId(),
     },
   });
 
@@ -185,7 +187,7 @@ export type SimuladoResumo = {
 export async function listarSimulados(): Promise<SimuladoResumo[]> {
   const userId = await getUserId();
   const simulados = await prisma.simulado.findMany({
-    where: { userId },
+    where: { userId, concursoId: await getConcursoAtualId() },
     orderBy: { finalizadoEm: "desc" },
     take: 50,
   });

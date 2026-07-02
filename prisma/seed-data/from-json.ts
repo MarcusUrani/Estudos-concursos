@@ -20,6 +20,9 @@ type Raw = {
   palavrasChave?: string[];
 };
 
+// Concurso ao qual todo este conteudo pertence (por ora, so o SEDES-DF).
+export const CONCURSO: { nome: string; sigla: string } = { nome: "SEDES-DF", sigla: "SEDES" };
+
 // Materias (disciplinas) que agrupam os assuntos. Ordem = ordem de exibicao.
 export const MATERIAS: { nome: string; descricao: string }[] = [
   { nome: "Assistência Social (SUAS)", descricao: "Arcabouço nacional do SUAS." },

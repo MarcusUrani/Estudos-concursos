@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { INTERVALOS_REVISAO } from "@/lib/utils";
+import { getConcursoAtualId } from "@/server/concurso";
 
 /**
  * Atualiza a fila de revisao espacada (estilo Anki) apos uma resposta.
@@ -65,8 +66,11 @@ export async function listarRevisaoDoDia(): Promise<ListaRevisao> {
       where: {
         userId,
         proximaData: { lte: new Date() },
-        // Oculta as questoes que o usuario reportou (ainda nao resolvidas).
-        questao: { reportes: { none: { userId, status: { not: "resolvido" } } } },
+        // Apenas do concurso atual + oculta as questoes reportadas (nao resolvidas).
+        questao: {
+          concursoId: await getConcursoAtualId(),
+          reportes: { none: { userId, status: { not: "resolvido" } } },
+        },
       },
       orderBy: { proximaData: "asc" },
       take: 50,
@@ -112,12 +116,15 @@ export async function listarRevisao(
   if (!session?.user?.id) throw new Error("Nao autenticado");
   const userId = session.user.id;
 
-  // Oculta as questoes que o usuario reportou (ainda nao resolvidas).
-  const semReportados = { reportes: { none: { userId, status: { not: "resolvido" } } } };
+  // Do concurso atual + oculta as questoes reportadas (ainda nao resolvidas).
+  const base = {
+    concursoId: await getConcursoAtualId(),
+    reportes: { none: { userId, status: { not: "resolvido" } } },
+  };
   const where =
     status === "favoritas"
-      ? { favoritos: { some: { userId } }, ...semReportados }
-      : { respostas: { some: { userId, acertou: false } }, ...semReportados };
+      ? { favoritos: { some: { userId } }, ...base }
+      : { respostas: { some: { userId, acertou: false } }, ...base };
 
   const [questoes, favoritos] = await Promise.all([
     prisma.questao.findMany({

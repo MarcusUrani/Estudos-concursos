@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getConcursoAtualId } from "@/server/concurso";
 
 export type HistoricoItem = {
   id: string;
@@ -27,9 +28,10 @@ export async function listarHistorico(): Promise<Historico> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Nao autenticado");
   const userId = session.user.id;
+  const concursoId = await getConcursoAtualId();
 
   const respostas = await prisma.resposta.findMany({
-    where: { userId },
+    where: { userId, questao: { concursoId } },
     orderBy: { respondidaEm: "desc" },
     take: LIMITE,
     include: {

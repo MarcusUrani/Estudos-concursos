@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { atualizarRevisao } from "@/server/revisao";
+import { getConcursoAtualId } from "@/server/concurso";
 
 // Flashcards "automaticos": derivados das proprias questoes. Frente = enunciado;
 // verso = alternativa correta + comentario + base legal. A auto-avaliacao
@@ -48,7 +49,7 @@ export async function gerarFlashcards(opts?: {
   const userId = await getUserId();
   const quantidade = Math.min(Math.max(opts?.quantidade ?? 20, 1), 60);
 
-  const where: Prisma.QuestaoWhereInput = {};
+  const where: Prisma.QuestaoWhereInput = { concursoId: await getConcursoAtualId() };
   if (opts?.assuntoIds && opts.assuntoIds.length > 0) {
     where.assuntoId = { in: opts.assuntoIds };
   }

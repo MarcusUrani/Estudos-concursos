@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { listarSimulados } from "@/server/simulado";
+import { getConcursoAtualId } from "@/server/concurso";
 import { SimuladoClient } from "./simulado-client";
 
 export const dynamic = "force-dynamic";
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function SimuladoPage() {
   const [assuntos, historico] = await Promise.all([
     prisma.assunto.findMany({
+      where: { concursoId: await getConcursoAtualId() },
       orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
       select: {
         id: true,

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getConcursoAtualId } from "@/server/concurso";
 import { FlashcardsClient } from "./flashcards-client";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,7 @@ export default async function FlashcardsPage({
   const { assunto } = await searchParams;
 
   const assuntos = await prisma.assunto.findMany({
+    where: { concursoId: await getConcursoAtualId() },
     orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
     select: {
       id: true,

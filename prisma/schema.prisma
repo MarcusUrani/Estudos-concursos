@@ -26,27 +26,52 @@ model User {
   reportes  Reporte[]
 }
 
+// Concurso = topo da hierarquia de conteudo. Cada concurso tem suas proprias
+// Materias/Assuntos/Questoes. Concursos diferentes PODEM ter materias com o
+// mesmo nome (por isso a unicidade de materia/assunto e por concurso).
+model Concurso {
+  id        String   @id @default(cuid())
+  nome      String   @unique
+  sigla     String?
+  ordem     Int      @default(0)
+
+  materias  Materia[]
+  assuntos  Assunto[]
+  questoes  Questao[]
+  simulados Simulado[]
+}
+
 // Materia = disciplina/area (ex.: "Beneficios e Programas Sociais do DF") que
 // agrupa varios Assuntos (cada assunto = uma lei/programa/tema).
 model Materia {
   id        String    @id @default(cuid())
-  nome      String    @unique
+  nome      String
   descricao String?
   ordem     Int       @default(0)
-  assuntos  Assunto[]
+
+  concursoId String?
+  concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
+
+  assuntos Assunto[]
+
+  @@unique([concursoId, nome])
 }
 
 model Assunto {
   id        String   @id @default(cuid())
-  nome      String   @unique
+  nome      String
   descricao String?
   ordem     Int      @default(0)
 
-  materiaId String?
-  materia   Materia? @relation(fields: [materiaId], references: [id], onDelete: SetNull)
+  concursoId String?
+  concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
+  materiaId  String?
+  materia    Materia?  @relation(fields: [materiaId], references: [id], onDelete: SetNull)
 
   subassuntos Subassunto[]
   questoes    Questao[]
+
+  @@unique([concursoId, nome])
 }
 
 model Subassunto {
@@ -72,6 +97,8 @@ model Questao {
   tempoMedio    Int      @default(60) // segundos
   createdAt     DateTime @default(now())
 
+  concursoId   String?
+  concurso     Concurso?   @relation(fields: [concursoId], references: [id], onDelete: Cascade)
   assuntoId    String
   assunto      Assunto     @relation(fields: [assuntoId], references: [id], onDelete: Cascade)
   subassuntoId String?
@@ -84,6 +111,7 @@ model Questao {
   reportes     Reporte[]
 
   @@index([assuntoId])
+  @@index([concursoId])
 }
 
 model Alternativa {
@@ -160,8 +188,10 @@ model Simulado {
   duracao      Int // limite de tempo escolhido (segundos)
   finalizadoEm DateTime @default(now())
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  concursoId String?
+  concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

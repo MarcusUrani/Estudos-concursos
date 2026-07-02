@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { atualizarRevisao } from "@/server/revisao";
+import { getConcursoAtualId } from "@/server/concurso";
 
 export type FiltroTreino = {
   assuntoIds?: string[];
@@ -42,7 +43,7 @@ export async function montarTreino(filtro: FiltroTreino): Promise<QuestaoDTO[]> 
   const userId = await getUserId();
   const quantidade = Math.min(Math.max(filtro.quantidade || 10, 1), 100);
 
-  const where: Prisma.QuestaoWhereInput = {};
+  const where: Prisma.QuestaoWhereInput = { concursoId: await getConcursoAtualId() };
   if (filtro.assuntoIds && filtro.assuntoIds.length > 0) {
     where.assuntoId = { in: filtro.assuntoIds };
   }

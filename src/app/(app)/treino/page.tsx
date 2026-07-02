@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
+import { getConcursoAtualId } from "@/server/concurso";
 import { TreinoClient } from "./treino-client";
 
 export const dynamic = "force-dynamic";
 
 export default async function TreinoPage() {
   const assuntos = await prisma.assunto.findMany({
+    where: { concursoId: await getConcursoAtualId() },
     orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
     select: {
       id: true,

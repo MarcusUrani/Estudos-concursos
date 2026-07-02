@@ -25,6 +25,7 @@ import { sair } from "@/server/auth-actions";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BotaoFeedback } from "@/components/botao-feedback";
 import { ConcursoSelector } from "@/components/concurso-selector";
+import type { ConcursoDTO } from "@/server/concurso";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -39,7 +40,7 @@ const links = [
   { href: "/conquistas", label: "Conquistas", icon: Sparkles },
 ];
 
-function Marca() {
+function Marca({ concursos, concursoAtualId }: Pick<NavProps, "concursos" | "concursoAtualId">) {
   return (
     <div className="flex items-center gap-2.5">
       <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 shadow-lg shadow-indigo-600/30">
@@ -47,7 +48,7 @@ function Marca() {
       </div>
       <div>
         <p className="text-sm font-semibold leading-tight text-slate-100">Jade Study</p>
-        <ConcursoSelector />
+        <ConcursoSelector concursos={concursos} atualId={concursoAtualId} />
       </div>
     </div>
   );
@@ -97,7 +98,14 @@ function BotaoSair({ className }: { className?: string }) {
   );
 }
 
-export function Nav({ nome, isAdmin }: { nome: string; isAdmin?: boolean }) {
+type NavProps = {
+  nome: string;
+  isAdmin?: boolean;
+  concursos: ConcursoDTO[];
+  concursoAtualId: string | null;
+};
+
+export function Nav({ nome, isAdmin, concursos, concursoAtualId }: NavProps) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
 
@@ -110,7 +118,7 @@ export function Nav({ nome, isAdmin }: { nome: string; isAdmin?: boolean }) {
       {/* ===== Mobile: barra superior + menu retrátil ===== */}
       <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950/80 backdrop-blur md:hidden">
         <div className="flex items-center justify-between px-4 py-3">
-          <Marca />
+          <Marca concursos={concursos} concursoAtualId={concursoAtualId} />
           <button
             type="button"
             onClick={() => setAberto((v) => !v)}
@@ -150,7 +158,7 @@ export function Nav({ nome, isAdmin }: { nome: string; isAdmin?: boolean }) {
       {/* ===== Desktop: sidebar fixa ===== */}
       <aside className="hidden shrink-0 border-slate-800 bg-slate-950/60 md:flex md:h-screen md:w-64 md:flex-col md:border-r md:px-4 md:py-6">
         <div className="mb-8 px-2">
-          <Marca />
+          <Marca concursos={concursos} concursoAtualId={concursoAtualId} />
         </div>
 
         <nav className="flex flex-1 flex-col gap-1">

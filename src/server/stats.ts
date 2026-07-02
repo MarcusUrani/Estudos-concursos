@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getConcursoAtualId } from "@/server/concurso";
 
 export type DashboardStats = {
   nome: string;
@@ -17,15 +18,16 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Nao autenticado");
   const userId = session.user.id;
+  const concursoId = await getConcursoAtualId();
 
   const [user, respostas, revisoesPendentes] = await Promise.all([
     prisma.user.findUnique({ where: { id: userId } }),
     prisma.resposta.findMany({
-      where: { userId },
+      where: { userId, questao: { concursoId } },
       include: { questao: { include: { assunto: true } } },
     }),
     prisma.revisao.count({
-      where: { userId, proximaData: { lte: new Date() } },
+      where: { userId, proximaData: { lte: new Date() }, questao: { concursoId } },
     }),
   ]);
 

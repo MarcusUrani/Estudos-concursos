@@ -1,8 +1,8 @@
 import type { QSeed } from "./tipos";
-import questoes, { ASSUNTOS_BASE, MATERIAS } from "./from-json";
+import questoes, { ASSUNTOS_BASE, MATERIAS, CONCURSO } from "./from-json";
 
 export type { QSeed } from "./tipos";
-export { MATERIAS };
+export { MATERIAS, CONCURSO };
 
 export const TODAS_QUESTOES: QSeed[] = questoes;
 

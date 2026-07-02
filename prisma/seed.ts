@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { ASSUNTOS, MATERIAS, TODAS_QUESTOES } from "./seed-data";
+import { ASSUNTOS, MATERIAS, CONCURSO, TODAS_QUESTOES } from "./seed-data";
 
 const prisma = new PrismaClient();
 
@@ -40,12 +40,21 @@ async function main() {
   });
   console.log("Admin garantido: admin@sedes.df (role admin)");
 
+  // Concurso (topo da hierarquia). Upsert por nome mantem o MESMO id entre
+  // re-seeds, preservando o historico de simulados vinculado a ele.
+  const concurso = await prisma.concurso.upsert({
+    where: { nome: CONCURSO.nome },
+    update: { sigla: CONCURSO.sigla, ordem: 0 },
+    create: { nome: CONCURSO.nome, sigla: CONCURSO.sigla, ordem: 0 },
+  });
+  console.log(`Concurso garantido: ${concurso.nome}`);
+
   // Materias (disciplinas que agrupam os assuntos)
   const materiaMap = new Map<string, string>();
   for (let i = 0; i < MATERIAS.length; i++) {
     const m = MATERIAS[i];
     const materia = await prisma.materia.create({
-      data: { nome: m.nome, descricao: m.descricao, ordem: i },
+      data: { nome: m.nome, descricao: m.descricao, ordem: i, concursoId: concurso.id },
     });
     materiaMap.set(m.nome, materia.id);
   }
@@ -57,7 +66,13 @@ async function main() {
   for (let i = 0; i < ASSUNTOS.length; i++) {
     const a = ASSUNTOS[i];
     const assunto = await prisma.assunto.create({
-      data: { nome: a.nome, descricao: a.descricao, ordem: i, materiaId: materiaMap.get(a.materia) },
+      data: {
+        nome: a.nome,
+        descricao: a.descricao,
+        ordem: i,
+        materiaId: materiaMap.get(a.materia),
+        concursoId: concurso.id,
+      },
     });
     assuntoMap.set(a.nome, assunto.id);
     for (const sub of a.subassuntos) {
@@ -101,6 +116,7 @@ async function main() {
         fonteLegal: q.fonteLegal,
         dificuldade: q.dificuldade,
         palavrasChave: q.palavrasChave?.join(", "),
+        concursoId: concurso.id,
         assuntoId,
         subassuntoId,
         alternativas: {

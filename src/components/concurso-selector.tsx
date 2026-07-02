@@ -1,19 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, Check, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { selecionarConcurso } from "@/server/concurso-actions";
+import type { ConcursoDTO } from "@/server/concurso";
 
-// Concurso atualmente estudado. Por enquanto so o SEDES-DF esta disponivel;
-// os demais aparecem como "em breve". Quando houver mais bancos de conteudo,
-// basta marcar `disponivel: true` (e ligar a troca real no back-end).
-const CONCURSOS: { id: string; nome: string; disponivel: boolean }[] = [
-  { id: "sedes-df", nome: "SEDES-DF", disponivel: true },
-];
-
-export function ConcursoSelector() {
+/**
+ * Seletor de concurso no logo. Troca o concurso atual (persistido em cookie) e
+ * recarrega o conteudo. Quando houver mais de um concurso no banco, todos
+ * aparecem aqui automaticamente.
+ */
+export function ConcursoSelector({
+  concursos,
+  atualId,
+}: {
+  concursos: ConcursoDTO[];
+  atualId: string | null;
+}) {
+  const router = useRouter();
   const [aberto, setAberto] = useState(false);
-  const [atualId, setAtualId] = useState("sedes-df");
+  const [pending, startTransition] = useTransition();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,7 +32,20 @@ export function ConcursoSelector() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const atual = CONCURSOS.find((c) => c.id === atualId) ?? CONCURSOS[0];
+  const atual = concursos.find((c) => c.id === atualId) ?? concursos[0];
+
+  function trocar(id: string) {
+    setAberto(false);
+    if (id === atual?.id) return;
+    startTransition(async () => {
+      await selecionarConcurso(id);
+      router.refresh();
+    });
+  }
+
+  if (!atual) {
+    return <span className="text-xs text-slate-500">Sem concurso</span>;
+  }
 
   return (
     <div ref={ref} className="relative">
@@ -33,29 +54,27 @@ export function ConcursoSelector() {
         onClick={() => setAberto((v) => !v)}
         aria-label="Selecionar concurso"
         aria-expanded={aberto}
-        className="flex items-center gap-1 text-xs font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+        disabled={pending}
+        className="flex items-center gap-1 text-xs font-medium text-indigo-400 transition-colors hover:text-indigo-300 disabled:opacity-60"
       >
-        {atual.nome}
+        {atual.sigla ?? atual.nome}
         <ChevronDown className={cn("h-3 w-3 transition-transform", aberto && "rotate-180")} />
       </button>
 
       {aberto && (
-        <div className="absolute left-0 top-full z-40 mt-1.5 w-52 rounded-xl border border-slate-800 bg-slate-900 p-1 shadow-2xl">
+        <div className="absolute left-0 top-full z-40 mt-1.5 w-56 rounded-xl border border-slate-800 bg-slate-900 p-1 shadow-2xl">
           <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
             Concurso
           </p>
-          {CONCURSOS.map((c) => (
+          {concursos.map((c) => (
             <button
               key={c.id}
               type="button"
-              onClick={() => {
-                setAtualId(c.id);
-                setAberto(false);
-              }}
-              className="flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-sm text-slate-200 transition-colors hover:bg-slate-800"
+              onClick={() => trocar(c.id)}
+              className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm text-slate-200 transition-colors hover:bg-slate-800"
             >
-              {c.nome}
-              {c.id === atual.id && <Check className="h-3.5 w-3.5 text-indigo-400" />}
+              <span className="truncate">{c.nome}</span>
+              {c.id === atual.id && <Check className="h-3.5 w-3.5 shrink-0 text-indigo-400" />}
             </button>
           ))}
           <div className="mt-1 flex items-center gap-1.5 border-t border-slate-800 px-2 pb-1 pt-2 text-xs text-slate-500">
