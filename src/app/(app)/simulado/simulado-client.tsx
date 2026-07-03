@@ -10,6 +10,7 @@ import {
 } from "@/server/simulado";
 import { SimuladoSessao } from "@/components/simulado-sessao";
 import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
+import { SeletorQuantidade } from "@/components/seletor-quantidade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +37,6 @@ const NIVEIS = [
   { value: "Medio", label: "Médio" },
   { value: "Dificil", label: "Difícil" },
 ];
-const QUANTIDADES = [10, 20, 30, 40];
 const TEMPOS = [10, 20, 30, 60]; // minutos
 
 type Fase = "config" | "rodando" | "resultado";
@@ -152,13 +152,7 @@ export function SimuladoClient({
           </Campo>
 
           <Campo titulo="Quantidade de questões">
-            <div className="flex flex-wrap gap-2">
-              {QUANTIDADES.map((q) => (
-                <Chip key={q} ativo={quantidade === q} onClick={() => setQuantidade(q)}>
-                  {q}
-                </Chip>
-              ))}
-            </div>
+            <SeletorQuantidade value={quantidade} onChange={setQuantidade} />
           </Campo>
 
           <Campo titulo="Tempo" dica={`${(minutos / quantidade).toFixed(1)} min por questão`}>

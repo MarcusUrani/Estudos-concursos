@@ -8,6 +8,7 @@ import {
 } from "@/server/treino";
 import { TreinoSessao } from "@/components/treino-sessao";
 import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
+import { SeletorQuantidade } from "@/components/seletor-quantidade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,6 @@ const STATUS: { value: NonNullable<FiltroTreino["status"]>; label: string }[] = 
   { value: "favoritas", label: "Favoritas" },
 ];
 
-const QUANTIDADES = [5, 10, 20, 50];
 
 export function TreinoClient({ assuntos }: { assuntos: Assunto[] }) {
   const [questoes, setQuestoes] = useState<QuestaoDTO[] | null>(null);
@@ -122,13 +122,7 @@ export function TreinoClient({ assuntos }: { assuntos: Assunto[] }) {
         </Campo>
 
         <Campo titulo="Quantidade de questões">
-          <div className="flex flex-wrap gap-2">
-            {QUANTIDADES.map((q) => (
-              <Chip key={q} ativo={quantidade === q} onClick={() => setQuantidade(q)}>
-                {q}
-              </Chip>
-            ))}
-          </div>
+          <SeletorQuantidade value={quantidade} onChange={setQuantidade} />
         </Campo>
 
         {erro && (
