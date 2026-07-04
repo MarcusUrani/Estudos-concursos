@@ -118,6 +118,12 @@ function load(): Raw[] {
   return JSON.parse(json) as Raw[];
 }
 
+// Chave para detectar questoes duplicadas (mesmo enunciado, ignorando
+// acentuacao, caixa e espacos). Garante que nenhuma questao repetida entre no
+// banco — logo nunca aparece repetida em nenhum modo (treino/simulado/etc.).
+const chaveEnunciado = (s: string) => norm(s).replace(/\s+/g, " ").trim();
+const vistos = new Set<string>();
+
 const questoes: QSeed[] = load()
   // Defesa: o seed exige >=3 alternativas e exatamente 1 correta.
   .filter((q) => q.alternativas?.length >= 3 && q.alternativas.filter((a) => a.correta).length === 1)
@@ -134,6 +140,13 @@ const questoes: QSeed[] = load()
   }))
   // O assunto "Fundamentos" foi removido do banco: descarta as questoes que
   // caem nele (LOAS/BPC/principios/diretrizes/fallback) para o seed nao recria-lo.
-  .filter((q) => q.assunto !== "Fundamentos");
+  .filter((q) => q.assunto !== "Fundamentos")
+  // Remove questoes com enunciado duplicado (mantem a primeira ocorrencia).
+  .filter((q) => {
+    const k = chaveEnunciado(q.enunciado);
+    if (vistos.has(k)) return false;
+    vistos.add(k);
+    return true;
+  });
 
 export default questoes;
