@@ -32,20 +32,35 @@ export function TreinoSessao({
   questoes,
   acaoFinal,
   favoritosIniciais,
+  indiceInicial = 0,
+  acertosIniciais = 0,
+  onProgresso,
+  onConcluir,
 }: {
   questoes: QuestaoDTO[];
   acaoFinal?: AcaoFinal;
   favoritosIniciais?: Record<string, boolean>;
+  indiceInicial?: number;
+  acertosIniciais?: number;
+  onProgresso?: (indice: number, acertos: number) => void;
+  onConcluir?: () => void;
 }) {
   const [sessao, setSessao] = useState(0);
-  const [indice, setIndice] = useState(0);
-  const [acertos, setAcertos] = useState(0);
+  const [indice, setIndice] = useState(indiceInicial);
+  const [acertos, setAcertos] = useState(acertosIniciais);
   const [fim, setFim] = useState(false);
 
   function proxima(acertou: boolean) {
-    if (acertou) setAcertos((n) => n + 1);
-    if (indice + 1 >= questoes.length) setFim(true);
-    else setIndice((i) => i + 1);
+    const novoAcertos = acertou ? acertos + 1 : acertos;
+    if (acertou) setAcertos(novoAcertos);
+    const novoIndice = indice + 1;
+    if (novoIndice >= questoes.length) {
+      setFim(true);
+      onConcluir?.();
+    } else {
+      setIndice(novoIndice);
+      onProgresso?.(novoIndice, novoAcertos);
+    }
   }
 
   function refazer() {

@@ -1,12 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import { listarSimulados } from "@/server/simulado";
 import { getConcursoAtualId } from "@/server/concurso";
+import { getSessao } from "@/server/sessao";
 import { SimuladoClient } from "./simulado-client";
 
 export const dynamic = "force-dynamic";
 
-export default async function SimuladoPage() {
-  const [assuntos, historico] = await Promise.all([
+export default async function SimuladoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ retomar?: string }>;
+}) {
+  const { retomar } = await searchParams;
+
+  const [assuntos, historico, sessaoInicial] = await Promise.all([
     prisma.assunto.findMany({
       where: { concursoId: await getConcursoAtualId() },
       orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
@@ -18,6 +25,7 @@ export default async function SimuladoPage() {
       },
     }),
     listarSimulados(),
+    retomar ? getSessao("simulado") : Promise.resolve(null),
   ]);
 
   return (
@@ -30,6 +38,7 @@ export default async function SimuladoPage() {
           materia: a.materia?.nome ?? "Outros",
         }))}
         historico={historico}
+        sessaoInicial={sessaoInicial}
       />
     </div>
   );

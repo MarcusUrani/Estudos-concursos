@@ -11,6 +11,7 @@ import {
 import { SimuladoSessao } from "@/components/simulado-sessao";
 import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
 import { SeletorQuantidade } from "@/components/seletor-quantidade";
+import { salvarSessao, limparSessao, type SessaoSalva } from "@/server/sessao";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,16 +42,30 @@ const TEMPOS = [10, 20, 30, 60]; // minutos
 
 type Fase = "config" | "rodando" | "resultado";
 
+type EstadoSimulado = {
+  questoes: QuestaoDTO[];
+  duracaoSegundos: number;
+  indice: number;
+  respostas: Record<string, string>;
+  restante: number;
+};
+const TIPO = "simulado";
+
 export function SimuladoClient({
   assuntos,
   historico,
+  sessaoInicial,
 }: {
   assuntos: Assunto[];
   historico: SimuladoResumo[];
+  sessaoInicial?: SessaoSalva | null;
 }) {
-  const [fase, setFase] = useState<Fase>("config");
-  const [questoes, setQuestoes] = useState<QuestaoDTO[]>([]);
-  const [duracao, setDuracao] = useState(0); // segundos
+  const [retomar, setRetomar] = useState<EstadoSimulado | null>(() =>
+    sessaoInicial ? (JSON.parse(sessaoInicial.estado) as EstadoSimulado) : null
+  );
+  const [fase, setFase] = useState<Fase>(retomar ? "rodando" : "config");
+  const [questoes, setQuestoes] = useState<QuestaoDTO[]>(retomar?.questoes ?? []);
+  const [duracao, setDuracao] = useState(retomar?.duracaoSegundos ?? 0); // segundos
   const [resultado, setResultado] = useState<ResultadoSimulado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -79,8 +94,23 @@ export function SimuladoClient({
           setErro("Nenhuma questão encontrada com esses filtros. Tente afrouxá-los.");
           return;
         }
+        const dur = minutos * 60;
+        const novo: EstadoSimulado = {
+          questoes: lista,
+          duracaoSegundos: dur,
+          indice: 0,
+          respostas: {},
+          restante: dur,
+        };
+        await salvarSessao({
+          tipo: TIPO,
+          estado: JSON.stringify(novo),
+          indice: 0,
+          total: lista.length,
+        });
+        setRetomar(null); // sessao nova comeca do zero
         setQuestoes(lista);
-        setDuracao(minutos * 60);
+        setDuracao(dur);
         setFase("rodando");
       } catch {
         setErro("Não foi possível montar o simulado. Tente novamente.");
@@ -90,6 +120,7 @@ export function SimuladoClient({
 
   function finalizar(respostas: RespostaSimulado[], tempoGasto: number) {
     startTransition(async () => {
+      await limparSessao(TIPO);
       const r = await finalizarSimulado(respostas, tempoGasto, duracao);
       setResultado(r);
       setFase("resultado");
@@ -109,6 +140,17 @@ export function SimuladoClient({
         duracaoSegundos={duracao}
         onFinalizar={finalizar}
         pending={pending}
+        indiceInicial={retomar?.indice}
+        respostasIniciais={retomar?.respostas}
+        restanteInicial={retomar?.restante}
+        onProgresso={(estado) =>
+          void salvarSessao({
+            tipo: TIPO,
+            estado: JSON.stringify({ questoes, duracaoSegundos: duracao, ...estado }),
+            indice: estado.indice,
+            total: questoes.length,
+          })
+        }
       />
     );
   }

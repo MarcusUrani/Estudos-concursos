@@ -9,6 +9,7 @@ import {
 import { TreinoSessao } from "@/components/treino-sessao";
 import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
 import { SeletorQuantidade } from "@/components/seletor-quantidade";
+import { salvarSessao, limparSessao, type SessaoSalva } from "@/server/sessao";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,8 +32,19 @@ const STATUS: { value: NonNullable<FiltroTreino["status"]>; label: string }[] = 
 ];
 
 
-export function TreinoClient({ assuntos }: { assuntos: Assunto[] }) {
-  const [questoes, setQuestoes] = useState<QuestaoDTO[] | null>(null);
+type EstadoTreino = { questoes: QuestaoDTO[]; indice: number; acertos: number };
+const TIPO = "treino";
+
+export function TreinoClient({
+  assuntos,
+  sessaoInicial,
+}: {
+  assuntos: Assunto[];
+  sessaoInicial?: SessaoSalva | null;
+}) {
+  const [sessao, setSessao] = useState<EstadoTreino | null>(() =>
+    sessaoInicial ? (JSON.parse(sessaoInicial.estado) as EstadoTreino) : null
+  );
   const [pending, startTransition] = useTransition();
   const [erro, setErro] = useState<string | null>(null);
 
@@ -62,18 +74,38 @@ export function TreinoClient({ assuntos }: { assuntos: Assunto[] }) {
           setErro("Nenhuma questão encontrada com esses filtros. Tente afrouxá-los.");
           return;
         }
-        setQuestoes(lista);
+        const novo: EstadoTreino = { questoes: lista, indice: 0, acertos: 0 };
+        // Salva a sessao (substitui qualquer treino incompleto anterior).
+        await salvarSessao({
+          tipo: TIPO,
+          estado: JSON.stringify(novo),
+          indice: 0,
+          total: lista.length,
+        });
+        setSessao(novo);
       } catch {
         setErro("Não foi possível montar o treino. Tente novamente.");
       }
     });
   }
 
-  if (questoes) {
+  if (sessao) {
+    const { questoes, indice, acertos } = sessao;
     return (
       <TreinoSessao
         questoes={questoes}
-        acaoFinal={{ label: "Novo treino", onClick: () => setQuestoes(null) }}
+        indiceInicial={indice}
+        acertosIniciais={acertos}
+        onProgresso={(i, ac) =>
+          void salvarSessao({
+            tipo: TIPO,
+            estado: JSON.stringify({ questoes, indice: i, acertos: ac }),
+            indice: i,
+            total: questoes.length,
+          })
+        }
+        onConcluir={() => void limparSessao(TIPO)}
+        acaoFinal={{ label: "Novo treino", onClick: () => setSessao(null) }}
       />
     );
   }

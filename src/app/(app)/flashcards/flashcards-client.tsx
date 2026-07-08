@@ -4,24 +4,31 @@ import { useState, useTransition } from "react";
 import { gerarFlashcards, type FlashcardDTO } from "@/server/flashcards";
 import { FlashcardSessao } from "@/components/flashcard-sessao";
 import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos";
+import { salvarSessao, limparSessao, type SessaoSalva } from "@/server/sessao";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Layers, AlertCircle } from "lucide-react";
 
 type Assunto = AssuntoSel;
+type EstadoFlashcards = { cards: FlashcardDTO[]; indice: number; sabia: number };
+const TIPO = "flashcards";
 
 export function FlashcardsClient({
   assuntos,
   assuntosIniciais,
+  sessaoInicial,
 }: {
   assuntos: Assunto[];
   assuntosIniciais: string[];
+  sessaoInicial?: SessaoSalva | null;
 }) {
   const [assuntoIds, setAssuntoIds] = useState<string[]>(assuntosIniciais);
   const [vencidos, setVencidos] = useState(false);
   const [quantidade, setQuantidade] = useState(20);
-  const [deck, setDeck] = useState<FlashcardDTO[] | null>(null);
+  const [sessao, setSessao] = useState<EstadoFlashcards | null>(() =>
+    sessaoInicial ? (JSON.parse(sessaoInicial.estado) as EstadoFlashcards) : null
+  );
   const [vazio, setVazio] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -39,13 +46,40 @@ export function FlashcardsClient({
         quantidade,
         vencidos,
       });
-      if (cards.length === 0) setVazio(true);
-      else setDeck(cards);
+      if (cards.length === 0) {
+        setVazio(true);
+        return;
+      }
+      const novo: EstadoFlashcards = { cards, indice: 0, sabia: 0 };
+      await salvarSessao({
+        tipo: TIPO,
+        estado: JSON.stringify(novo),
+        indice: 0,
+        total: cards.length,
+      });
+      setSessao(novo);
     });
   }
 
-  if (deck) {
-    return <FlashcardSessao cards={deck} onSair={() => setDeck(null)} />;
+  if (sessao) {
+    const { cards, indice, sabia } = sessao;
+    return (
+      <FlashcardSessao
+        cards={cards}
+        indiceInicial={indice}
+        sabiaIniciais={sabia}
+        onProgresso={(i, sb) =>
+          void salvarSessao({
+            tipo: TIPO,
+            estado: JSON.stringify({ cards, indice: i, sabia: sb }),
+            indice: i,
+            total: cards.length,
+          })
+        }
+        onConcluir={() => void limparSessao(TIPO)}
+        onSair={() => setSessao(null)}
+      />
+    );
   }
 
   return (

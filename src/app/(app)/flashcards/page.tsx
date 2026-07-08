@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getConcursoAtualId } from "@/server/concurso";
+import { getSessao } from "@/server/sessao";
 import { FlashcardsClient } from "./flashcards-client";
 
 export const dynamic = "force-dynamic";
@@ -7,20 +8,23 @@ export const dynamic = "force-dynamic";
 export default async function FlashcardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ assunto?: string }>;
+  searchParams: Promise<{ assunto?: string; retomar?: string }>;
 }) {
-  const { assunto } = await searchParams;
+  const { assunto, retomar } = await searchParams;
 
-  const assuntos = await prisma.assunto.findMany({
-    where: { concursoId: await getConcursoAtualId() },
-    orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
-    select: {
-      id: true,
-      nome: true,
-      materia: { select: { nome: true } },
-      _count: { select: { questoes: true } },
-    },
-  });
+  const [assuntos, sessaoInicial] = await Promise.all([
+    prisma.assunto.findMany({
+      where: { concursoId: await getConcursoAtualId() },
+      orderBy: [{ materia: { ordem: "asc" } }, { ordem: "asc" }],
+      select: {
+        id: true,
+        nome: true,
+        materia: { select: { nome: true } },
+        _count: { select: { questoes: true } },
+      },
+    }),
+    retomar ? getSessao("flashcards") : Promise.resolve(null),
+  ]);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -40,6 +44,7 @@ export default async function FlashcardsPage({
           materia: a.materia?.nome ?? "Outros",
         }))}
         assuntosIniciais={assunto ? [assunto] : []}
+        sessaoInicial={sessaoInicial}
       />
     </div>
   );

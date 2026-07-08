@@ -24,6 +24,7 @@ model User {
   metas     Meta[]
   simulados Simulado[]
   reportes  Reporte[]
+  sessoes   SessaoEmAndamento[]
 }
 
 // Concurso = topo da hierarquia de conteudo. Cada concurso tem suas proprias
@@ -39,6 +40,27 @@ model Concurso {
   assuntos  Assunto[]
   questoes  Questao[]
   simulados Simulado[]
+  sessoes   SessaoEmAndamento[]
+}
+
+// Sessao (treino/simulado/flashcards) iniciada mas nao concluida. Guarda o
+// estado para o usuario retomar depois. Uma por usuario+tipo+concurso: iniciar
+// uma nova sobrescreve (apaga) a anterior incompleta.
+model SessaoEmAndamento {
+  id           String   @id @default(cuid())
+  tipo         String // "treino" | "simulado" | "flashcards"
+  estado       String // JSON com tudo para retomar
+  total        Int      @default(0)
+  indice       Int      @default(0)
+  atualizadaEm DateTime @default(now()) @updatedAt
+
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  concursoId String?
+  concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tipo, concursoId])
+  @@index([userId])
 }
 
 // Materia = disciplina/area (ex.: "Beneficios e Programas Sociais do DF") que

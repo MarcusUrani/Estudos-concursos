@@ -23,26 +23,39 @@ import {
 export function FlashcardSessao({
   cards,
   onSair,
+  indiceInicial = 0,
+  sabiaIniciais = 0,
+  onProgresso,
+  onConcluir,
 }: {
   cards: FlashcardDTO[];
   onSair: () => void;
+  indiceInicial?: number;
+  sabiaIniciais?: number;
+  onProgresso?: (indice: number, sabia: number) => void;
+  onConcluir?: () => void;
 }) {
-  const [indice, setIndice] = useState(0);
+  const [indice, setIndice] = useState(indiceInicial);
   const [revelado, setRevelado] = useState(false);
-  const [sabia, setSabia] = useState(0);
+  const [sabia, setSabia] = useState(sabiaIniciais);
   const [fim, setFim] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function avaliar(acertou: boolean) {
     const card = cards[indice];
-    if (acertou) setSabia((n) => n + 1);
+    const novoSabia = acertou ? sabia + 1 : sabia;
+    if (acertou) setSabia(novoSabia);
     startTransition(async () => {
       await avaliarFlashcard(card.questaoId, acertou);
     });
-    if (indice + 1 >= cards.length) setFim(true);
-    else {
-      setIndice((i) => i + 1);
+    const novoIndice = indice + 1;
+    if (novoIndice >= cards.length) {
+      setFim(true);
+      onConcluir?.();
+    } else {
+      setIndice(novoIndice);
       setRevelado(false);
+      onProgresso?.(novoIndice, novoSabia);
     }
   }
 

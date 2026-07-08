@@ -31,17 +31,30 @@ export function SimuladoSessao({
   duracaoSegundos,
   onFinalizar,
   pending,
+  indiceInicial = 0,
+  respostasIniciais,
+  restanteInicial,
+  onProgresso,
 }: {
   questoes: QuestaoDTO[];
   duracaoSegundos: number;
   onFinalizar: (respostas: RespostaSimulado[], tempoGasto: number) => void;
   pending?: boolean;
+  indiceInicial?: number;
+  respostasIniciais?: Record<string, string>;
+  restanteInicial?: number;
+  onProgresso?: (estado: { indice: number; respostas: Record<string, string>; restante: number }) => void;
 }) {
-  const [indice, setIndice] = useState(0);
-  const [respostas, setRespostas] = useState<Record<string, string>>({});
-  const [restante, setRestante] = useState(duracaoSegundos);
+  const [indice, setIndice] = useState(indiceInicial);
+  const [respostas, setRespostas] = useState<Record<string, string>>(respostasIniciais ?? {});
+  const [restante, setRestante] = useState(restanteInicial ?? duracaoSegundos);
   const [confirmando, setConfirmando] = useState(false);
   const finalizadoRef = useRef(false);
+
+  function irPara(i: number) {
+    setIndice(i);
+    onProgresso?.({ indice: i, respostas, restante });
+  }
 
   const finalizar = useCallback(() => {
     if (finalizadoRef.current) return;
@@ -76,7 +89,9 @@ export function SimuladoSessao({
   const tempoCritico = restante <= 60;
 
   function escolher(altId: string) {
-    setRespostas((cur) => ({ ...cur, [atual.id]: altId }));
+    const novo = { ...respostas, [atual.id]: altId };
+    setRespostas(novo);
+    onProgresso?.({ indice, respostas: novo, restante });
   }
 
   return (
@@ -114,7 +129,7 @@ export function SimuladoSessao({
           return (
             <button
               key={q.id}
-              onClick={() => setIndice(i)}
+              onClick={() => irPara(i)}
               className={cn(
                 "h-8 w-8 rounded-lg border text-xs font-semibold transition-all",
                 ativa
@@ -183,14 +198,14 @@ export function SimuladoSessao({
             <div className="flex justify-between gap-2 pt-2">
               <Button
                 variant="secondary"
-                onClick={() => setIndice((i) => Math.max(0, i - 1))}
+                onClick={() => irPara(Math.max(0, indice - 1))}
                 disabled={indice === 0}
               >
                 <ChevronLeft className="h-4 w-4" />
                 Anterior
               </Button>
               {indice + 1 < questoes.length ? (
-                <Button onClick={() => setIndice((i) => Math.min(questoes.length - 1, i + 1))}>
+                <Button onClick={() => irPara(Math.min(questoes.length - 1, indice + 1))}>
                   Próxima
                   <ChevronRight className="h-4 w-4" />
                 </Button>

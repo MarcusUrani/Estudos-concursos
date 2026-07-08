@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/server/stats";
 import { getGamificacao } from "@/server/gamificacao";
+import { listarSessoesEmAndamento } from "@/server/sessao";
 import { formatDuracao, cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,9 +17,20 @@ import {
   ArrowRight,
   Flame,
   Sparkles,
+  Dumbbell,
+  TimerReset,
+  Layers,
+  Play,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+// Metadados de cada modo retomavel.
+const MODOS: Record<string, { label: string; href: string; icon: React.ElementType; unidade: string }> = {
+  treino: { label: "Treino", href: "/treino?retomar=1", icon: Dumbbell, unidade: "questões" },
+  simulado: { label: "Simulado", href: "/simulado?retomar=1", icon: TimerReset, unidade: "questões" },
+  flashcards: { label: "Flashcards", href: "/flashcards?retomar=1", icon: Layers, unidade: "cards" },
+};
 
 function StatCard({
   icon: Icon,
@@ -47,8 +59,13 @@ function StatCard({
 }
 
 export default async function DashboardPage() {
-  const [s, g] = await Promise.all([getDashboardStats(), getGamificacao()]);
+  const [s, g, sessoes] = await Promise.all([
+    getDashboardStats(),
+    getGamificacao(),
+    listarSessoesEmAndamento(),
+  ]);
   const pctNivel = Math.round((g.xpNoNivel / g.xpProximoNivel) * 100);
+  const emAndamento = sessoes.filter((x) => MODOS[x.tipo] && x.indice < x.total);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -89,6 +106,44 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         </Link>
+      )}
+
+      {emAndamento.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Play className="h-4 w-4 text-indigo-400" />
+              Continuar de onde parou
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {emAndamento.map((x) => {
+              const m = MODOS[x.tipo];
+              const pct = x.total ? Math.round((x.indice / x.total) * 100) : 0;
+              return (
+                <Link key={x.tipo} href={m.href} className="group block">
+                  <div className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-800 bg-slate-950/40 p-4 transition-colors group-hover:border-indigo-600/50">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300">
+                      <m.icon className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-45 flex-1">
+                      <p className="text-sm font-semibold text-slate-100">{m.label}</p>
+                      <p className="text-xs text-slate-400">
+                        {x.indice} de {x.total} {m.unidade} · {pct}%
+                      </p>
+                      <div className="mt-1.5">
+                        <Progress value={pct} barClassName="bg-indigo-500" />
+                      </div>
+                    </div>
+                    <span className="flex items-center gap-1 text-sm font-medium text-indigo-300">
+                      Continuar <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </CardContent>
+        </Card>
       )}
 
       {/* Nível + sequência (gamificação) */}
