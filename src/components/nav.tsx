@@ -101,17 +101,19 @@ function BotaoSair({ className }: { className?: string }) {
 type NavProps = {
   nome: string;
   isAdmin?: boolean;
+  podeRevisar?: boolean;
   concursos: ConcursoDTO[];
   concursoAtualId: string | null;
 };
 
-export function Nav({ nome, isAdmin, concursos, concursoAtualId }: NavProps) {
+export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtualId }: NavProps) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
 
+  const base = podeRevisar ? links : links.filter((l) => l.href !== "/revisao");
   const itens = isAdmin
-    ? [...links, { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert }]
-    : links;
+    ? [...base, { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert }]
+    : base;
 
   return (
     <>

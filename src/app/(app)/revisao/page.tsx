@@ -1,9 +1,15 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { podeAcessarRevisao } from "@/lib/acesso";
 import { listarRevisaoDoDia } from "@/server/revisao";
 import { RevisaoDoDiaCliente } from "./revisao-do-dia-cliente";
 
 export const dynamic = "force-dynamic";
 
 export default async function RevisaoPage() {
+  const session = await auth();
+  if (!podeAcessarRevisao(session?.user?.email)) redirect("/dashboard");
+
   const { questoes, favoritos } = await listarRevisaoDoDia();
 
   return (

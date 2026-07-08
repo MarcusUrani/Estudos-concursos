@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Nav } from "@/components/nav";
 import { listarConcursos, getConcursoAtualId } from "@/server/concurso";
+import { podeAcessarRevisao } from "@/lib/acesso";
 
 export default async function AppLayout({
   children,
@@ -21,6 +22,7 @@ export default async function AppLayout({
       <Nav
         nome={session.user.name ?? "Estudante"}
         isAdmin={session.user.role === "admin"}
+        podeRevisar={podeAcessarRevisao(session.user.email)}
         concursos={concursos}
         concursoAtualId={concursoAtualId}
       />

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { auth } from "@/auth";
+import { podeAcessarRevisao } from "@/lib/acesso";
 import { getDashboardStats } from "@/server/stats";
 import { getGamificacao } from "@/server/gamificacao";
 import { listarSessoesEmAndamento } from "@/server/sessao";
@@ -59,11 +61,13 @@ function StatCard({
 }
 
 export default async function DashboardPage() {
-  const [s, g, sessoes] = await Promise.all([
+  const [session, s, g, sessoes] = await Promise.all([
+    auth(),
     getDashboardStats(),
     getGamificacao(),
     listarSessoesEmAndamento(),
   ]);
+  const podeRevisar = podeAcessarRevisao(session?.user?.email);
   const pctNivel = Math.round((g.xpNoNivel / g.xpProximoNivel) * 100);
   const emAndamento = sessoes.filter((x) => MODOS[x.tipo] && x.indice < x.total);
 
@@ -84,7 +88,7 @@ export default async function DashboardPage() {
         </Link>
       </header>
 
-      {s.revisoesPendentes > 0 && (
+      {podeRevisar && s.revisoesPendentes > 0 && (
         <Link href="/revisao" className="block">
           <Card className="border-amber-700/40 bg-amber-500/5 transition-colors hover:border-amber-600/60">
             <CardContent className="flex flex-wrap items-center gap-4 p-5">
@@ -198,14 +202,16 @@ export default async function DashboardPage() {
           value={formatDuracao(s.tempoEstudoSegundos)}
           accent="bg-violet-500/15 text-violet-300"
         />
-        <Link href="/revisao" className="block transition-transform hover:-translate-y-0.5">
-          <StatCard
-            icon={BellRing}
-            label="Revisões pendentes"
-            value={String(s.revisoesPendentes)}
-            accent="bg-amber-500/15 text-amber-300"
-          />
-        </Link>
+        {podeRevisar && (
+          <Link href="/revisao" className="block transition-transform hover:-translate-y-0.5">
+            <StatCard
+              icon={BellRing}
+              label="Revisões pendentes"
+              value={String(s.revisoesPendentes)}
+              accent="bg-amber-500/15 text-amber-300"
+            />
+          </Link>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
