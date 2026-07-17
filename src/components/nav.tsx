@@ -47,7 +47,7 @@ function Marca({ concursos, concursoAtualId }: Pick<NavProps, "concursos" | "con
         <GraduationCap className="h-5 w-5 text-white" />
       </div>
       <div>
-        <p className="text-sm font-semibold leading-tight text-slate-100">Jade Study</p>
+        <p className="text-sm font-semibold leading-tight text-slate-100">Gabarix</p>
         <ConcursoSelector concursos={concursos} atualId={concursoAtualId} />
       </div>
     </div>
