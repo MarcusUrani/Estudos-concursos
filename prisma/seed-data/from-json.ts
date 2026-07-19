@@ -37,7 +37,13 @@ const A = {
   PNAS: "Política Nacional de Assistência Social (PNAS/2004)",
   NOB: "Norma Operacional Básica do SUAS (NOB/SUAS 2012)",
   BENEF: "Benefícios Eventuais da Assistência Social do DF (Lei nº 5.165/2013 e Decreto nº 35.191/2014)",
-  PLANO: "Plano DF Social (Lei nº 7.008/2021 e Decreto nº 42.872/2021)",
+  PLANO: "Programa DF Social (Lei nº 7.008/2021 e Decreto nº 42.872/2021)",
+  DF_BRINCAR: "DF Brincar",
+  INCENTIVA_DF: "Incentiva DF",
+  AGENTES_CIDADA: "Agentes da Cidadania (Portaria nº 42/2023)",
+  AGENTES_AMB: "Agentes de Cidadania Ambiental",
+  DF_ALFAB: "DF Alfabetização",
+  SOS_MULHER: "SOS Mulher",
   GAS: "Programa Cartão Gás do DF (Lei nº 6.938/2021 e Decreto nº 42.376/2021)",
   PRATO: "Programa Cartão Prato Cheio (Lei nº 7.009/2021 e Decreto nº 42.873/2021)",
   REST: "Restaurante Comunitário / SISAN (Decreto nº 33.329/2011)",
@@ -54,7 +60,13 @@ export const ASSUNTOS_BASE: { nome: string; materia: string; descricao: string }
   { nome: A.PNAS, materia: "Assistência Social (SUAS)", descricao: "Proteções, seguranças e territorialização." },
   { nome: A.NOB, materia: "Assistência Social (SUAS)", descricao: "Gestão, financiamento e vigilância socioassistencial." },
   { nome: A.BENEF, materia: "Benefícios e Programas Sociais do DF", descricao: "Provisões suplementares e temporárias." },
-  { nome: A.PLANO, materia: "Benefícios e Programas Sociais do DF", descricao: "Programa de proteção social do DF." },
+  { nome: A.PLANO, materia: "Benefícios e Programas Sociais do DF", descricao: "Programa guarda-chuva de proteção social do DF." },
+  { nome: A.DF_BRINCAR, materia: "Benefícios e Programas Sociais do DF", descricao: "Inclusão social pelo brincar." },
+  { nome: A.INCENTIVA_DF, materia: "Benefícios e Programas Sociais do DF", descricao: "Incentivo à qualificação e cidadania." },
+  { nome: A.AGENTES_CIDADA, materia: "Benefícios e Programas Sociais do DF", descricao: "Agentes comunitários voluntários." },
+  { nome: A.AGENTES_AMB, materia: "Benefícios e Programas Sociais do DF", descricao: "Agentes ambientais voluntários." },
+  { nome: A.DF_ALFAB, materia: "Benefícios e Programas Sociais do DF", descricao: "Alfabetização de jovens e adultos." },
+  { nome: A.SOS_MULHER, materia: "Benefícios e Programas Sociais do DF", descricao: "Proteção à mulher em situação de violência." },
   { nome: A.GAS, materia: "Benefícios e Programas Sociais do DF", descricao: "Auxílio gás do DF." },
   { nome: A.PRATO, materia: "Benefícios e Programas Sociais do DF", descricao: "Segurança alimentar." },
   { nome: A.REST, materia: "Benefícios e Programas Sociais do DF", descricao: "SISAN / segurança alimentar." },
@@ -77,7 +89,13 @@ export function mapAssunto(raw: string): string {
   if (/840/.test(t)) return A.LEI840;
   if (/maria da penha/.test(t)) return A.MARIA;
   if (/pdpm|politica para mulheres|politica distrital.*mulher/.test(t)) return A.PDPM;
-  if (/plano df social/.test(t)) return A.PLANO;
+  if (/sos mulher/.test(t)) return A.SOS_MULHER;
+  if (/df alfabetiza/.test(t)) return A.DF_ALFAB;
+  if (/agentes? de cidadania ambiental/.test(t)) return A.AGENTES_AMB;
+  if (/agentes? da cidadania/.test(t)) return A.AGENTES_CIDADA;
+  if (/incentiva df/.test(t)) return A.INCENTIVA_DF;
+  if (/df brincar/.test(t)) return A.DF_BRINCAR;
+  if (/plano df social|programa df social/.test(t)) return A.PLANO;
   if (/cartao gas|gas do distrito/.test(t)) return A.GAS;
   if (/prato cheio/.test(t)) return A.PRATO;
   if (/restaurante comunitario|sisan/.test(t)) return A.REST;

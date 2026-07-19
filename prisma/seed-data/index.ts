@@ -1,10 +1,27 @@
 import type { QSeed } from "./tipos";
-import questoes, { ASSUNTOS_BASE, MATERIAS, CONCURSO } from "./from-json";
+import questoesJson, { ASSUNTOS_BASE, MATERIAS, CONCURSO } from "./from-json";
+import questoesProgramaDFSocial from "./programa-df-social";
+import questoesDFBrincar from "./df-brincar";
+import questoesIncentivaDF from "./incentiva-df";
+import questoesAgentesCidadania from "./agentes-cidadania";
+import questoesAgentesAmbiental from "./agentes-cidadania-ambiental";
+import questoesDFAlfabetizacao from "./df-alfabetizacao";
+import questoesSOSMulher from "./sos-mulher";
 
 export type { QSeed } from "./tipos";
 export { MATERIAS, CONCURSO };
 
-export const TODAS_QUESTOES: QSeed[] = questoes;
+// Concatena todas as fontes de questoes: questoes.json + seed files avulsos.
+export const TODAS_QUESTOES: QSeed[] = [
+  ...questoesJson,
+  ...questoesProgramaDFSocial,
+  ...questoesDFBrincar,
+  ...questoesIncentivaDF,
+  ...questoesAgentesCidadania,
+  ...questoesAgentesAmbiental,
+  ...questoesDFAlfabetizacao,
+  ...questoesSOSMulher,
+];
 
 // Monta a estrutura de assuntos canonicos a partir das proprias questoes:
 // para cada assunto, agrega os subassuntos distintos encontrados. Assim o seed

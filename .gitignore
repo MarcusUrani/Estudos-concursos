@@ -52,8 +52,7 @@ CLAUDE.md
 .playwright-mcp
 
 # lista de questoes
-questoes.json
-questoes-2.json
+/questoes
 
 # tooling do agente (nao faz parte do app)
 .agents/

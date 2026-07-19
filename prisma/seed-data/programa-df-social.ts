@@ -1,13 +1,13 @@
 import type { QSeed } from "./tipos";
 
-const A = "Plano DF Social";
+const A = "Programa DF Social (Lei nº 7.008/2021 e Decreto nº 42.872/2021)";
 
 const questoes: QSeed[] = [
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "O Plano DF Social é, em essência, uma estratégia do Governo do Distrito Federal voltada a:",
+    enunciado: "O Programa DF Social é, em essência, uma estratégia do Governo do Distrito Federal voltada a:",
     alternativas: [
       { texto: "articular ações e programas de proteção e desenvolvimento social para enfrentar a pobreza e a vulnerabilidade.", correta: true },
       { texto: "regular o transporte público do DF.", correta: false },
@@ -16,15 +16,15 @@ const questoes: QSeed[] = [
       { texto: "definir a política de segurança pública.", correta: false },
     ],
     explicacao:
-      "O Plano DF Social é uma estratégia de articulação de programas e ações de proteção social e desenvolvimento social no DF, com foco no enfrentamento da pobreza e das vulnerabilidades sociais.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "O Programa DF Social é uma estratégia de articulação de programas e ações de proteção social e desenvolvimento social no DF, com foco no enfrentamento da pobreza e das vulnerabilidades sociais.",
+    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["proteção social", "pobreza", "vulnerabilidade"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "O órgão gestor responsável pela coordenação do Plano DF Social é, prioritariamente:",
+    enunciado: "O órgão gestor responsável pela coordenação do Programa DF Social é, prioritariamente:",
     alternativas: [
       { texto: "a Secretaria de Estado de Desenvolvimento Social do DF (SEDES).", correta: true },
       { texto: "a Secretaria de Fazenda.", correta: false },
@@ -33,15 +33,15 @@ const questoes: QSeed[] = [
       { texto: "uma entidade privada com fins lucrativos.", correta: false },
     ],
     explicacao:
-      "A coordenação do Plano DF Social cabe à SEDES, órgão gestor da política de desenvolvimento e assistência social do Distrito Federal, em articulação com outras pastas.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "A coordenação do Programa DF Social cabe à SEDES, órgão gestor da política de desenvolvimento e assistência social do Distrito Federal, em articulação com outras pastas.",
+    fonteLegal: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "coordenação"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "O Cadastro Único (CadÚnico) cumpre, no Plano DF Social, a função de:",
+    enunciado: "O Cadastro Único (CadÚnico) cumpre, no Programa DF Social, a função de:",
     alternativas: [
       { texto: "identificar e caracterizar as famílias de baixa renda para acesso a programas sociais.", correta: true },
       { texto: "calcular tributos das famílias.", correta: false },
@@ -50,15 +50,15 @@ const questoes: QSeed[] = [
       { texto: "cadastrar empresas para licitação.", correta: false },
     ],
     explicacao:
-      "O CadÚnico é o instrumento de identificação e caracterização socioeconômica das famílias de baixa renda, base para a seleção de beneficiários dos programas sociais articulados pelo Plano DF Social.",
-    fonteLegal: "Plano DF Social; Decreto federal do Cadastro Único",
+      "O CadÚnico é o instrumento de identificação e caracterização socioeconômica das famílias de baixa renda, base para a seleção de beneficiários dos programas sociais articulados pelo Programa DF Social.",
+    fonteLegal: "Lei nº 7.008/2021; Decreto federal do Cadastro Único",
     palavrasChave: ["Cadastro Único", "baixa renda", "elegibilidade"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "São exemplos de programas que podem integrar a rede de proteção articulada pelo Plano DF Social:",
+    enunciado: "São exemplos de programas que podem integrar a rede de proteção articulada pelo Programa DF Social:",
     alternativas: [
       { texto: "Cartão Prato Cheio, Cartão Gás, restaurantes comunitários e benefícios eventuais.", correta: true },
       { texto: "licenciamento ambiental e zoneamento.", correta: false },
@@ -67,15 +67,15 @@ const questoes: QSeed[] = [
       { texto: "obras de mobilidade urbana.", correta: false },
     ],
     explicacao:
-      "O Plano DF Social articula programas de transferência de renda e segurança alimentar (como Cartão Prato Cheio e Cartão Gás), restaurantes comunitários e benefícios eventuais, entre outras ações de proteção social.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "O Programa DF Social articula programas de transferência de renda e segurança alimentar (como Cartão Prato Cheio e Cartão Gás), restaurantes comunitários e benefícios eventuais, entre outras ações de proteção social.",
+    fonteLegal: "Lei nº 7.008/2021, art. 2º",
     palavrasChave: ["programas", "segurança alimentar", "transferência de renda"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A intersetorialidade é central no Plano DF Social porque:",
+    enunciado: "A intersetorialidade é central no Programa DF Social porque:",
     alternativas: [
       { texto: "o enfrentamento da pobreza exige a atuação articulada de assistência, saúde, educação, trabalho e segurança alimentar.", correta: true },
       { texto: "cada secretaria deve atuar isoladamente.", correta: false },
@@ -84,15 +84,15 @@ const questoes: QSeed[] = [
       { texto: "a articulação entre políticas é proibida.", correta: false },
     ],
     explicacao:
-      "O Plano DF Social adota a lógica intersetorial: a superação da pobreza e da vulnerabilidade demanda ações coordenadas de diferentes políticas públicas.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "O Programa DF Social adota a lógica intersetorial: a superação da pobreza e da vulnerabilidade demanda ações coordenadas de diferentes políticas públicas.",
+    fonteLegal: "Lei nº 7.008/2021, art. 3º",
     palavrasChave: ["intersetorialidade", "articulação"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "O público prioritário do Plano DF Social é composto por:",
+    enunciado: "O público prioritário do Programa DF Social é composto por:",
     alternativas: [
       { texto: "famílias em situação de pobreza, extrema pobreza e vulnerabilidade social.", correta: true },
       { texto: "apenas servidores públicos do DF.", correta: false },
@@ -101,15 +101,15 @@ const questoes: QSeed[] = [
       { texto: "apenas famílias de alta renda.", correta: false },
     ],
     explicacao:
-      "O foco do Plano DF Social são as famílias em situação de pobreza, extrema pobreza e vulnerabilidade social, identificadas, em regra, pelo Cadastro Único.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "O foco do Programa DF Social são as famílias em situação de pobreza, extrema pobreza e vulnerabilidade social, identificadas, em regra, pelo Cadastro Único.",
+    fonteLegal: "Lei nº 7.008/2021, art. 1º",
     palavrasChave: ["público prioritário", "extrema pobreza"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A segurança alimentar e nutricional, no âmbito do Plano DF Social, é promovida por meio de:",
+    enunciado: "A segurança alimentar e nutricional, no âmbito do Programa DF Social, é promovida por meio de:",
     alternativas: [
       { texto: "programas como restaurantes comunitários e transferência de renda para alimentação.", correta: true },
       { texto: "exclusivamente multas a estabelecimentos.", correta: false },
@@ -119,14 +119,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A segurança alimentar e nutricional é promovida por ações como restaurantes comunitários, Cartão Prato Cheio e demais iniciativas que ampliam o acesso a alimentação adequada.",
-    fonteLegal: "Plano DF Social; LOSAN (Lei 11.346/2006)",
+    fonteLegal: "Lei nº 7.008/2021; LOSAN (Lei 11.346/2006)",
     palavrasChave: ["segurança alimentar", "acesso a alimentos"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A geração de trabalho e renda, como eixo do Plano DF Social, busca:",
+    enunciado: "A geração de trabalho e renda, como eixo do Programa DF Social, busca:",
     alternativas: [
       { texto: "promover a autonomia das famílias por meio de qualificação, emprego e empreendedorismo.", correta: true },
       { texto: "manter as famílias permanentemente dependentes de benefícios.", correta: false },
@@ -135,15 +135,15 @@ const questoes: QSeed[] = [
       { texto: "transferir renda apenas a empresas.", correta: false },
     ],
     explicacao:
-      "Além da proteção imediata, o Plano DF Social busca a emancipação das famílias por meio de qualificação profissional, inclusão produtiva, emprego e apoio ao empreendedorismo.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "Além da proteção imediata, o Programa DF Social busca a emancipação das famílias por meio de qualificação profissional, inclusão produtiva, emprego e apoio ao empreendedorismo.",
+    fonteLegal: "Lei nº 7.008/2021, art. 2º, II",
     palavrasChave: ["trabalho e renda", "inclusão produtiva", "emancipação"],
   },
   {
     assunto: A,
     nivel: "Dificil",
     dificuldade: 4,
-    enunciado: "A lógica de 'porta de entrada' única e de encaminhamento integrado, presente no Plano DF Social, apoia-se sobretudo:",
+    enunciado: "A lógica de 'porta de entrada' única e de encaminhamento integrado, presente no Programa DF Social, apoia-se sobretudo:",
     alternativas: [
       { texto: "na rede do SUAS (CRAS e CREAS) e no Cadastro Único para acolher e direcionar as famílias.", correta: true },
       { texto: "exclusivamente em delegacias de polícia.", correta: false },
@@ -152,15 +152,15 @@ const questoes: QSeed[] = [
       { texto: "em entidades privadas com fins lucrativos.", correta: false },
     ],
     explicacao:
-      "A rede do SUAS (especialmente os CRAS) e o Cadastro Único funcionam como portas de entrada e instrumentos de encaminhamento integrado das famílias aos programas do Plano DF Social.",
-    fonteLegal: "Plano DF Social; PNAS/2004",
+      "A rede do SUAS (especialmente os CRAS) e o Cadastro Único funcionam como portas de entrada e instrumentos de encaminhamento integrado das famílias aos programas do Programa DF Social.",
+    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["porta de entrada", "CRAS", "encaminhamento"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "O Plano DF Social tem caráter:",
+    enunciado: "O Programa DF Social tem caráter:",
     alternativas: [
       { texto: "de política pública de proteção social, articulada e voltada à redução das desigualdades.", correta: true },
       { texto: "de programa exclusivamente assistencialista e temporário.", correta: false },
@@ -169,15 +169,15 @@ const questoes: QSeed[] = [
       { texto: "de regulação do mercado financeiro.", correta: false },
     ],
     explicacao:
-      "O Plano DF Social estrutura-se como política pública de proteção e desenvolvimento social, articulando programas para reduzir desigualdades e promover direitos, e não como mero assistencialismo pontual.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "O Programa DF Social estrutura-se como política pública de proteção e desenvolvimento social, articulando programas para reduzir desigualdades e promover direitos, e não como mero assistencialismo pontual.",
+    fonteLegal: "Lei nº 7.008/2021, art. 1º",
     palavrasChave: ["política pública", "desigualdades"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A focalização dos programas do Plano DF Social, baseada em critérios de renda, tem por objetivo:",
+    enunciado: "A focalização dos programas do Programa DF Social, baseada em critérios de renda, tem por objetivo:",
     alternativas: [
       { texto: "direcionar os recursos a quem mais necessita, priorizando as famílias mais pobres.", correta: true },
       { texto: "beneficiar prioritariamente famílias de alta renda.", correta: false },
@@ -187,14 +187,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A focalização por critérios de renda (via CadÚnico) busca direcionar os recursos públicos às famílias em maior situação de pobreza e vulnerabilidade, ampliando a efetividade da política.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+    fonteLegal: "Lei nº 7.008/2021, art. 5º",
     palavrasChave: ["focalização", "renda", "priorização"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "O monitoramento e a avaliação do Plano DF Social permitem:",
+    enunciado: "O monitoramento e a avaliação do Programa DF Social permitem:",
     alternativas: [
       { texto: "acompanhar resultados, corrigir rumos e qualificar a gestão dos programas sociais.", correta: true },
       { texto: "ocultar os resultados das ações.", correta: false },
@@ -203,15 +203,15 @@ const questoes: QSeed[] = [
       { texto: "punir as famílias beneficiárias.", correta: false },
     ],
     explicacao:
-      "O monitoramento e a avaliação são essenciais para medir resultados, identificar falhas e aprimorar a gestão e a efetividade dos programas sociais articulados pelo plano.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "O monitoramento e a avaliação são essenciais para medir resultados, identificar falhas e aprimorar a gestão e a efetividade dos programas sociais articulados pelo programa.",
+    fonteLegal: "Lei nº 7.008/2021, art. 8º",
     palavrasChave: ["monitoramento", "avaliação", "gestão"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "A proteção social no Plano DF Social dialoga diretamente com a:",
+    enunciado: "A proteção social no Programa DF Social dialoga diretamente com a:",
     alternativas: [
       { texto: "Política Nacional de Assistência Social (PNAS) e o SUAS.", correta: true },
       { texto: "política industrial de exportação.", correta: false },
@@ -220,15 +220,15 @@ const questoes: QSeed[] = [
       { texto: "legislação de propriedade intelectual.", correta: false },
     ],
     explicacao:
-      "As ações de proteção social do Plano DF Social alinham-se à PNAS e ao SUAS, utilizando a rede socioassistencial e seus instrumentos para alcançar as famílias.",
-    fonteLegal: "Plano DF Social; PNAS/2004",
+      "As ações de proteção social do Programa DF Social alinham-se à PNAS e ao SUAS, utilizando a rede socioassistencial e seus instrumentos para alcançar as famílias.",
+    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["PNAS", "SUAS", "proteção social"],
   },
   {
     assunto: A,
     nivel: "Dificil",
     dificuldade: 4,
-    enunciado: "A articulação entre transferência de renda e acompanhamento familiar no Plano DF Social visa:",
+    enunciado: "A articulação entre transferência de renda e acompanhamento familiar no Programa DF Social visa:",
     alternativas: [
       { texto: "combinar alívio imediato da pobreza com o fortalecimento dos vínculos e o acesso a direitos.", correta: true },
       { texto: "substituir todos os serviços socioassistenciais pela renda.", correta: false },
@@ -238,14 +238,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A combinação de transferência de renda com acompanhamento familiar (PAIF/PAEFI) busca aliviar a pobreza no curto prazo e, ao mesmo tempo, fortalecer vínculos e promover acesso a direitos e à emancipação.",
-    fonteLegal: "Plano DF Social; PNAS/2004",
+    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["transferência de renda", "acompanhamento familiar"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A participação e o controle social sobre o Plano DF Social são exercidos, sobretudo, por:",
+    enunciado: "A participação e o controle social sobre o Programa DF Social são exercidos, sobretudo, por:",
     alternativas: [
       { texto: "conselhos de políticas públicas (como o de assistência social) e instâncias de participação.", correta: true },
       { texto: "decisões sigilosas, sem qualquer controle.", correta: false },
@@ -255,14 +255,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O controle social ocorre por meio de conselhos de políticas públicas (como o Conselho de Assistência Social do DF) e demais instâncias participativas, garantindo transparência e accountability.",
-    fonteLegal: "Plano DF Social; LOAS",
+    fonteLegal: "Lei nº 7.008/2021; LOAS",
     palavrasChave: ["controle social", "conselhos"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "Entre os objetivos do Plano DF Social, destaca-se:",
+    enunciado: "Entre os objetivos do Programa DF Social, destaca-se:",
     alternativas: [
       { texto: "reduzir a pobreza e a desigualdade social no Distrito Federal.", correta: true },
       { texto: "aumentar a carga tributária das famílias pobres.", correta: false },
@@ -271,15 +271,15 @@ const questoes: QSeed[] = [
       { texto: "privatizar a assistência social.", correta: false },
     ],
     explicacao:
-      "Um objetivo central do plano é reduzir a pobreza e a desigualdade social, promovendo proteção social e oportunidades de desenvolvimento às famílias vulneráveis.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "Um objetivo central do programa é reduzir a pobreza e a desigualdade social, promovendo proteção social e oportunidades de desenvolvimento às famílias vulneráveis.",
+    fonteLegal: "Lei nº 7.008/2021, art. 2º",
     palavrasChave: ["redução da pobreza", "desigualdade"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "O combate à fome e à insegurança alimentar, no Plano DF Social, é tratado como:",
+    enunciado: "O combate à fome e à insegurança alimentar, no Programa DF Social, é tratado como:",
     alternativas: [
       { texto: "prioridade, por meio de ações de segurança alimentar e nutricional.", correta: true },
       { texto: "tema irrelevante para a política social.", correta: false },
@@ -288,15 +288,15 @@ const questoes: QSeed[] = [
       { texto: "questão de competência da política de trânsito.", correta: false },
     ],
     explicacao:
-      "O enfrentamento da fome e da insegurança alimentar é prioridade do plano, materializado em programas de segurança alimentar e nutricional (restaurantes comunitários, Prato Cheio etc.).",
-    fonteLegal: "Plano DF Social; LOSAN",
+      "O enfrentamento da fome e da insegurança alimentar é prioridade do programa, materializado em programas de segurança alimentar e nutricional (restaurantes comunitários, Prato Cheio etc.).",
+    fonteLegal: "Lei nº 7.008/2021; LOSAN",
     palavrasChave: ["fome", "insegurança alimentar"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A integração de bases de dados e sistemas no Plano DF Social contribui para:",
+    enunciado: "A integração de bases de dados e sistemas no Programa DF Social contribui para:",
     alternativas: [
       { texto: "qualificar a identificação das famílias e evitar sobreposição ou lacunas no atendimento.", correta: true },
       { texto: "dificultar o acesso das famílias aos programas.", correta: false },
@@ -306,14 +306,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A integração de dados (CadÚnico e sistemas setoriais) melhora a identificação das famílias, reduz duplicidades e lacunas e qualifica o planejamento e a oferta dos programas.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+    fonteLegal: "Lei nº 7.008/2021, art. 7º",
     palavrasChave: ["integração de dados", "planejamento"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "A territorialização das ações do Plano DF Social significa considerar:",
+    enunciado: "A territorialização das ações do Programa DF Social significa considerar:",
     alternativas: [
       { texto: "as desigualdades entre as regiões administrativas do DF na oferta de serviços e programas.", correta: true },
       { texto: "apenas o Plano Piloto.", correta: false },
@@ -323,14 +323,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A territorialização leva em conta as desigualdades entre as regiões administrativas do DF, priorizando as áreas de maior vulnerabilidade na oferta de serviços e programas.",
-    fonteLegal: "Plano DF Social; PNAS/2004",
+    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["territorialização", "regiões administrativas"],
   },
   {
     assunto: A,
     nivel: "Dificil",
     dificuldade: 4,
-    enunciado: "A sustentabilidade dos resultados do Plano DF Social depende, sobretudo, de:",
+    enunciado: "A sustentabilidade dos resultados do Programa DF Social depende, sobretudo, de:",
     alternativas: [
       { texto: "combinar proteção social com inclusão produtiva e acesso a direitos, evitando a dependência permanente de benefícios.", correta: true },
       { texto: "manter as famílias indefinidamente fora do mercado de trabalho.", correta: false },
@@ -340,14 +340,14 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Resultados sustentáveis exigem articular a proteção social imediata com estratégias de inclusão produtiva e acesso a direitos, promovendo a autonomia das famílias a médio e longo prazo.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+    fonteLegal: "Lei nº 7.008/2021, art. 2º, parágrafo único",
     palavrasChave: ["sustentabilidade", "inclusão produtiva", "autonomia"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A relação do Plano DF Social com os benefícios eventuais evidencia que estes:",
+    enunciado: "A relação do Programa DF Social com os benefícios eventuais evidencia que estes:",
     alternativas: [
       { texto: "atendem situações temporárias (como nascimento, morte e calamidade) dentro da rede de proteção.", correta: true },
       { texto: "são benefícios permanentes equivalentes a um salário mínimo.", correta: false },
@@ -356,15 +356,15 @@ const questoes: QSeed[] = [
       { texto: "constituem aposentadoria.", correta: false },
     ],
     explicacao:
-      "Os benefícios eventuais (provisões suplementares e provisórias) integram a rede de proteção articulada pelo plano, atendendo situações temporárias como nascimento, morte, vulnerabilidade temporária e calamidade.",
-    fonteLegal: "Plano DF Social; LOAS, art. 22",
+      "Os benefícios eventuais (provisões suplementares e provisórias) integram a rede de proteção articulada pelo programa, atendendo situações temporárias como nascimento, morte, vulnerabilidade temporária e calamidade.",
+    fonteLegal: "Lei nº 7.008/2021; LOAS, art. 22",
     palavrasChave: ["benefícios eventuais", "provisório"],
   },
   {
     assunto: A,
     nivel: "Facil",
     dificuldade: 2,
-    enunciado: "A perspectiva de direitos no Plano DF Social significa que a proteção social é entendida como:",
+    enunciado: "A perspectiva de direitos no Programa DF Social significa que a proteção social é entendida como:",
     alternativas: [
       { texto: "um direito do cidadão e dever do Estado, e não como favor ou caridade.", correta: true },
       { texto: "uma concessão facultativa do gestor.", correta: false },
@@ -373,15 +373,15 @@ const questoes: QSeed[] = [
       { texto: "um serviço exclusivamente privado.", correta: false },
     ],
     explicacao:
-      "Alinhado à CF/1988 e à LOAS, o plano trata a proteção social como direito do cidadão e dever do Estado, superando a lógica do assistencialismo e da caridade.",
-    fonteLegal: "Plano DF Social; CF/1988, art. 203",
+      "Alinhado à CF/1988 e à LOAS, o programa trata a proteção social como direito do cidadão e dever do Estado, superando a lógica do assistencialismo e da caridade.",
+    fonteLegal: "Lei nº 7.008/2021; CF/1988, art. 203",
     palavrasChave: ["direito", "dever do Estado"],
   },
   {
     assunto: A,
     nivel: "Medio",
     dificuldade: 3,
-    enunciado: "A articulação do Plano DF Social com a política de habitação e moradia é relevante porque:",
+    enunciado: "A articulação do Programa DF Social com a política de habitação e moradia é relevante porque:",
     alternativas: [
       { texto: "a moradia digna é determinante para a superação da pobreza e a proteção das famílias.", correta: true },
       { texto: "a habitação não tem relação com a proteção social.", correta: false },
@@ -390,9 +390,43 @@ const questoes: QSeed[] = [
       { texto: "a habitação é tema apenas tributário.", correta: false },
     ],
     explicacao:
-      "A moradia digna é um determinante social: a articulação com políticas de habitação fortalece a superação da pobreza e a proteção integral das famílias, na lógica intersetorial do plano.",
-    fonteLegal: "Plano DF Social (GDF/SEDES)",
+      "A moradia digna é um determinante social: a articulação com políticas de habitação fortalece a superação da pobreza e a proteção integral das famílias, na lógica intersetorial do programa.",
+    fonteLegal: "Lei nº 7.008/2021, art. 3º, III",
     palavrasChave: ["habitação", "moradia", "intersetorialidade"],
+  },
+  {
+    assunto: A,
+    nivel: "Dificil",
+    dificuldade: 4,
+    enunciado: "O Programa DF Social, instituído pela Lei nº 7.008/2021, é regulamentado pelo seguinte decreto:",
+    alternativas: [
+      { texto: "Decreto nº 42.872/2021.", correta: true },
+      { texto: "Decreto nº 42.376/2021.", correta: false },
+      { texto: "Decreto nº 42.873/2021.", correta: false },
+      { texto: "Decreto nº 35.191/2014.", correta: false },
+      { texto: "Decreto nº 33.329/2011.", correta: false },
+    ],
+    explicacao:
+      "O Programa DF Social foi instituído pela Lei nº 7.008/2021 e regulamentado pelo Decreto nº 42.872/2021, que estabelece sua organização e funcionamento.",
+    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    palavrasChave: ["regulamentação", "decreto"],
+  },
+  {
+    assunto: A,
+    nivel: "Medio",
+    dificuldade: 3,
+    enunciado: "Os programas que integram o Programa DF Social devem observar qual princípio fundamental?",
+    alternativas: [
+      { texto: "A articulação intersetorial e a participação social.", correta: true },
+      { texto: "A centralização dos recursos em uma única secretaria.", correta: false },
+      { texto: "A exclusão do Cadastro Único como instrumento de seleção.", correta: false },
+      { texto: "A substituição dos serviços públicos por entidades privadas.", correta: false },
+      { texto: "A redução do orçamento da assistência social.", correta: false },
+    ],
+    explicacao:
+      "O Programa DF Social fundamenta-se na articulação intersetorial e na participação social como princípios para a efetividade das ações de proteção e desenvolvimento social.",
+    fonteLegal: "Lei nº 7.008/2021, art. 3º",
+    palavrasChave: ["princípios", "intersetorialidade", "participação"],
   },
 ];
 
