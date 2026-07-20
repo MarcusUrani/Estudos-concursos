@@ -43,7 +43,14 @@ export async function montarTreino(filtro: FiltroTreino): Promise<QuestaoDTO[]> 
   const userId = await getUserId();
   const quantidade = Math.min(Math.max(filtro.quantidade || 10, 1), 100);
 
-  const where: Prisma.QuestaoWhereInput = { concursoId: await getConcursoAtualId() };
+  let concursoId: string | null = null;
+  try {
+    concursoId = await getConcursoAtualId();
+  } catch (e) {
+    console.error("getConcursoAtualId falhou:", e);
+    throw new Error("Erro ao identificar o concurso ativo. Tente recarregar a página.");
+  }
+  const where: Prisma.QuestaoWhereInput = { concursoId };
   if (filtro.assuntoIds && filtro.assuntoIds.length > 0) {
     where.assuntoId = { in: filtro.assuntoIds };
   }
@@ -65,7 +72,13 @@ export async function montarTreino(filtro: FiltroTreino): Promise<QuestaoDTO[]> 
   // `take` pegaria sempre as primeiras por data de criacao — e como o seed
   // insere as questoes agrupadas por assunto, um treino multi-tema acabaria
   // mostrando so o primeiro assunto selecionado.
-  const ids = await prisma.questao.findMany({ where, select: { id: true } });
+  let ids: { id: string }[];
+  try {
+    ids = await prisma.questao.findMany({ where, select: { id: true } });
+  } catch (e) {
+    console.error("prisma.questao.findMany falhou:", e);
+    throw new Error("Erro ao consultar banco de questões. Verifique se o banco foi populado.");
+  }
   const idsSorteados = embaralhar(ids.map((q) => q.id)).slice(0, quantidade);
 
   const questoes = await prisma.questao.findMany({

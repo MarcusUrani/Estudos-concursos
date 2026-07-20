@@ -36,24 +36,34 @@ export async function salvarSessao(input: {
   total: number;
 }): Promise<void> {
   const userId = await getUserId();
-  const concursoId = await getConcursoAtualId();
+  let concursoId: string | null = null;
+  try {
+    concursoId = await getConcursoAtualId();
+  } catch (e) {
+    console.error("salvarSessao: getConcursoAtualId falhou:", e);
+  }
   if (!concursoId) return; // sem concurso selecionado nao ha o que salvar
 
   // Upsert atomico (evita corrida entre autosaves concorrentes). A unique
   // [userId, tipo, concursoId] garante uma sessao por modo/concurso — iniciar
   // uma nova apenas atualiza a mesma linha, "apagando" o estado anterior.
-  await prisma.sessaoEmAndamento.upsert({
-    where: { userId_tipo_concursoId: { userId, tipo: input.tipo, concursoId } },
-    update: { estado: input.estado, indice: input.indice, total: input.total },
-    create: {
-      userId,
-      concursoId,
-      tipo: input.tipo,
-      estado: input.estado,
-      indice: input.indice,
-      total: input.total,
-    },
-  });
+  try {
+    await prisma.sessaoEmAndamento.upsert({
+      where: { userId_tipo_concursoId: { userId, tipo: input.tipo, concursoId } },
+      update: { estado: input.estado, indice: input.indice, total: input.total },
+      create: {
+        userId,
+        concursoId,
+        tipo: input.tipo,
+        estado: input.estado,
+        indice: input.indice,
+        total: input.total,
+      },
+    });
+  } catch (e) {
+    console.error("salvarSessao: upsert em SessaoEmAndamento falhou:", e);
+    throw new Error("Erro ao salvar sessão. O banco de dados pode estar desatualizado.");
+  }
 }
 
 /** Recupera a sessao salva de um tipo (para retomar), ou null. */

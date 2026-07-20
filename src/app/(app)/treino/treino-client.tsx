@@ -83,8 +83,10 @@ export function TreinoClient({
           total: lista.length,
         });
         setSessao(novo);
-      } catch {
-        setErro("Não foi possível montar o treino. Tente novamente.");
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "Erro desconhecido";
+        console.error("montarTreino/salvarSessao falhou:", msg, e);
+        setErro(msg);
       }
     });
   }

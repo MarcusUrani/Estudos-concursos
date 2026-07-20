@@ -18,10 +18,17 @@ export async function listarConcursos(): Promise<ConcursoDTO[]> {
  * Id do concurso atual: le o cookie; se ausente, cai no primeiro concurso
  * (ordem). A action `selecionarConcurso` so grava ids validos, entao confiamos
  * no cookie sem uma consulta extra no caminho comum.
+ *
+ * NOTA: `cookies()` do next/headers pode lancar erro em Server Actions no
+ * Next.js 16. Por isso o try-catch: se falhar, cai no findFirst como fallback.
  */
 export async function getConcursoAtualId(): Promise<string | null> {
-  const doCookie = (await cookies()).get(COOKIE_CONCURSO)?.value;
-  if (doCookie) return doCookie;
+  try {
+    const doCookie = (await cookies()).get(COOKIE_CONCURSO)?.value;
+    if (doCookie) return doCookie;
+  } catch (e) {
+    console.warn("getConcursoAtualId: cookies() falhou, usando fallback BD:", e);
+  }
   const primeiro = await prisma.concurso.findFirst({
     orderBy: { ordem: "asc" },
     select: { id: true },
