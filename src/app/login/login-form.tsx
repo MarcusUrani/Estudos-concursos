@@ -30,9 +30,13 @@ export function LoginForm() {
           id="email"
           name="email"
           type="email"
+          inputMode="email"
           placeholder="seu@email.com"
           required
           autoComplete="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
         />
       </div>
       <div className="space-y-1.5">

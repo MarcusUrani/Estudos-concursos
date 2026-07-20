@@ -23,7 +23,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null;
 
         const { email, senha } = parsed.data;
-        const user = await prisma.user.findUnique({ where: { email } });
+        // Normaliza o e-mail: a busca no banco e sensivel a maiusculas, e
+        // teclados de celular costumam auto-capitalizar/adicionar espaco.
+        // Sem isso, "Admin@sedes.df" nao acha "admin@sedes.df".
+        const emailNorm = email.trim().toLowerCase();
+        const user = await prisma.user.findUnique({ where: { email: emailNorm } });
         if (!user) return null;
 
         const ok = await bcrypt.compare(senha, user.senha);
