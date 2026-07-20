@@ -29,31 +29,26 @@ export type SessaoSalva = {
 };
 
 /** Salva/atualiza a sessao em andamento do tipo indicado (substitui a anterior). */
-export async function salvarSessao(input: {
-  tipo: string;
-  estado: string;
-  indice: number;
-  total: number;
-}): Promise<void> {
+export async function salvarSessao(
+  input: {
+    tipo: string;
+    estado: string;
+    indice: number;
+    total: number;
+  },
+  concursoId?: string | null
+): Promise<void> {
   const userId = await getUserId();
-  let concursoId: string | null = null;
-  try {
-    concursoId = await getConcursoAtualId();
-  } catch (e) {
-    console.error("salvarSessao: getConcursoAtualId falhou:", e);
-  }
-  if (!concursoId) return; // sem concurso selecionado nao ha o que salvar
+  const cid = concursoId !== undefined ? concursoId : await getConcursoAtualId();
+  if (!cid) return;
 
-  // Upsert atomico (evita corrida entre autosaves concorrentes). A unique
-  // [userId, tipo, concursoId] garante uma sessao por modo/concurso — iniciar
-  // uma nova apenas atualiza a mesma linha, "apagando" o estado anterior.
   try {
     await prisma.sessaoEmAndamento.upsert({
-      where: { userId_tipo_concursoId: { userId, tipo: input.tipo, concursoId } },
+      where: { userId_tipo_concursoId: { userId, tipo: input.tipo, concursoId: cid } },
       update: { estado: input.estado, indice: input.indice, total: input.total },
       create: {
         userId,
-        concursoId,
+        concursoId: cid,
         tipo: input.tipo,
         estado: input.estado,
         indice: input.indice,
@@ -62,26 +57,32 @@ export async function salvarSessao(input: {
     });
   } catch (e) {
     console.error("salvarSessao: upsert em SessaoEmAndamento falhou:", e);
-    throw new Error("Erro ao salvar sessão. O banco de dados pode estar desatualizado.");
+    throw new Error("Erro ao salvar sessão.");
   }
 }
 
 /** Recupera a sessao salva de um tipo (para retomar), ou null. */
-export async function getSessao(tipo: string): Promise<SessaoSalva | null> {
+export async function getSessao(
+  tipo: string,
+  concursoId?: string | null
+): Promise<SessaoSalva | null> {
   const userId = await getUserId();
-  const concursoId = await getConcursoAtualId();
+  const cid = concursoId !== undefined ? concursoId : await getConcursoAtualId();
   const s = await prisma.sessaoEmAndamento.findFirst({
-    where: { userId, tipo, concursoId },
+    where: { userId, tipo, concursoId: cid },
     select: { estado: true, indice: true, total: true },
   });
   return s ?? null;
 }
 
 /** Remove a sessao em andamento de um tipo (ex.: ao concluir). */
-export async function limparSessao(tipo: string): Promise<void> {
+export async function limparSessao(
+  tipo: string,
+  concursoId?: string | null
+): Promise<void> {
   const userId = await getUserId();
-  const concursoId = await getConcursoAtualId();
-  await prisma.sessaoEmAndamento.deleteMany({ where: { userId, tipo, concursoId } });
+  const cid = concursoId !== undefined ? concursoId : await getConcursoAtualId();
+  await prisma.sessaoEmAndamento.deleteMany({ where: { userId, tipo, concursoId: cid } });
 }
 
 /** Lista as sessoes em andamento do concurso atual (para o dashboard). */

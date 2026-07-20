@@ -36,9 +36,11 @@ type EstadoTreino = { questoes: QuestaoDTO[]; indice: number; acertos: number };
 const TIPO = "treino";
 
 export function TreinoClient({
+  concursoId,
   assuntos,
   sessaoInicial,
 }: {
+  concursoId: string | null;
   assuntos: Assunto[];
   sessaoInicial?: SessaoSalva | null;
 }) {
@@ -69,6 +71,7 @@ export function TreinoClient({
           nivel: nivel || undefined,
           status,
           quantidade,
+          concursoId,
         });
         if (lista.length === 0) {
           setErro("Nenhuma questão encontrada com esses filtros. Tente afrouxá-los.");
@@ -76,12 +79,10 @@ export function TreinoClient({
         }
         const novo: EstadoTreino = { questoes: lista, indice: 0, acertos: 0 };
         // Salva a sessao (substitui qualquer treino incompleto anterior).
-        await salvarSessao({
-          tipo: TIPO,
-          estado: JSON.stringify(novo),
-          indice: 0,
-          total: lista.length,
-        });
+        await salvarSessao(
+          { tipo: TIPO, estado: JSON.stringify(novo), indice: 0, total: lista.length },
+          concursoId
+        );
         setSessao(novo);
       } catch (e) {
         const msg = e instanceof Error ? e.message : "Erro desconhecido";
@@ -99,14 +100,17 @@ export function TreinoClient({
         indiceInicial={indice}
         acertosIniciais={acertos}
         onProgresso={(i, ac) =>
-          void salvarSessao({
-            tipo: TIPO,
-            estado: JSON.stringify({ questoes, indice: i, acertos: ac }),
-            indice: i,
-            total: questoes.length,
-          })
+          void salvarSessao(
+            {
+              tipo: TIPO,
+              estado: JSON.stringify({ questoes, indice: i, acertos: ac }),
+              indice: i,
+              total: questoes.length,
+            },
+            concursoId
+          )
         }
-        onConcluir={() => void limparSessao(TIPO)}
+        onConcluir={() => void limparSessao(TIPO, concursoId)}
         acaoFinal={{ label: "Novo treino", onClick: () => setSessao(null) }}
       />
     );
