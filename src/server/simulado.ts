@@ -1,22 +1,9 @@
 "use server";
 
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { atualizarRevisao } from "@/server/revisao";
 import { getConcursoAtualId } from "@/server/concurso";
-
-async function getUserId() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Nao autenticado");
-  const existe = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true },
-  });
-  if (!existe) {
-    throw new Error("Sessao invalida. Saia e entre novamente para continuar.");
-  }
-  return session.user.id;
-}
+import { requireUserId } from "@/server/usuario";
 
 // Uma resposta do gabarito do aluno. alternativaId null = nao respondida (tempo esgotou).
 export type RespostaSimulado = { questaoId: string; alternativaId: string | null };
@@ -63,7 +50,7 @@ export async function finalizarSimulado(
   tempoGasto: number,
   duracao: number
 ): Promise<ResultadoSimulado> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
 
   const ids = respostas.map((r) => r.questaoId);
   const questoes = await prisma.questao.findMany({
@@ -185,7 +172,7 @@ export type SimuladoResumo = {
 
 /** Historico de simulados do usuario, do mais recente para o mais antigo. */
 export async function listarSimulados(): Promise<SimuladoResumo[]> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const simulados = await prisma.simulado.findMany({
     where: { userId, concursoId: await getConcursoAtualId() },
     orderBy: { finalizadoEm: "desc" },

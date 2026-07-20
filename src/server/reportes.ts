@@ -4,12 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ehMotivoValido } from "@/lib/reportes";
-
-async function getUserId() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Nao autenticado");
-  return session.user.id;
-}
+import { requireUserId } from "@/server/usuario";
 
 async function exigirAdmin() {
   const session = await auth();
@@ -26,7 +21,7 @@ export async function reportarQuestao(
   motivos: string[],
   comentario?: string
 ): Promise<void> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
 
   const validos = (motivos ?? []).filter(ehMotivoValido);
   if (validos.length === 0) throw new Error("Selecione ao menos um motivo.");

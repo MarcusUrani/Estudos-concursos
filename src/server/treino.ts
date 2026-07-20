@@ -1,10 +1,10 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { atualizarRevisao } from "@/server/revisao";
 import { getConcursoAtualId } from "@/server/concurso";
+import { requireUserId } from "@/server/usuario";
 
 export type FiltroTreino = {
   assuntoIds?: string[];
@@ -25,23 +25,9 @@ export type QuestaoDTO = {
   alternativas: AlternativaDTO[];
 };
 
-async function getUserId() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Nao autenticado");
-  // Garante que o usuario do cookie ainda existe (evita erro de FK apos reset do banco).
-  const existe = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true },
-  });
-  if (!existe) {
-    throw new Error("Sessao invalida. Saia e entre novamente para continuar.");
-  }
-  return session.user.id;
-}
-
 /** Monta a lista de questoes do treino conforme os filtros. */
 export async function montarTreino(filtro: FiltroTreino): Promise<QuestaoDTO[]> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const quantidade = Math.min(Math.max(filtro.quantidade || 10, 1), 100);
 
   // Se concursoId foi explicitamente passado (inclusive null), usa-o.
@@ -120,7 +106,7 @@ export async function responder(
   alternativaId: string,
   tempo: number
 ): Promise<ResultadoResposta> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
 
   const questao = await prisma.questao.findUnique({
     where: { id: questaoId },
@@ -157,7 +143,7 @@ export async function responder(
 
 /** Alterna o status de favorito de uma questao. */
 export async function alternarFavorito(questaoId: string): Promise<boolean> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const existente = await prisma.favorito.findUnique({
     where: { userId_questaoId: { userId, questaoId } },
   });

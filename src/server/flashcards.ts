@@ -1,10 +1,10 @@
 "use server";
 
 import { Prisma } from "@prisma/client";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { atualizarRevisao } from "@/server/revisao";
 import { getConcursoAtualId } from "@/server/concurso";
+import { requireUserId } from "@/server/usuario";
 
 // Flashcards "automaticos": derivados das proprias questoes. Frente = enunciado;
 // verso = alternativa correta + comentario + base legal. A auto-avaliacao
@@ -22,11 +22,6 @@ export type FlashcardDTO = {
   nivel: string;
 };
 
-async function getUserId() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Nao autenticado");
-  return session.user.id;
-}
 
 function embaralhar<T>(arr: T[]): T[] {
   const c = [...arr];
@@ -46,7 +41,7 @@ export async function gerarFlashcards(opts?: {
   quantidade?: number;
   vencidos?: boolean;
 }): Promise<FlashcardDTO[]> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const quantidade = Math.min(Math.max(opts?.quantidade ?? 20, 1), 60);
 
   const where: Prisma.QuestaoWhereInput = { concursoId: await getConcursoAtualId() };
@@ -92,6 +87,6 @@ export async function gerarFlashcards(opts?: {
  * "sabia" avanca o intervalo; "nao sabia" volta ao inicio.
  */
 export async function avaliarFlashcard(questaoId: string, sabia: boolean): Promise<void> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   await atualizarRevisao(userId, questaoId, sabia);
 }

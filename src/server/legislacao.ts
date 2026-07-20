@@ -1,6 +1,6 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getConcursoAtualId } from "@/server/concurso";
+import { requireUserId } from "@/server/usuario";
 
 // "Resumos por legislacao" e "modo de leitura da lei com questoes relacionadas".
 // Cada Assunto representa uma legislacao/tema. O resumo NAO e fixo no banco: e
@@ -32,15 +32,10 @@ export type LegislacaoDetalhe = {
   secoes: SecaoResumo[];
 };
 
-async function getUserId() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Nao autenticado");
-  return session.user.id;
-}
 
 /** Lista as legislacoes (assuntos) com progresso do usuario. */
 export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const agora = new Date();
   const concursoId = await getConcursoAtualId();
 
@@ -107,7 +102,7 @@ function resumirPonto(texto: string): string {
 
 /** Monta o resumo derivado + dados de leitura de uma legislacao (assunto). */
 export async function getLegislacao(assuntoId: string): Promise<LegislacaoDetalhe | null> {
-  await getUserId();
+  await requireUserId();
 
   const assunto = await prisma.assunto.findUnique({
     where: { id: assuntoId },

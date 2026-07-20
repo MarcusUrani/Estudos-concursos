@@ -1,19 +1,13 @@
 "use server";
 
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getConcursoAtualId } from "@/server/concurso";
+import { requireUserId } from "@/server/usuario";
 
 // Sessoes de estudo iniciadas mas nao concluidas (treino/simulado/flashcards).
 // Guardamos o `estado` (JSON) para retomar, alem de indice/total para o resumo
 // no dashboard. Uma por usuario+tipo+concurso — iniciar uma nova substitui a
 // anterior incompleta.
-
-async function getUserId() {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error("Nao autenticado");
-  return session.user.id;
-}
 
 export type SessaoResumo = {
   tipo: string;
@@ -38,7 +32,7 @@ export async function salvarSessao(
   },
   concursoId?: string | null
 ): Promise<void> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const cid = concursoId !== undefined ? concursoId : await getConcursoAtualId();
   if (!cid) return;
 
@@ -66,7 +60,7 @@ export async function getSessao(
   tipo: string,
   concursoId?: string | null
 ): Promise<SessaoSalva | null> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const cid = concursoId !== undefined ? concursoId : await getConcursoAtualId();
   const s = await prisma.sessaoEmAndamento.findFirst({
     where: { userId, tipo, concursoId: cid },
@@ -80,14 +74,14 @@ export async function limparSessao(
   tipo: string,
   concursoId?: string | null
 ): Promise<void> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const cid = concursoId !== undefined ? concursoId : await getConcursoAtualId();
   await prisma.sessaoEmAndamento.deleteMany({ where: { userId, tipo, concursoId: cid } });
 }
 
 /** Lista as sessoes em andamento do concurso atual (para o dashboard). */
 export async function listarSessoesEmAndamento(): Promise<SessaoResumo[]> {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const concursoId = await getConcursoAtualId();
   const sessoes = await prisma.sessaoEmAndamento.findMany({
     where: { userId, concursoId },
