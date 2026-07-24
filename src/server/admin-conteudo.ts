@@ -110,6 +110,40 @@ export async function criarAssunto(input: {
   revalidatePath("/estudar");
 }
 
+// ---------------------------------------------------------------- material de estudo
+
+/** Texto do material de estudo (resumo) de um assunto, para edicao no admin. */
+export async function getResumoEstudo(assuntoId: string): Promise<string> {
+  await exigirAdmin();
+  const concursoId = await concursoAtual();
+  const assunto = await prisma.assunto.findFirst({
+    where: { id: assuntoId, concursoId },
+    select: { resumo: true },
+  });
+  if (!assunto) throw new Error("Assunto não encontrado neste concurso.");
+  return assunto.resumo ?? "";
+}
+
+/** Salva o material de estudo (resumo) de um assunto. Texto vazio limpa. */
+export async function salvarResumoEstudo(assuntoId: string, texto: string): Promise<void> {
+  await exigirAdmin();
+  const concursoId = await concursoAtual();
+  const assunto = await prisma.assunto.findFirst({
+    where: { id: assuntoId, concursoId },
+    select: { id: true },
+  });
+  if (!assunto) throw new Error("Assunto não encontrado neste concurso.");
+
+  await prisma.assunto.update({
+    where: { id: assunto.id },
+    data: { resumo: texto.trim() || null },
+  });
+
+  revalidatePath("/admin/conteudo");
+  revalidatePath(`/estudar/${assunto.id}`);
+  revalidatePath("/estudar");
+}
+
 // ---------------------------------------------------------------- questao (uma)
 
 type AlternativaInput = { texto: string; correta: boolean };

@@ -66,6 +66,19 @@ export function EstudarClient({
 
       {aba === "resumo" ? (
         <div className="space-y-4">
+          {detalhe.resumo && (
+            <Card className="border-indigo-700/40 bg-indigo-500/5">
+              <CardContent className="space-y-2 p-5">
+                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-300">
+                  <BookOpenText className="h-4 w-4" /> Material de estudo
+                </p>
+                <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
+                  {detalhe.resumo}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {detalhe.fontesLegais.length > 0 && (
             <Card>
               <CardContent className="space-y-2 p-5">

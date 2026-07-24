@@ -83,6 +83,7 @@ model Assunto {
   id        String   @id @default(cuid())
   nome      String
   descricao String?
+  resumo    String? // material de estudo escrito pelo admin (aba "Estudar")
   ordem     Int      @default(0)
 
   concursoId String?

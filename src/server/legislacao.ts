@@ -27,6 +27,7 @@ export type LegislacaoDetalhe = {
   id: string;
   nome: string;
   descricao: string | null;
+  resumo: string | null; // material de estudo escrito pelo admin
   totalQuestoes: number;
   fontesLegais: string[];
   secoes: SecaoResumo[];
@@ -106,7 +107,7 @@ export async function getLegislacao(assuntoId: string): Promise<LegislacaoDetalh
 
   const assunto = await prisma.assunto.findUnique({
     where: { id: assuntoId },
-    select: { id: true, nome: true, descricao: true },
+    select: { id: true, nome: true, descricao: true, resumo: true },
   });
   if (!assunto) return null;
 
@@ -148,6 +149,7 @@ export async function getLegislacao(assuntoId: string): Promise<LegislacaoDetalh
     id: assunto.id,
     nome: assunto.nome,
     descricao: assunto.descricao,
+    resumo: assunto.resumo,
     totalQuestoes: questoes.length,
     fontesLegais: [...fontesGerais].sort((a, b) => a.localeCompare(b, "pt")).slice(0, 16),
     secoes,

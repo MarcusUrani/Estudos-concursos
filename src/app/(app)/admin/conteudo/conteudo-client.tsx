@@ -7,6 +7,8 @@ import {
   criarAssunto,
   criarQuestao,
   importarQuestoes,
+  getResumoEstudo,
+  salvarResumoEstudo,
   type ConteudoAdmin,
   type ResultadoImport,
 } from "@/server/admin-conteudo";
@@ -20,12 +22,13 @@ const inputCls =
   "w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
 const textareaCls = cn(inputCls, "resize-y");
 
-type Aba = "materia" | "assunto" | "questao";
+type Aba = "materia" | "assunto" | "questao" | "estudo";
 
 const ABAS: { id: Aba; label: string }[] = [
   { id: "materia", label: "Matéria" },
   { id: "assunto", label: "Assunto" },
   { id: "questao", label: "Questões" },
+  { id: "estudo", label: "Estudo" },
 ];
 
 export function ConteudoClient({ conteudo }: { conteudo: ConteudoAdmin }) {
@@ -54,6 +57,7 @@ export function ConteudoClient({ conteudo }: { conteudo: ConteudoAdmin }) {
       {aba === "materia" && <MateriaForm />}
       {aba === "assunto" && <AssuntoForm materias={conteudo.materias} />}
       {aba === "questao" && <QuestaoForm assuntos={conteudo.assuntos} />}
+      {aba === "estudo" && <EstudoForm assuntos={conteudo.assuntos} />}
     </div>
   );
 }
@@ -446,6 +450,103 @@ function QuestaoUnica({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
             {pending ? "Salvando…" : "Criar questão"}
           </Button>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// -------------------------------------------------------------- material de estudo
+
+function EstudoForm({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
+  const [assuntoId, setAssuntoId] = useState("");
+  const [texto, setTexto] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [ok, setOk] = useState<string | null>(null);
+  const [carregando, startLoad] = useTransition();
+  const [pending, startSave] = useTransition();
+
+  function selecionar(id: string) {
+    setAssuntoId(id);
+    setErro(null);
+    setOk(null);
+    setTexto("");
+    if (!id) return;
+    startLoad(async () => {
+      try {
+        setTexto(await getResumoEstudo(id));
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : "Não foi possível carregar o material.");
+      }
+    });
+  }
+
+  function salvar() {
+    setErro(null);
+    setOk(null);
+    startSave(async () => {
+      try {
+        await salvarResumoEstudo(assuntoId, texto);
+        setOk("Material de estudo salvo.");
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : "Não foi possível salvar.");
+      }
+    });
+  }
+
+  if (assuntos.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-6 text-sm text-slate-400">
+          Crie uma <span className="font-medium text-slate-200">matéria</span> e um{" "}
+          <span className="font-medium text-slate-200">assunto</span> antes de escrever o material de estudo.
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardContent className="space-y-4 p-6">
+        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-400">
+          O material aparece no topo da aba <span className="font-medium text-slate-200">Resumo</span> da tela
+          Estudar, acima do resumo automático das questões. As quebras de linha são preservadas — escreva em
+          tópicos, seções, etc. Deixe em branco para remover.
+        </div>
+
+        <Campo label="Assunto">
+          <select value={assuntoId} onChange={(e) => selecionar(e.target.value)} className={inputCls}>
+            <option value="">Selecione…</option>
+            {assuntos.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.materia ? `${a.materia} — ${a.nome}` : a.nome}
+              </option>
+            ))}
+          </select>
+        </Campo>
+
+        {assuntoId && (
+          <Campo label="Material de estudo">
+            <textarea
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              rows={14}
+              disabled={carregando}
+              className={cn(textareaCls, carregando && "opacity-50")}
+              placeholder={carregando ? "Carregando…" : "Escreva o resumo / material de estudo deste assunto…"}
+            />
+          </Campo>
+        )}
+
+        <Feedback erro={erro} ok={ok} />
+
+        {assuntoId && (
+          <div className="flex justify-end">
+            <Button onClick={salvar} disabled={pending || carregando}>
+              <Save className="h-4 w-4" />
+              {pending ? "Salvando…" : "Salvar material"}
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
