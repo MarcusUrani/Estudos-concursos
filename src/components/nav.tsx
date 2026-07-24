@@ -19,6 +19,7 @@ import {
   Menu,
   X,
   ShieldAlert,
+  FolderPlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { sair } from "@/server/auth-actions";
@@ -112,7 +113,11 @@ export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtua
 
   const base = podeRevisar ? links : links.filter((l) => l.href !== "/revisao");
   const itens = isAdmin
-    ? [...base, { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert }]
+    ? [
+        ...base,
+        { href: "/admin/conteudo", label: "Conteúdo", icon: FolderPlus },
+        { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert },
+      ]
     : base;
 
   return (
