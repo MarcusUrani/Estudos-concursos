@@ -15,8 +15,11 @@ function subscribe(callback: () => void) {
 function getSnapshot(): "light" | "dark" {
   return document.documentElement.classList.contains("light") ? "light" : "dark";
 }
+// Precisa espelhar o padrao do script anti-flash em `layout.tsx` (papel/claro).
+// Se divergir, o HTML do servidor sai com o icone e o rotulo do tema errado e
+// eles trocam sozinhos na hidratacao.
 function getServerSnapshot(): "light" | "dark" {
-  return "dark";
+  return "light";
 }
 
 /** Botao de alternancia claro/escuro. Persiste a escolha em localStorage e
@@ -42,7 +45,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={escuro ? "Ativar modo claro" : "Ativar modo escuro"}
       title={escuro ? "Modo claro" : "Modo escuro"}
       className={cn(
-        "flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800/60 hover:text-slate-200",
+        "flex items-center justify-center gap-2 rounded-sm px-3 py-2 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-800/60 hover:text-slate-200",
         className
       )}
     >

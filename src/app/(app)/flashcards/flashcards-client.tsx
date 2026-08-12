@@ -106,7 +106,7 @@ export function FlashcardsClient({
           </div>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3">
+        <label className="flex cursor-pointer items-center gap-3 rounded-sm border border-slate-800 bg-slate-950/40 px-4 py-3">
           <input
             type="checkbox"
             checked={vencidos}
@@ -119,7 +119,7 @@ export function FlashcardsClient({
         </label>
 
         {vazio && (
-          <div className="flex items-center gap-2 rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+          <div className="flex items-center gap-2 rounded-sm bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
             <AlertCircle className="h-4 w-4" />
             Nenhum card encontrado com esses filtros. Tente outro assunto ou desmarque “apenas
             vencidos”.

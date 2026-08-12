@@ -65,7 +65,7 @@ export function SeletorAssuntos({
         )}
       </div>
 
-      <div className="divide-y divide-slate-800 overflow-hidden rounded-xl border border-slate-800">
+      <div className="divide-y divide-slate-800 overflow-hidden rounded-sm border border-slate-800">
         {grupos.map((g) => {
           const aberta = abertas.includes(g.materia);
           const selNaMateria = g.itens.filter((a) => selSet.has(a.id)).length;
@@ -85,7 +85,7 @@ export function SeletorAssuntos({
                 />
                 <span className="flex-1 text-sm font-medium text-slate-200">{g.materia}</span>
                 {selNaMateria > 0 && (
-                  <span className="rounded-full bg-indigo-500/15 px-2 py-0.5 text-xs font-medium text-indigo-300 ring-1 ring-inset ring-indigo-500/30">
+                  <span className="rounded-[2px] bg-indigo-600/12 px-2 py-0.5 text-xs font-medium text-indigo-300 ring-1 ring-inset ring-indigo-500/30">
                     {selNaMateria}
                   </span>
                 )}
@@ -103,7 +103,7 @@ export function SeletorAssuntos({
                         disabled={desabilitarVazios && a.total === 0}
                         onClick={() => onAlternar(a.id)}
                         className={cn(
-                          "rounded-full border px-3.5 py-1.5 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40",
+                          "rounded-sm border px-3.5 py-1.5 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40",
                           ativo
                             ? "border-indigo-500 bg-indigo-500/15 text-indigo-200"
                             : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"

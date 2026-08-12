@@ -31,7 +31,7 @@ export function SeletorQuantidade({
           onClick={() => onChange(n)}
           aria-pressed={value === n}
           className={cn(
-            "min-w-11 rounded-xl border px-3.5 py-2 text-sm font-medium tabular-nums transition-all",
+            "min-w-11 rounded-sm border px-3.5 py-2 text-sm font-medium tabular-nums transition-all",
             value === n
               ? "border-indigo-500 bg-indigo-500/15 text-indigo-200"
               : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"

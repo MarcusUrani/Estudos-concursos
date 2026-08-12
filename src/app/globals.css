@@ -1,62 +1,117 @@
 @import "tailwindcss";
 
+/* =============================================================================
+   Gabarix — "Caderno de Prova"
+
+   Direcao: papel de prova + gabarito. A tinta e a da caneta esferografica azul
+   (a unica permitida em prova); a marca visual e a BOLHA DE GABARITO.
+   Nada de gradiente radial, glow ou cartao de vidro.
+
+   COMO O TEMA FUNCIONA
+   O app inteiro escreve `slate-*` para superficie/texto e `indigo-*` para acao.
+   Em vez de reescrever centenas de classes, redefinimos essas duas rampas aqui:
+   as utilities do Tailwind v4 leem `var(--color-slate-*)`. Trocar a variavel
+   reskina o app inteiro de uma vez.
+
+   A rampa e usada em sentido "escuro-primeiro": 950 = fundo da pagina,
+   900 = superficie de cartao, 800/700 = bordas, 500/400 = texto secundario,
+   100/200 = texto principal. O tema PAPEL inverte esse sentido; o tema TINTA
+   mantem. Por isso os dois blocos existem.
+   ============================================================================= */
+
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono-data);
+  --font-display: var(--font-headline);
 }
 
-/* ===================== Tema ESCURO (padrao) ===================== */
-html {
-  color-scheme: dark;
-}
-
-body {
-  background:
-    radial-gradient(1200px 600px at 100% -10%, rgba(99, 102, 241, 0.12), transparent 60%),
-    radial-gradient(900px 500px at -10% 10%, rgba(139, 92, 246, 0.1), transparent 55%),
-    #020617;
-  color: #e2e8f0;
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-}
-
-/* Scrollbar discreta */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
-}
-
-/* ===================== Tema CLARO ===================== */
-/* O app inteiro usa a paleta `slate` (superficies escuras + texto claro). Em vez
-   de reescrever centenas de classes, invertemos a rampa `slate` aqui: as
-   utilities do Tailwind v4 leem `var(--color-slate-*)`, entao trocar essas
-   variaveis sob `html.light` vira todo o tema de uma vez. Os acentos
-   (indigo/emerald/amber/rose) permanecem e funcionam bem sobre fundo claro. */
+/* ===================== Tema PAPEL (padrao) ===================== */
+/* Neutros quentes, levemente ocre. Nunca branco puro: cansa em leitura longa
+   de texto legal, que e o que essa tela pede o dia inteiro. */
+html,
 html.light {
   color-scheme: light;
 
-  --color-slate-50: oklch(0.129 0.042 264.695); /* era 950 */
-  --color-slate-100: oklch(0.208 0.042 265.755); /* era 900 */
-  --color-slate-200: oklch(0.279 0.041 260.031); /* era 800 */
-  --color-slate-300: oklch(0.372 0.044 257.287); /* era 700 */
-  --color-slate-400: oklch(0.446 0.043 257.281); /* era 600 */
-  --color-slate-500: oklch(0.554 0.046 257.417); /* 500 (eixo) */
-  --color-slate-600: oklch(0.704 0.04 256.788); /* era 400 */
-  --color-slate-700: oklch(0.869 0.022 252.894); /* era 300 */
-  --color-slate-800: oklch(0.929 0.013 255.508); /* era 200 */
-  --color-slate-900: oklch(0.968 0.007 247.896); /* era 100 */
-  --color-slate-950: oklch(0.984 0.003 247.858); /* era 50 */
+  --color-slate-50: #14120e;
+  --color-slate-100: #221f19; /* titulo */
+  --color-slate-200: #332f26;
+  --color-slate-300: #4a4438;
+  --color-slate-400: #6b6354; /* texto secundario */
+  --color-slate-500: #756d5c; /* texto terciario — 5.1:1 no cartao (era 4.1:1) */
+  --color-slate-600: #a9a08a; /* decoracao apenas: 2.6:1, nao serve para texto */
+  --color-slate-700: #cfc8b6; /* borda forte */
+  --color-slate-800: #e3ded1; /* borda */
+  --color-slate-900: #fffdf9; /* superficie de cartao */
+  --color-slate-950: #f5f2ea; /* fundo da pagina (papel) */
+}
 
-  /* Acentos: os tons claros (50-400) dos acentos sao usados como TEXTO/icone
-     (sobre fundos claros ou tintas suaves) e ficam ilegiveis no tema claro.
-     Apontamos esses tons para tons ESCUROS do mesmo acento, melhorando o
-     contraste. Nenhum fundo solido usa esses tons, entao e seguro. */
+/* ===================== Tema TINTA (escuro) ===================== */
+/* Preto quente, nao azulado: e a mesma folha vista sob luz baixa.
+ *
+ * A rampa NAO e o espelho da rampa clara. Papel e meio refletivo, tela e meio
+ * emissivo: texto claro sobre fundo escuro floresce (halation) e o mesmo passo
+ * de luminancia rende menos legibilidade. Por isso a rampa escura e comprimida
+ * para cima — 200-500 sobem bastante, 600-800 descem para a borda ficar quieta.
+ *
+ * Contraste medido sobre o cartao (#221f19), que e onde quase todo texto vive:
+ *   400 = 8.0:1  secundario     500 = 5.3:1  terciario e etiqueta (passa AA)
+ *   600 = 3.3:1  SO decoracao — icone, seta, tracinho. Nunca texto.
+ * O cartao tambem subiu em relacao ao fundo da pagina: no valor antigo a
+ * separacao era de 1.07:1, ou seja, cartao nenhum. */
+html.dark {
+  color-scheme: dark;
+
+  --color-slate-50: #fdfbf5;
+  --color-slate-100: #f6f2e7; /* titulo */
+  --color-slate-200: #e9e3d3; /* corpo */
+  --color-slate-300: #d3cbb6;
+  --color-slate-400: #bdb5a1; /* texto secundario */
+  --color-slate-500: #9a927f; /* texto terciario */
+  --color-slate-600: #77705f; /* decoracao */
+  --color-slate-700: #5f5847; /* borda forte */
+  --color-slate-800: #3a362c; /* borda */
+  --color-slate-900: #221f19; /* superficie de cartao */
+  --color-slate-950: #131210; /* fundo da pagina */
+}
+
+/* ===================== Tinta: ultramarino ===================== */
+/* Substitui o indigo em todo o app. Mais azul e menos violeta que o indigo do
+   Tailwind — e a cor da esferografica, nao a do dashboard de SaaS.
+   Fica de fora de verde/vermelho de proposito: essas duas sao reservadas para
+   acerto e erro, e o primario nunca pode competir com elas. */
+html,
+html.light,
+html.dark {
+  --color-indigo-950: #0c1a47;
+  --color-indigo-900: #122256;
+  --color-indigo-800: #162c72;
+  --color-indigo-700: #1a3590;
+  --color-indigo-600: #1d3faf; /* acao primaria */
+  --color-indigo-500: #2e52c8;
+  --color-indigo-400: #4e71dc;
+  --color-indigo-300: #7b96e9;
+  --color-indigo-200: #afc0f3;
+  --color-indigo-100: #d6defa;
+  --color-indigo-50: #edf1fd;
+}
+
+/* No papel a tinta e escura porque a folha e clara. Na tela escura a MESMA
+   tinta vira um bloco quase preto: o botao primario sumia dentro do fundo e o
+   contorno de foco mal aparecia. O tema tinta sobe a rampa de acao em dois
+   passos — #4361d9 com texto branco da 5.5:1, e continua sendo azul de
+   esferografica, nao azul de dashboard. */
+html.dark {
+  --color-indigo-800: #23388f;
+  --color-indigo-700: #3050bd;
+  --color-indigo-600: #4361d9; /* acao primaria */
+  --color-indigo-500: #5c78e5;
+  --color-indigo-400: #8098ee;
+}
+
+/* No tema papel os tons claros (50-400) dos acentos aparecem como TEXTO e icone
+   sobre fundo claro — ficam ilegiveis. Apontamos para tons escuros do mesmo
+   acento. Nenhum fundo solido usa esses tons, entao a troca e segura. */
+html:not(.dark) {
   --color-indigo-50: var(--color-indigo-700);
   --color-indigo-100: var(--color-indigo-700);
   --color-indigo-200: var(--color-indigo-700);
@@ -88,17 +143,105 @@ html.light {
   --color-violet-400: var(--color-violet-600);
 }
 
-html.light body {
-  background:
-    radial-gradient(1200px 600px at 100% -10%, rgba(99, 102, 241, 0.1), transparent 60%),
-    radial-gradient(900px 500px at -10% 10%, rgba(139, 92, 246, 0.08), transparent 55%),
-    #f8fafc;
-  color: #0f172a;
+/* ===================== Base ===================== */
+body {
+  background-color: var(--color-slate-950);
+  color: var(--color-slate-200);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-synthesis-weight: none;
 }
 
-html.light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+/* Titulos na grotesca. Apertada de proposito: o contraste com o corpo de alta
+   legibilidade e o que carrega a personalidade da pagina. */
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-headline), var(--font-body), sans-serif;
+  letter-spacing: -0.02em;
 }
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+
+/* Dado e mono: cronometro, porcentagem, numero de artigo, questao 7 / 20.
+   Mono aqui nao e enfeite — alinha digito com digito quando o numero muda. */
+.tabular {
+  font-family: var(--font-mono-data), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Etiqueta de seccao: caixa alta, tracking aberto, pequena. E o rotulo de pasta
+   de arquivo — diz "isto e um campo", nao grita. */
+.etiqueta {
+  font-family: var(--font-mono-data), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-slate-500);
+}
+
+/* ===================== Bolha de gabarito ===================== */
+/* A assinatura da interface. Um circulo de contorno que preenche quando marcado.
+   Usada em: alternativa selecionada, progresso da sessao, sequencia de acertos. */
+.bolha {
+  --bolha-cor: var(--color-slate-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 9999px;
+  border: 1.5px solid var(--bolha-cor);
+  background: transparent;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+.bolha-cheia {
+  background: var(--bolha-cor);
+  border-color: var(--bolha-cor);
+}
+.bolha-marcada {
+  --bolha-cor: var(--color-indigo-600);
+}
+.bolha-certa {
+  --bolha-cor: var(--color-emerald-600);
+}
+.bolha-errada {
+  --bolha-cor: var(--color-rose-600);
+}
+.bolha-atual {
+  --bolha-cor: var(--color-indigo-600);
+  transform: scale(1.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bolha {
+    transition: none;
+  }
+  .bolha-atual {
+    transform: none;
+  }
+}
+
+/* ===================== Foco ===================== */
+/* Visivel de verdade, e na cor da tinta. Requisito, nao detalhe. */
+/* Sem `border-radius` aqui: a regra se aplica ao proprio elemento e mudaria a
+   geometria dele no foco. O `outline` ja acompanha o raio de cada componente. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-indigo-600);
+  outline-offset: 2px;
+}
+
+/* ===================== Scrollbar ===================== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-slate-700);
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-slate-600);
 }

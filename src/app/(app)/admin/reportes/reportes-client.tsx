@@ -31,7 +31,7 @@ export function ReportesClient({ reportes }: { reportes: ReporteDTO[] }) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-3 p-10 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-300">
+          <div className="flex h-14 w-14 items-center justify-center rounded-sm bg-emerald-500/15 text-emerald-300">
             <ClipboardCheck className="h-7 w-7" />
           </div>
           <h2 className="text-xl font-bold text-slate-100">Nenhum reporte</h2>
@@ -69,7 +69,7 @@ export function ReportesClient({ reportes }: { reportes: ReporteDTO[] }) {
                 {r.motivos.map((m) => (
                   <span
                     key={m}
-                    className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-0.5 text-xs font-medium text-rose-300 ring-1 ring-inset ring-rose-500/30"
+                    className="inline-flex items-center gap-1 rounded-[2px] bg-rose-600/10 px-2.5 py-0.5 text-xs font-medium text-rose-300 ring-1 ring-inset ring-rose-500/30"
                   >
                     <Flag className="h-3 w-3" />
                     {rotuloMotivo(m)}
@@ -78,7 +78,7 @@ export function ReportesClient({ reportes }: { reportes: ReporteDTO[] }) {
               </div>
 
               {r.comentario && (
-                <div className="flex gap-2 rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-sm text-slate-300">
+                <div className="flex gap-2 rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-sm text-slate-300">
                   <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
                   <p className="leading-relaxed">{r.comentario}</p>
                 </div>

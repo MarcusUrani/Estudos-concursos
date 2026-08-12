@@ -68,9 +68,9 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onClick={fechar} />
+            <div className="absolute inset-0 bg-slate-950/70" onClick={fechar} />
             <motion.div
-              className="relative z-10 w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl"
+              className="relative z-10 w-full max-w-md rounded-sm border border-slate-800 bg-slate-900 p-6 shadow-2xl"
               initial={{ scale: 0.96, y: 8 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.96, y: 8 }}
@@ -91,7 +91,7 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
 
               {enviado ? (
                 <div className="flex flex-col items-center gap-3 py-6 text-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-emerald-500/15 text-emerald-300">
                     <CheckCircle2 className="h-6 w-6" />
                   </div>
                   <p className="text-sm text-slate-300">
@@ -114,7 +114,7 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
                             type="button"
                             onClick={() => alternar(m.id)}
                             className={cn(
-                              "flex w-full items-center gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition-colors",
+                              "flex w-full items-center gap-3 rounded-sm border px-3 py-2.5 text-left text-sm transition-colors",
                               marcado
                                 ? "border-indigo-500 bg-indigo-600/15 text-slate-100"
                                 : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"
@@ -148,12 +148,12 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
                       rows={3}
                       maxLength={1000}
                       placeholder="Descreva o problema, se quiser…"
-                      className="w-full resize-none rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      className="w-full resize-none rounded-sm border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                     />
                   </div>
 
                   {erro && (
-                    <div className="flex items-center gap-2 rounded-xl bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
+                    <div className="flex items-center gap-2 rounded-sm bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
                       <AlertCircle className="h-4 w-4 shrink-0" />
                       {erro}
                     </div>

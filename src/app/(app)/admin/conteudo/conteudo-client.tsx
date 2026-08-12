@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { CheckCircle2, AlertCircle, Plus, Trash2, Save, Upload } from "lucide-react";
 
 const inputCls =
-  "w-full rounded-xl border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+  "w-full rounded-sm border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
 const textareaCls = cn(inputCls, "resize-y");
 
 type Aba = "materia" | "assunto" | "questao" | "estudo";
@@ -36,7 +36,7 @@ export function ConteudoClient({ conteudo }: { conteudo: ConteudoAdmin }) {
 
   return (
     <div className="space-y-5">
-      <div className="flex gap-1 rounded-xl border border-slate-800 bg-slate-950/40 p-1">
+      <div className="flex gap-1 rounded-sm border border-slate-800 bg-slate-950/40 p-1">
         {ABAS.map((a) => (
           <button
             key={a.id}
@@ -67,12 +67,12 @@ export function ConteudoClient({ conteudo }: { conteudo: ConteudoAdmin }) {
 function Feedback({ erro, ok }: { erro?: string | null; ok?: string | null }) {
   if (!erro && !ok) return null;
   return erro ? (
-    <div className="flex items-start gap-2 rounded-xl bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
+    <div className="flex items-start gap-2 rounded-sm bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
       <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
       <span className="whitespace-pre-wrap">{erro}</span>
     </div>
   ) : (
-    <div className="flex items-start gap-2 rounded-xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
+    <div className="flex items-start gap-2 rounded-sm bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
       <span className="whitespace-pre-wrap">{ok}</span>
     </div>
@@ -382,7 +382,7 @@ function QuestaoUnica({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
               <div
                 key={i}
                 className={cn(
-                  "flex items-start gap-2 rounded-xl border p-2.5",
+                  "flex items-start gap-2 rounded-sm border p-2.5",
                   a.correta ? "border-emerald-500/60 bg-emerald-500/5" : "border-slate-700 bg-slate-950/40"
                 )}
               >
@@ -507,7 +507,7 @@ function EstudoForm({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
   return (
     <Card>
       <CardContent className="space-y-4 p-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-400">
+        <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-400">
           O material aparece no topo da aba <span className="font-medium text-slate-200">Resumo</span> da tela
           Estudar, acima do resumo automático das questões. As quebras de linha são preservadas — escreva em
           tópicos, seções, etc. Deixe em branco para remover.
@@ -602,7 +602,7 @@ function QuestaoLote({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
   return (
     <Card>
       <CardContent className="space-y-4 p-6">
-        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-400">
+        <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-400">
           Cole um <span className="font-medium text-slate-200">array JSON</span> de questões. Cada item usa o{" "}
           <span className="font-medium text-slate-200">nome do assunto</span> (deve já existir). Questões com enunciado
           repetido são ignoradas. Campos: <code className="text-indigo-300">assunto, enunciado, explicacao,
@@ -622,7 +622,7 @@ function QuestaoLote({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
 
         {erro && <Feedback erro={erro} />}
         {resultado && (
-          <div className="space-y-2 rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-sm">
+          <div className="space-y-2 rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-sm">
             <p className="text-emerald-300">
               {resultado.criadas} {resultado.criadas === 1 ? "questão criada" : "questões criadas"}
               {resultado.ignoradas > 0 && (

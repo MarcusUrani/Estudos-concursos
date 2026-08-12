@@ -62,7 +62,7 @@ export function ConcursoSelector({
       </button>
 
       {aberto && (
-        <div className="absolute left-0 top-full z-40 mt-1.5 w-56 rounded-xl border border-slate-800 bg-slate-900 p-1 shadow-2xl">
+        <div className="absolute left-0 top-full z-40 mt-1.5 w-56 rounded-sm border border-slate-800 bg-slate-900 p-1 shadow-2xl">
           <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
             Concurso
           </p>

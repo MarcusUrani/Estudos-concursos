@@ -64,7 +64,7 @@ export function LoginForm() {
       </div>
 
       {erro && (
-        <div className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
+        <div className="flex items-center gap-2 rounded-sm border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
           <AlertCircle className="h-4 w-4 shrink-0" />
           {erro}
         </div>
