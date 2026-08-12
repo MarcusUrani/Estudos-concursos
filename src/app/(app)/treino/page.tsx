@@ -30,18 +30,18 @@ export default async function TreinoPage({
     retomar ? getSessao("treino", concursoId) : Promise.resolve(null),
   ]);
 
+  // Sem container aqui: o TreinoClient escolhe a largura conforme o estado —
+  // formulario em coluna de medida, sessao em coluna + trilho.
   return (
-    <div className="mx-auto max-w-3xl">
-      <TreinoClient
-        concursoId={concursoId}
-        assuntos={assuntos.map((a) => ({
-          id: a.id,
-          nome: a.nome,
-          total: a._count.questoes,
-          materia: a.materia?.nome ?? "Outros",
-        }))}
-        sessaoInicial={sessaoInicial}
-      />
-    </div>
+    <TreinoClient
+      concursoId={concursoId}
+      assuntos={assuntos.map((a) => ({
+        id: a.id,
+        nome: a.nome,
+        total: a._count.questoes,
+        materia: a.materia?.nome ?? "Outros",
+      }))}
+      sessaoInicial={sessaoInicial}
+    />
   );
 }

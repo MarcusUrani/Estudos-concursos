@@ -12,7 +12,25 @@ export type DashboardStats = {
   temasFortes: string[];
   temasFracos: string[];
   revisoesPendentes: number;
+  /** Acerto/erro das ultimas respostas, em ordem cronologica. Alimenta a fita
+   *  de gabarito do dashboard. */
+  ultimas: boolean[];
+  /** Ritmo dos ultimos 14 dias, do mais antigo para hoje. Dias sem resposta
+   *  vem com total 0 — a lacuna e o dado. */
+  porDia: { dia: string; rotulo: string; total: number; acertos: number }[];
 };
+
+/** Quantas respostas a fita de gabarito mostra. */
+const JANELA_FITA = 40;
+/** Quantos dias a faixa de ritmo cobre. */
+const JANELA_DIAS = 14;
+
+/** Chave de dia no fuso do servidor. Mesma convencao ja usada no historico. */
+function chaveDia(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+}
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   const session = await auth();
@@ -25,6 +43,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     prisma.resposta.findMany({
       where: { userId, questao: { concursoId } },
       include: { questao: { include: { assunto: true } } },
+      orderBy: { respondidaEm: "asc" },
     }),
     prisma.revisao.count({
       where: { userId, proximaData: { lte: new Date() }, questao: { concursoId } },
@@ -61,6 +80,29 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     .filter((a) => a.percentual < 60)
     .map((a) => a.assunto);
 
+  // Fita de gabarito: as ultimas respostas na ordem em que aconteceram. E o
+  // unico lugar do app que mostra a sequencia, e nao a media — a media esconde
+  // se a pessoa esta melhorando ou piorando agora.
+  const ultimas = respostas.slice(-JANELA_FITA).map((r) => r.acertou);
+
+  // Ritmo por dia. Agregado em memoria: as respostas ja estao todas carregadas.
+  const diario = new Map<string, { total: number; acertos: number }>();
+  for (const r of respostas) {
+    const k = chaveDia(new Date(r.respondidaEm));
+    const cur = diario.get(k) ?? { total: 0, acertos: 0 };
+    cur.total += 1;
+    if (r.acertou) cur.acertos += 1;
+    diario.set(k, cur);
+  }
+  const porDia = Array.from({ length: JANELA_DIAS }, (_, i) => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - (JANELA_DIAS - 1 - i));
+    const k = chaveDia(d);
+    const v = diario.get(k) ?? { total: 0, acertos: 0 };
+    return { dia: k, rotulo: String(d.getDate()).padStart(2, "0"), ...v };
+  });
+
   return {
     nome: user?.nome ?? "Estudante",
     respondidas,
@@ -71,5 +113,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     temasFortes,
     temasFracos,
     revisoesPendentes,
+    ultimas,
+    porDia,
   };
 }

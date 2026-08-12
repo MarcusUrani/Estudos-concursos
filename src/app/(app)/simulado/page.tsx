@@ -28,18 +28,18 @@ export default async function SimuladoPage({
     retomar ? getSessao("simulado") : Promise.resolve(null),
   ]);
 
+  // Sem container: o SimuladoClient escolhe a largura por fase — formulario e
+  // resultado em coluna de medida, prova em coluna + trilho com relogio.
   return (
-    <div className="mx-auto max-w-3xl">
-      <SimuladoClient
-        assuntos={assuntos.map((a) => ({
-          id: a.id,
-          nome: a.nome,
-          total: a._count.questoes,
-          materia: a.materia?.nome ?? "Outros",
-        }))}
-        historico={historico}
-        sessaoInicial={sessaoInicial}
-      />
-    </div>
+    <SimuladoClient
+      assuntos={assuntos.map((a) => ({
+        id: a.id,
+        nome: a.nome,
+        total: a._count.questoes,
+        materia: a.materia?.nome ?? "Outros",
+      }))}
+      historico={historico}
+      sessaoInicial={sessaoInicial}
+    />
   );
 }

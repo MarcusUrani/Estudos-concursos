@@ -8,10 +8,12 @@ import {
   type QuestaoDTO,
   type ResultadoResposta,
 } from "@/server/treino";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Bolha, FitaGabarito } from "@/components/ui/bolha";
+import { PaginaLeitura, TrilhoBloco, TrilhoDado } from "@/components/ui/pagina";
 import { BotaoReporte } from "@/components/botao-reporte";
 import { cn } from "@/lib/utils";
 import {
@@ -50,9 +52,19 @@ export function TreinoSessao({
   const [acertos, setAcertos] = useState(acertosIniciais);
   const [fim, setFim] = useState(false);
 
+  // Historico de acerto/erro por questao, na ordem — alimenta a fita de gabarito.
+  // Ao RETOMAR uma sessao so conhecemos os totais, nao a ordem original: por isso
+  // a semente agrupa os acertos antes dos erros. O placar fica correto; a posicao
+  // exata de cada marca dentro do trecho ja respondido, nao.
+  const [resultados, setResultados] = useState<boolean[]>(() => [
+    ...Array<boolean>(acertosIniciais).fill(true),
+    ...Array<boolean>(Math.max(0, indiceInicial - acertosIniciais)).fill(false),
+  ]);
+
   function proxima(acertou: boolean) {
     const novoAcertos = acertou ? acertos + 1 : acertos;
     if (acertou) setAcertos(novoAcertos);
+    setResultados((r) => [...r, acertou]);
     const novoIndice = indice + 1;
     if (novoIndice >= questoes.length) {
       setFim(true);
@@ -66,6 +78,7 @@ export function TreinoSessao({
   function refazer() {
     setIndice(0);
     setAcertos(0);
+    setResultados([]);
     setFim(false);
     setSessao((s) => s + 1);
   }
@@ -73,41 +86,54 @@ export function TreinoSessao({
   if (fim) {
     const pct = questoes.length ? Math.round((acertos / questoes.length) * 100) : 0;
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-300">
-            <Trophy className="h-8 w-8" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold text-slate-100">Concluído!</h2>
-            <p className="mt-1 text-slate-400">
-              Você acertou{" "}
-              <span className="font-semibold text-emerald-400">
-                {acertos} de {questoes.length}
-              </span>{" "}
-              ({pct}%).
-            </p>
-          </div>
-          <div className="w-full max-w-xs">
-            <Progress
-              value={pct}
-              barClassName={pct >= 80 ? "bg-emerald-500" : pct >= 60 ? "bg-indigo-500" : "bg-rose-500"}
+      <PaginaLeitura>
+        <Card>
+          <CardContent className="flex flex-col items-center gap-5 p-10 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-indigo-500/15 text-indigo-300">
+              <Trophy className="h-8 w-8" />
+            </div>
+            <div>
+              <h2 className="font-display text-2xl font-bold text-slate-100">Concluído!</h2>
+              <p className="mt-1 text-slate-400">
+                Você acertou{" "}
+                <span className="tabular font-semibold text-emerald-400">
+                  {acertos} de {questoes.length}
+                </span>{" "}
+                ({pct}%).
+              </p>
+            </div>
+
+            {/* O cartao-resposta inteiro da sessao: onde ela errou e onde
+                acertou, na ordem. E a informacao que a porcentagem apaga. */}
+            <FitaGabarito
+              resultados={resultados}
+              total={questoes.length}
+              className="justify-center"
             />
-          </div>
-          <div className="mt-2 flex flex-wrap justify-center gap-3">
-            <Button onClick={refazer} variant="secondary">
-              <RotateCcw className="h-4 w-4" />
-              Refazer
-            </Button>
-            {acaoFinal && (
-              <Button onClick={acaoFinal.onClick}>
-                {acaoFinal.label}
-                <ArrowRight className="h-4 w-4" />
+
+            <div className="w-full max-w-xs">
+              <Progress
+                value={pct}
+                barClassName={
+                  pct >= 80 ? "bg-emerald-500" : pct >= 60 ? "bg-indigo-500" : "bg-rose-500"
+                }
+              />
+            </div>
+            <div className="mt-2 flex flex-wrap justify-center gap-3">
+              <Button onClick={refazer} variant="secondary">
+                <RotateCcw className="h-4 w-4" />
+                Refazer
               </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              {acaoFinal && (
+                <Button onClick={acaoFinal.onClick}>
+                  {acaoFinal.label}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </PaginaLeitura>
     );
   }
 
@@ -118,6 +144,7 @@ export function TreinoSessao({
       questao={atual}
       indice={indice}
       total={questoes.length}
+      resultados={resultados}
       favoritoInicial={favoritosIniciais?.[atual.id] ?? false}
       onProxima={proxima}
     />
@@ -128,12 +155,14 @@ function Questao({
   questao,
   indice,
   total,
+  resultados,
   favoritoInicial,
   onProxima,
 }: {
   questao: QuestaoDTO;
   indice: number;
   total: number;
+  resultados: boolean[];
   favoritoInicial: boolean;
   onProxima: (acertou: boolean) => void;
 }) {
@@ -159,45 +188,85 @@ function Questao({
     });
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
-    >
-      <div className="mb-4">
-        <div className="mb-2 flex items-center justify-between text-sm text-slate-400">
-          <span>
-            Questão {indice + 1} de {total}
-          </span>
-          <span>{Math.round((indice / total) * 100)}%</span>
-        </div>
-        <Progress value={(indice / total) * 100} />
-      </div>
+  const respondidas = resultados.length;
+  const acertosSessao = resultados.filter(Boolean).length;
 
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge>{questao.assunto}</Badge>
-              {questao.subassunto && <Badge variant="neutral">{questao.subassunto}</Badge>}
-              <Badge variant="neutral">{questao.banca}</Badge>
-            </div>
-            <div className="flex items-center gap-3">
-              <BotaoReporte questaoId={questao.id} />
-              <button
-                onClick={toggleFav}
-                disabled={pending}
-                title="Favoritar"
-                className="text-slate-400 transition-colors hover:text-amber-300"
-              >
-                <Star className={cn("h-5 w-5", favorito && "fill-amber-400 text-amber-400")} />
-              </button>
-            </div>
+  // Tudo que NAO e a questao mora no trilho: posicao, placar, classificacao e
+  // as acoes sobre a questao. A coluna de leitura fica so com enunciado,
+  // alternativas e correcao — que e o que a pessoa precisa ler sem desviar.
+  const trilho = (
+    <>
+      <TrilhoBloco>
+        {/* Em tela estreita posicao e fita dividem a mesma linha: cada pixel
+            gasto aqui empurra o enunciado para fora da tela. No trilho, em
+            `xl`, elas empilham. */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 xl:block">
+          <div>
+            <p className="etiqueta">Questão</p>
+            <p className="tabular mt-1 text-2xl font-semibold leading-none text-slate-100 xl:mt-1.5 xl:text-3xl">
+              {String(indice + 1).padStart(2, "0")}
+              <span className="text-slate-500"> / {String(total).padStart(2, "0")}</span>
+            </p>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-base leading-relaxed text-slate-100">{questao.enunciado}</p>
+          <div className="xl:mt-4">
+            <FitaGabarito resultados={resultados} atual={indice} total={total} />
+          </div>
+        </div>
+      </TrilhoBloco>
+
+      {/* Em tela estreita o trilho vira cabeçalho da questão — o placar aqui
+          empurraria o enunciado para fora da tela. A fita acima já mostra o
+          mesmo desempenho sem ocupar linha. */}
+      {respondidas > 0 && (
+        <TrilhoBloco titulo="Placar" className="hidden xl:block">
+          <div className="space-y-2">
+            <TrilhoDado rotulo="Acertos" valor={acertosSessao} />
+            <TrilhoDado rotulo="Erros" valor={respondidas - acertosSessao} />
+            <TrilhoDado
+              rotulo="Aproveitamento"
+              valor={`${Math.round((acertosSessao / respondidas) * 100)}%`}
+            />
+          </div>
+        </TrilhoBloco>
+      )}
+
+      <TrilhoBloco titulo="Classificação">
+        <div className="flex flex-wrap gap-2">
+          <Badge>{questao.assunto}</Badge>
+          {questao.subassunto && <Badge variant="neutral">{questao.subassunto}</Badge>}
+          <Badge variant="neutral">{questao.banca}</Badge>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+          <button
+            onClick={toggleFav}
+            disabled={pending}
+            className={cn(
+              "flex items-center gap-2 text-sm transition-colors",
+              favorito ? "text-amber-300" : "text-slate-400 hover:text-amber-300"
+            )}
+          >
+            <Star className={cn("h-4 w-4", favorito && "fill-amber-400 text-amber-400")} />
+            {favorito ? "Favoritada" : "Favoritar"}
+          </button>
+          <BotaoReporte questaoId={questao.id} />
+        </div>
+      </TrilhoBloco>
+    </>
+  );
+
+  return (
+    <PaginaLeitura trilho={trilho}>
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+      >
+      <Card>
+        <CardContent className="space-y-5 px-5 py-6">
+          {/* A coluna agora e so do enunciado, entao ele pode assumir o corpo
+              de leitura de verdade: 17px com entrelinha aberta. E o texto que
+              precisa ser relido duas ou tres vezes. */}
+          <p className="text-[1.0625rem] leading-[1.65] text-slate-100">{questao.enunciado}</p>
 
           <div className="space-y-2">
             {questao.alternativas.map((alt, i) => {
@@ -211,7 +280,7 @@ function Questao({
                   disabled={!!resultado}
                   onClick={() => setSelecionada(alt.id)}
                   className={cn(
-                    "flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-all",
+                    "flex w-full items-start gap-3 rounded-sm border px-4 py-3 text-left text-sm transition-all",
                     !resultado &&
                       (escolhida
                         ? "border-indigo-500 bg-indigo-500/10 text-slate-100"
@@ -221,19 +290,32 @@ function Questao({
                     resultado && !correta && !erradaEscolhida && "border-slate-800 opacity-60"
                   )}
                 >
-                  <span
+                  {/* A bolha de gabarito no lugar do quadrado: o mesmo gesto do
+                      cartao-resposta de papel, e o mesmo simbolo que aparece na
+                      fita de progresso acima. */}
+                  <Bolha
+                    tamanho="lg"
+                    estado={
+                      resultado
+                        ? correta
+                          ? "certa"
+                          : erradaEscolhida
+                            ? "errada"
+                            : "vazia"
+                        : escolhida
+                          ? "marcada"
+                          : "vazia"
+                    }
                     className={cn(
-                      "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold",
-                      escolhida && !resultado && "bg-indigo-500 text-white",
-                      !escolhida && !resultado && "bg-slate-800 text-slate-400",
-                      resultado && correta && "bg-emerald-500 text-white",
-                      erradaEscolhida && "bg-rose-500 text-white",
-                      resultado && !correta && !erradaEscolhida && "bg-slate-800 text-slate-500"
+                      "mt-px",
+                      escolhida && !resultado && "text-white",
+                      resultado && (correta || erradaEscolhida) && "text-white",
+                      !escolhida && !resultado && "text-slate-400"
                     )}
                   >
                     {String.fromCharCode(65 + i)}
-                  </span>
-                  <span className="flex-1 pt-0.5">{alt.texto}</span>
+                  </Bolha>
+                  <span className="flex-1 pt-1">{alt.texto}</span>
                   {resultado && correta && <CheckCircle2 className="h-5 w-5 text-emerald-400" />}
                   {erradaEscolhida && <XCircle className="h-5 w-5 text-rose-400" />}
                 </button>
@@ -250,7 +332,7 @@ function Questao({
               >
                 <div
                   className={cn(
-                    "flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium",
+                    "flex items-center gap-2 rounded-sm px-4 py-3 text-sm font-medium",
                     resultado.acertou
                       ? "bg-emerald-500/10 text-emerald-300"
                       : "bg-rose-500/10 text-rose-300"
@@ -267,7 +349,7 @@ function Questao({
                   )}
                 </div>
 
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-4">
                   <p className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-300">
                     <BookOpen className="h-4 w-4" /> Comentário
                   </p>
@@ -303,6 +385,7 @@ function Questao({
           )}
         </CardContent>
       </Card>
-    </motion.div>
+      </motion.div>
+    </PaginaLeitura>
   );
 }

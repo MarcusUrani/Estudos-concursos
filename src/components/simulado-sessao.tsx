@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { QuestaoDTO } from "@/server/treino";
 import type { RespostaSimulado } from "@/server/simulado";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Bolha } from "@/components/ui/bolha";
+import { PaginaLeitura, TrilhoBloco } from "@/components/ui/pagina";
 import { BotaoReporte } from "@/components/botao-reporte";
 import { cn } from "@/lib/utils";
 import {
@@ -94,57 +96,79 @@ export function SimuladoSessao({
     onProgresso?.({ indice, respostas: novo, restante });
   }
 
-  return (
-    <div className="space-y-4">
-      {/* Barra fixa: relogio + progresso + finalizar */}
-      <div className="sticky top-0 z-10 -mx-1 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/80 px-4 py-3 backdrop-blur">
-        <div
+  // Numa prova cronometrada o relogio e o mapa nao sao acessorios do enunciado:
+  // sao o painel de controle. Em tela larga eles ficam parados na margem, sempre
+  // visiveis, sem empurrar a questao para baixo.
+  const trilho = (
+    <>
+      <TrilhoBloco className="sticky top-0 z-20 bg-slate-950 py-3 xl:static xl:bg-transparent xl:py-0">
+        <p className="etiqueta flex items-center gap-1.5">
+          <Clock className={cn("h-3.5 w-3.5", tempoCritico && "animate-pulse")} />
+          Tempo restante
+        </p>
+        <p
           className={cn(
-            "flex items-center gap-2 text-lg font-bold tabular-nums",
+            "tabular mt-1.5 text-3xl font-semibold leading-none",
             tempoCritico ? "text-rose-400" : "text-slate-100"
           )}
         >
-          <Clock className={cn("h-5 w-5", tempoCritico && "animate-pulse")} />
           {formatRelogio(restante)}
-        </div>
-        <span className="text-sm text-slate-400">
+        </p>
+        <p className="tabular mt-2.5 text-sm text-slate-400">
           {respondidas} de {questoes.length} respondidas
-        </span>
+        </p>
         <Button
           variant="secondary"
           size="sm"
+          className="mt-3 w-full"
           onClick={() => setConfirmando(true)}
           disabled={pending}
         >
           <Flag className="h-4 w-4" />
           Finalizar
         </Button>
-      </div>
+      </TrilhoBloco>
 
-      {/* Mapa de questoes */}
-      <div className="flex flex-wrap gap-1.5">
-        {questoes.map((q, i) => {
-          const respondida = !!respostas[q.id];
-          const ativa = i === indice;
-          return (
-            <button
-              key={q.id}
-              onClick={() => irPara(i)}
-              className={cn(
-                "h-8 w-8 rounded-lg border text-xs font-semibold transition-all",
-                ativa
-                  ? "border-indigo-400 bg-indigo-500 text-white"
-                  : respondida
-                  ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-200"
-                  : "border-slate-700 bg-slate-950/40 text-slate-400 hover:border-slate-600"
-              )}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
-      </div>
+      <TrilhoBloco titulo="Mapa da prova">
+        <div className="flex flex-wrap gap-1.5">
+          {questoes.map((q, i) => {
+            const respondida = !!respostas[q.id];
+            const ativa = i === indice;
+            return (
+              <button
+                key={q.id}
+                onClick={() => irPara(i)}
+                aria-current={ativa ? "true" : undefined}
+                className={cn(
+                  "tabular h-8 w-8 rounded-sm border text-xs font-semibold transition-colors",
+                  ativa
+                    ? "border-indigo-400 bg-indigo-600 text-white"
+                    : respondida
+                      ? "border-indigo-500/40 bg-indigo-500/15 text-indigo-200"
+                      : "border-slate-700 bg-slate-950/40 text-slate-400 hover:border-slate-600"
+                )}
+              >
+                {i + 1}
+              </button>
+            );
+          })}
+        </div>
+      </TrilhoBloco>
 
+      <TrilhoBloco titulo="Classificação">
+        <div className="flex flex-wrap gap-2">
+          <Badge>{atual.assunto}</Badge>
+          {atual.subassunto && <Badge variant="neutral">{atual.subassunto}</Badge>}
+        </div>
+        <div className="mt-4">
+          <BotaoReporte questaoId={atual.id} />
+        </div>
+      </TrilhoBloco>
+    </>
+  );
+
+  return (
+    <PaginaLeitura trilho={trilho}>
       <motion.div
         key={atual.id}
         initial={{ opacity: 0, y: 8 }}
@@ -152,20 +176,16 @@ export function SimuladoSessao({
         transition={{ duration: 0.2 }}
       >
         <Card>
-          <CardHeader>
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium text-slate-400">
-                  Questão {indice + 1} de {questoes.length}
-                </span>
-                <Badge>{atual.assunto}</Badge>
-                {atual.subassunto && <Badge variant="neutral">{atual.subassunto}</Badge>}
-              </div>
-              <BotaoReporte questaoId={atual.id} />
+          <CardContent className="space-y-5 px-5 py-6">
+            <div>
+              <p className="etiqueta">
+                Questão {String(indice + 1).padStart(2, "0")} de{" "}
+                {String(questoes.length).padStart(2, "0")}
+              </p>
+              <p className="mt-2.5 text-[1.0625rem] leading-[1.65] text-slate-100">
+                {atual.enunciado}
+              </p>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-base leading-relaxed text-slate-100">{atual.enunciado}</p>
 
             <div className="space-y-2">
               {atual.alternativas.map((alt, i) => {
@@ -175,21 +195,23 @@ export function SimuladoSessao({
                     key={alt.id}
                     onClick={() => escolher(alt.id)}
                     className={cn(
-                      "flex w-full items-start gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-all",
+                      "flex w-full items-start gap-3 rounded-sm border px-4 py-3 text-left text-sm transition-all",
                       escolhida
                         ? "border-indigo-500 bg-indigo-500/10 text-slate-100"
                         : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"
                     )}
                   >
-                    <span
-                      className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-xs font-bold",
-                        escolhida ? "bg-indigo-500 text-white" : "bg-slate-800 text-slate-400"
-                      )}
+                    {/* A mesma bolha do treino: marcar aqui e o mesmo gesto de
+                        marcar la, e o simulado nao devolve gabarito na hora —
+                        so o preenchimento muda. */}
+                    <Bolha
+                      tamanho="lg"
+                      estado={escolhida ? "marcada" : "vazia"}
+                      className={cn("mt-px", escolhida ? "text-white" : "text-slate-400")}
                     >
                       {String.fromCharCode(65 + i)}
-                    </span>
-                    <span className="flex-1 pt-0.5">{alt.texto}</span>
+                    </Bolha>
+                    <span className="flex-1 pt-1">{alt.texto}</span>
                   </button>
                 );
               })}
@@ -218,14 +240,13 @@ export function SimuladoSessao({
             </div>
           </CardContent>
         </Card>
-      </motion.div>
 
       {/* Confirmacao de finalizacao */}
       {confirmando && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 p-4">
           <Card className="w-full max-w-sm">
             <CardContent className="space-y-4 p-6 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-300">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-sm bg-amber-500/15 text-amber-300">
                 <AlertTriangle className="h-6 w-6" />
               </div>
               <div>
@@ -248,6 +269,7 @@ export function SimuladoSessao({
           </Card>
         </div>
       )}
-    </div>
+      </motion.div>
+    </PaginaLeitura>
   );
 }

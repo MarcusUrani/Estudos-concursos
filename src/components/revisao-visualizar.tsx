@@ -7,6 +7,7 @@ import type { QuestaoRevisaoDTO } from "@/server/revisao";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { PaginaLeitura } from "@/components/ui/pagina";
 import { BotaoReporte } from "@/components/botao-reporte";
 import { cn } from "@/lib/utils";
 import {
@@ -41,6 +42,7 @@ export function RevisaoVisualizar({
   }
 
   return (
+    <PaginaLeitura>
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <span className="text-sm text-slate-400">
@@ -116,7 +118,7 @@ export function RevisaoVisualizar({
                 <div
                   key={alt.id}
                   className={cn(
-                    "flex items-start gap-3 rounded-xl border px-4 py-3 text-sm",
+                    "flex items-start gap-3 rounded-sm border px-4 py-3 text-sm",
                     alt.correta
                       ? "border-emerald-500 bg-emerald-500/10 text-emerald-100"
                       : "border-slate-800 bg-slate-950/40 text-slate-400"
@@ -136,7 +138,7 @@ export function RevisaoVisualizar({
               ))}
             </div>
 
-            <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+            <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-4">
               <p className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-300">
                 <BookOpen className="h-4 w-4" /> Comentário
               </p>
@@ -155,5 +157,6 @@ export function RevisaoVisualizar({
         </Card>
       </motion.div>
     </div>
+    </PaginaLeitura>
   );
 }

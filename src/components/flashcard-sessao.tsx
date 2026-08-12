@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { PaginaLeitura, TrilhoBloco } from "@/components/ui/pagina";
 import { BotaoReporte } from "@/components/botao-reporte";
 import {
   RotateCcw,
@@ -62,9 +63,10 @@ export function FlashcardSessao({
   if (fim) {
     const pct = cards.length ? Math.round((sabia / cards.length) * 100) : 0;
     return (
+      <PaginaLeitura>
       <Card>
         <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-300">
+          <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-indigo-500/15 text-indigo-300">
             <Layers className="h-8 w-8" />
           </div>
           <div>
@@ -86,33 +88,44 @@ export function FlashcardSessao({
           </Button>
         </CardContent>
       </Card>
+      </PaginaLeitura>
     );
   }
 
   const card = cards[indice];
-  return (
-    <div>
-      <div className="mb-4">
-        <div className="mb-2 flex items-center justify-between text-sm text-slate-400">
-          <span>
-            Card {indice + 1} de {cards.length}
-          </span>
-          <span>{Math.round((indice / cards.length) * 100)}%</span>
-        </div>
-        <Progress value={(indice / cards.length) * 100} />
-      </div>
+  const pctSessao = Math.round((indice / cards.length) * 100);
 
+  const trilho = (
+    <>
+      <TrilhoBloco>
+        <p className="etiqueta">Card</p>
+        <p className="tabular mt-1.5 text-3xl font-semibold leading-none text-slate-100">
+          {String(indice + 1).padStart(2, "0")}
+          <span className="text-slate-500"> / {String(cards.length).padStart(2, "0")}</span>
+        </p>
+        <div className="mt-4">
+          <Progress value={pctSessao} barClassName="bg-indigo-500" />
+        </div>
+        <p className="tabular mt-2 text-xs text-slate-500">{pctSessao}% do baralho</p>
+      </TrilhoBloco>
+
+      <TrilhoBloco titulo="Classificação">
+        <div className="flex flex-wrap gap-2">
+          <Badge>{card.assunto}</Badge>
+          {card.subassunto && <Badge variant="neutral">{card.subassunto}</Badge>}
+        </div>
+        <div className="mt-4">
+          <BotaoReporte questaoId={card.questaoId} />
+        </div>
+      </TrilhoBloco>
+    </>
+  );
+
+  return (
+    <PaginaLeitura trilho={trilho}>
       <Card className="min-h-72">
         <CardContent className="space-y-4 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge>{card.assunto}</Badge>
-              {card.subassunto && <Badge variant="neutral">{card.subassunto}</Badge>}
-            </div>
-            <BotaoReporte questaoId={card.questaoId} />
-          </div>
-
-          <p className="text-base leading-relaxed text-slate-100">{card.frente}</p>
+          <p className="text-[1.0625rem] leading-[1.65] text-slate-100">{card.frente}</p>
 
           <AnimatePresence initial={false}>
             {revelado && (
@@ -121,13 +134,13 @@ export function FlashcardSessao({
                 animate={{ opacity: 1, height: "auto" }}
                 className="space-y-3 overflow-hidden"
               >
-                <div className="rounded-xl border border-emerald-700/40 bg-emerald-500/10 p-4">
+                <div className="rounded-sm border border-emerald-700/40 bg-emerald-500/10 p-4">
                   <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">
                     Resposta
                   </p>
                   <p className="text-sm leading-relaxed text-emerald-50">{card.verso}</p>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+                <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-4">
                   <p className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-300">
                     <BookOpen className="h-4 w-4" /> Comentário
                   </p>
@@ -185,6 +198,6 @@ export function FlashcardSessao({
           Trocar baralho
         </button>
       </div>
-    </div>
+    </PaginaLeitura>
   );
 }

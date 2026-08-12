@@ -42,9 +42,9 @@ export function HistoricoCliente({
 
   if (itens.length === 0) {
     return (
-      <Card>
+      <Card className="mx-auto max-w-xl">
         <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800 text-slate-400">
+          <div className="flex h-14 w-14 items-center justify-center rounded-sm bg-slate-800 text-slate-400">
             <History className="h-7 w-7" />
           </div>
           <div>
@@ -114,10 +114,11 @@ export function HistoricoCliente({
         <div className="space-y-6">
           {grupos.map((g) => (
             <div key={g.dia}>
-              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">
-                {g.dia}
-              </p>
-              <div className="space-y-2">
+              <p className="etiqueta mb-2.5 border-b border-slate-800 pb-2">{g.dia}</p>
+              {/* Cada item e curto. Em tela larga eles viram grade: o dia
+                  inteiro cabe de uma vez, em vez de virar uma fita vertical
+                  de 1500px de largura por 60px de altura. */}
+              <div className="grid gap-2 lg:grid-cols-2 2xl:grid-cols-3">
                 {g.itens.map((i) => (
                   <ItemHistorico key={i.id} item={i} />
                 ))}
@@ -133,7 +134,9 @@ export function HistoricoCliente({
 function ItemHistorico({ item }: { item: HistoricoItem }) {
   const Icon = item.acertou ? CheckCircle2 : XCircle;
   return (
-    <Card>
+    // `min-w-0`: como item de grade, o cartao nao encolheria abaixo do
+    // min-content do enunciado e furaria a tela no celular.
+    <Card className="min-w-0">
       <CardContent className="flex gap-3 p-4">
         <Icon
           className={cn(
@@ -181,7 +184,7 @@ function FiltroChip({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full border px-3.5 py-1.5 text-sm transition-all",
+        "rounded-sm border px-3.5 py-1.5 text-sm transition-all",
         ativo
           ? "border-indigo-500 bg-indigo-500/15 text-indigo-200"
           : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"

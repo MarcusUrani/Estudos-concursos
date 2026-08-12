@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { PaginaLeitura } from "@/components/ui/pagina";
 import { cn, formatDuracao } from "@/lib/utils";
 import {
   TimerReset,
@@ -160,6 +161,7 @@ export function SimuladoClient({
   }
 
   return (
+    <PaginaLeitura>
     <div className="space-y-6">
       <Card>
         <CardHeader>
@@ -208,7 +210,7 @@ export function SimuladoClient({
           </Campo>
 
           {erro && (
-            <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
+            <p className="rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
               {erro}
             </p>
           )}
@@ -232,7 +234,7 @@ export function SimuladoClient({
             {historico.map((s) => (
               <div
                 key={s.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm"
+                className="flex items-center justify-between gap-3 rounded-sm border border-slate-800 bg-slate-950/40 px-4 py-3 text-sm"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -258,6 +260,7 @@ export function SimuladoClient({
         </Card>
       )}
     </div>
+    </PaginaLeitura>
   );
 }
 
@@ -272,10 +275,11 @@ function ResultadoView({
   const semResposta = itens.filter((i) => !i.escolhidaId).length;
 
   return (
+    <PaginaLeitura>
     <div className="space-y-5">
       <Card>
         <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-300">
+          <div className="flex h-16 w-16 items-center justify-center rounded-sm bg-indigo-500/15 text-indigo-300">
             <Trophy className="h-8 w-8" />
           </div>
           <div>
@@ -320,7 +324,7 @@ function ResultadoView({
                   <span className="text-slate-300">{a.assunto}</span>
                   <span className="font-medium text-slate-400">
                     {a.percentual}%{" "}
-                    <span className="text-slate-600">
+                    <span className="text-slate-500">
                       ({a.acertos}/{a.total})
                     </span>
                   </span>
@@ -348,6 +352,7 @@ function ResultadoView({
         </div>
       </div>
     </div>
+    </PaginaLeitura>
   );
 }
 
@@ -384,7 +389,7 @@ function ItemRevisao({
               <div
                 key={alt.id}
                 className={cn(
-                  "flex items-start gap-3 rounded-xl border px-4 py-3 text-sm",
+                  "flex items-start gap-3 rounded-sm border px-4 py-3 text-sm",
                   alt.correta
                     ? "border-emerald-500 bg-emerald-500/10 text-emerald-100"
                     : erradaEscolhida
@@ -412,7 +417,7 @@ function ItemRevisao({
           })}
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4">
+        <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-4">
           <p className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-300">
             <BookOpen className="h-4 w-4" /> Comentário
           </p>
@@ -469,7 +474,7 @@ function Chip({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "rounded-full border px-3.5 py-1.5 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40",
+        "rounded-sm border px-3.5 py-1.5 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40",
         ativo
           ? "border-indigo-500 bg-indigo-500/15 text-indigo-200"
           : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"

@@ -4,6 +4,7 @@ import { podeAcessarRevisao } from "@/lib/acesso";
 import { listarLegislacoes, type LegislacaoResumo } from "@/server/legislacao";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Pagina, Cabecalho } from "@/components/ui/pagina";
 import { BookText, ArrowRight, BellRing } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -24,31 +25,30 @@ export default async function EstudarPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
-      <header>
-        <h1 className="text-2xl font-bold text-slate-100">Estudar por legislação</h1>
-        <p className="text-sm text-slate-400">
-          Os temas estão organizados por matéria. Cada tema reúne um resumo (derivado das questões),
-          a leitura dos pontos-chave e a prática das questões relacionadas.
-        </p>
-      </header>
+    <Pagina className="space-y-8">
+      <Cabecalho
+        titulo="Estudar por legislação"
+        descricao="Os temas estão organizados por matéria. Cada tema reúne um resumo derivado das questões, a leitura dos pontos-chave e a prática das questões relacionadas."
+      />
 
       {grupos.map((g) => (
         <section key={g.materia} className="space-y-4">
-          <h2 className="border-b border-slate-800 pb-2 text-sm font-semibold uppercase tracking-wide text-indigo-300">
+          {/* A matéria é o nome da pasta, não um título de página: vai na
+              etiqueta, com a régua fazendo a separação. */}
+          <h2 className="etiqueta border-b border-slate-800 pb-2 text-indigo-400">
             {g.materia}
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {g.itens.map((l) => {
               const pct = l.totalQuestoes
                 ? Math.round((l.respondidas / l.totalQuestoes) * 100)
                 : 0;
               return (
-                <Link key={l.id} href={`/estudar/${l.id}`} className="group block">
+                <Link key={l.id} href={`/estudar/${l.id}`} className="group block min-w-0">
                   <Card className="h-full transition-colors group-hover:border-indigo-600/50">
                     <CardContent className="flex h-full flex-col gap-3 p-5">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-indigo-500/15 text-indigo-300">
                           <BookText className="h-5 w-5" />
                         </div>
                         {podeRevisar && l.revisoesPendentes > 0 && (
@@ -78,6 +78,6 @@ export default async function EstudarPage() {
           </div>
         </section>
       ))}
-    </div>
+    </Pagina>
   );
 }

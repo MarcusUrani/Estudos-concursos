@@ -26,7 +26,17 @@ export default async function AppLayout({
         concursos={concursos}
         concursoAtualId={concursoAtualId}
       />
-      <main className="flex-1 overflow-y-auto p-4 md:h-screen md:p-8">{children}</main>
+      {/* `overflow-x-clip` e trava de seguranca, nao a correcao: se algum
+          conteudo furar a largura, ele e cortado em vez de tornar a PAGINA
+          rolavel na horizontal. Isso importa porque o cabecalho do celular e
+          `sticky`, que gruda so na vertical — com a pagina rolando de lado, o
+          cabecalho acompanha e o botao do menu sai do campo visivel, dando a
+          impressao de que o menu parou de abrir.
+          `clip` e nao `hidden` de proposito: `hidden` criaria um contexto de
+          rolagem e quebraria o `position: sticky` do trilho aqui dentro. */}
+      <main className="flex-1 overflow-y-auto overflow-x-clip p-4 md:h-screen md:p-8">
+        {children}
+      </main>
     </div>
   );
 }

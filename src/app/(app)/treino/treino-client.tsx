@@ -11,6 +11,7 @@ import { SeletorAssuntos, type AssuntoSel } from "@/components/seletor-assuntos"
 import { SeletorQuantidade } from "@/components/seletor-quantidade";
 import { salvarSessao, limparSessao, type SessaoSalva } from "@/server/sessao";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PaginaLeitura } from "@/components/ui/pagina";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Dumbbell, ArrowRight } from "lucide-react";
@@ -117,6 +118,7 @@ export function TreinoClient({
   }
 
   return (
+    <PaginaLeitura>
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -164,7 +166,7 @@ export function TreinoClient({
         </Campo>
 
         {erro && (
-          <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
+          <p className="rounded-sm border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
             {erro}
           </p>
         )}
@@ -175,6 +177,7 @@ export function TreinoClient({
         </Button>
       </CardContent>
     </Card>
+    </PaginaLeitura>
   );
 }
 
@@ -215,7 +218,7 @@ function Chip({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "rounded-full border px-3.5 py-1.5 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40",
+        "rounded-sm border px-3.5 py-1.5 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-40",
         ativo
           ? "border-indigo-500 bg-indigo-500/15 text-indigo-200"
           : "border-slate-700 bg-slate-950/40 text-slate-300 hover:border-slate-600"

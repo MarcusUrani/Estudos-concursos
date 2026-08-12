@@ -8,6 +8,7 @@ import type { QuestaoDTO } from "@/server/treino";
 import type { QuestaoRevisaoDTO } from "@/server/revisao";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PaginaLeitura } from "@/components/ui/pagina";
 import { cn } from "@/lib/utils";
 import { Star, XCircle, Eye, Pencil } from "lucide-react";
 
@@ -28,9 +29,10 @@ export function RevisaoCliente({
   if (questoes.length === 0) {
     const Icon = tipo === "favoritas" ? Star : XCircle;
     return (
+      <PaginaLeitura>
       <Card>
         <CardContent className="flex flex-col items-center gap-4 p-10 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-800 text-slate-400">
+          <div className="flex h-14 w-14 items-center justify-center rounded-sm bg-slate-800 text-slate-400">
             <Icon className="h-7 w-7" />
           </div>
           <div>
@@ -46,6 +48,7 @@ export function RevisaoCliente({
           <Button onClick={() => router.push("/treino")}>Ir para o treino</Button>
         </CardContent>
       </Card>
+      </PaginaLeitura>
     );
   }
 
@@ -53,7 +56,7 @@ export function RevisaoCliente({
 
   return (
     <div className="space-y-4">
-      <div className="inline-flex rounded-xl border border-slate-800 bg-slate-900/60 p-1">
+      <div className="inline-flex rounded-sm border border-slate-800 bg-slate-900/60 p-1">
         <ModoBtn
           ativo={modo === "visualizar"}
           onClick={() => setModo("visualizar")}

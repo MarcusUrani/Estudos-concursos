@@ -9,8 +9,15 @@ import type { QuestaoDTO } from "@/server/treino";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  PaginaSessao,
+  PaginaLeitura,
+  Cabecalho,
+  TrilhoBloco,
+  TrilhoDado,
+} from "@/components/ui/pagina";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, BookOpenText, Pencil, Layers, ScrollText, Dot } from "lucide-react";
+import { ArrowLeft, BookOpenText, Pencil, Layers, Dot } from "lucide-react";
 
 type Aba = "resumo" | "praticar";
 
@@ -27,34 +34,48 @@ export function EstudarClient({
   const [aba, setAba] = useState<Aba>("resumo");
   const favMap = Object.fromEntries(favoritos.map((id) => [id, true]));
 
+  // As bases legais e o atalho de flashcards nao sao leitura: sao referencia.
+  // Vao para a margem, e o resumo fica com a coluna inteira so para ele.
+  const trilho = (
+    <>
+      <TrilhoBloco>
+        <TrilhoDado rotulo="Questões no banco" valor={detalhe.totalQuestoes} />
+        <Link href={`/flashcards?assunto=${detalhe.id}`} className="mt-4 block">
+          <Button variant="secondary" className="w-full">
+            <Layers className="h-4 w-4" />
+            Flashcards deste tema
+          </Button>
+        </Link>
+      </TrilhoBloco>
+
+      {detalhe.fontesLegais.length > 0 && (
+        <TrilhoBloco titulo="Bases legais">
+          <div className="flex flex-wrap gap-2">
+            {detalhe.fontesLegais.map((f) => (
+              <Badge key={f} variant="neutral">
+                {f}
+              </Badge>
+            ))}
+          </div>
+        </TrilhoBloco>
+      )}
+    </>
+  );
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <PaginaSessao>
       <div>
         <Link
           href="/estudar"
-          className="mb-3 inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200"
+          className="mb-4 inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200"
         >
           <ArrowLeft className="h-4 w-4" />
           Todas as legislações
         </Link>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-100">{detalhe.nome}</h1>
-            {detalhe.descricao && (
-              <p className="mt-1 text-sm text-slate-400">{detalhe.descricao}</p>
-            )}
-            <p className="mt-1 text-xs text-slate-500">{detalhe.totalQuestoes} questões no banco</p>
-          </div>
-          <Link href={`/flashcards?assunto=${detalhe.id}`}>
-            <Button variant="secondary">
-              <Layers className="h-4 w-4" />
-              Flashcards
-            </Button>
-          </Link>
-        </div>
+        <Cabecalho titulo={detalhe.nome} descricao={detalhe.descricao ?? undefined} />
       </div>
 
-      <div className="inline-flex rounded-xl border border-slate-800 bg-slate-900/60 p-1">
+      <div className="inline-flex rounded-sm border border-slate-800 bg-slate-900/60 p-1">
         <AbaBtn ativo={aba === "resumo"} onClick={() => setAba("resumo")} icon={BookOpenText} label="Resumo" />
         <AbaBtn
           ativo={aba === "praticar"}
@@ -65,6 +86,7 @@ export function EstudarClient({
       </div>
 
       {aba === "resumo" ? (
+        <PaginaLeitura trilho={trilho}>
         <div className="space-y-4">
           {detalhe.resumo && (
             <Card className="border-indigo-700/40 bg-indigo-500/5">
@@ -74,23 +96,6 @@ export function EstudarClient({
                 </p>
                 <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
                   {detalhe.resumo}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {detalhe.fontesLegais.length > 0 && (
-            <Card>
-              <CardContent className="space-y-2 p-5">
-                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-300">
-                  <ScrollText className="h-4 w-4" /> Bases legais principais
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {detalhe.fontesLegais.map((f) => (
-                    <Badge key={f} variant="neutral">
-                      {f}
-                    </Badge>
-                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -126,6 +131,7 @@ export function EstudarClient({
             como guia de estudo e confirme sempre na fonte legal citada.
           </p>
         </div>
+        </PaginaLeitura>
       ) : relacionadas.length > 0 ? (
         <TreinoSessao
           questoes={relacionadas}
@@ -133,13 +139,15 @@ export function EstudarClient({
           acaoFinal={{ label: "Voltar às legislações", onClick: () => router.push("/estudar") }}
         />
       ) : (
-        <Card>
-          <CardContent className="p-8 text-center text-sm text-slate-400">
-            Ainda não há questões cadastradas para este tema.
-          </CardContent>
-        </Card>
+        <PaginaLeitura>
+          <Card>
+            <CardContent className="p-8 text-center text-sm text-slate-400">
+              Ainda não há questões cadastradas para este tema.
+            </CardContent>
+          </Card>
+        </PaginaLeitura>
       )}
-    </div>
+    </PaginaSessao>
   );
 }
 
