@@ -39,6 +39,10 @@ const links = [
   { href: "/erradas", label: "Que errei", icon: XCircle },
   { href: "/historico", label: "Histórico", icon: History },
   { href: "/conquistas", label: "Conquistas", icon: Sparkles },
+  // Aberto a todos: criar materia/assunto e gerar questoes por IA. As abas de
+  // cadastro manual e material de estudo continuam so para admin, dentro da
+  // propria pagina.
+  { href: "/conteudo", label: "Conteúdo", icon: FolderPlus },
 ];
 
 function Marca({ concursos, concursoAtualId }: Pick<NavProps, "concursos" | "concursoAtualId">) {
@@ -120,11 +124,7 @@ export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtua
 
   const base = podeRevisar ? links : links.filter((l) => l.href !== "/revisao");
   const itens = isAdmin
-    ? [
-        ...base,
-        { href: "/admin/conteudo", label: "Conteúdo", icon: FolderPlus },
-        { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert },
-      ]
+    ? [...base, { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert }]
     : base;
 
   return (

@@ -3,8 +3,6 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  criarMateria,
-  criarAssunto,
   criarQuestao,
   importarQuestoes,
   getResumoEstudo,
@@ -12,99 +10,115 @@ import {
   type ConteudoAdmin,
   type ResultadoImport,
 } from "@/server/admin-conteudo";
+import { criarMateria, criarAssunto, type ConcursoArvore } from "@/server/conteudo";
 import { NIVEIS, cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle2, AlertCircle, Plus, Trash2, Save, Upload } from "lucide-react";
+import { Campo, Feedback, inputCls, textareaCls } from "./campos";
+import { IaForm } from "./ia-form";
+import { Plus, Trash2, Save, Upload, Sparkles } from "lucide-react";
 
-const inputCls =
-  "w-full rounded-sm border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
-const textareaCls = cn(inputCls, "resize-y");
+type Aba = "materia" | "assunto" | "ia" | "questao" | "estudo";
 
-type Aba = "materia" | "assunto" | "questao" | "estudo";
-
-const ABAS: { id: Aba; label: string }[] = [
+/** `admin: true` = aba que so aparece para administradores. */
+const ABAS: { id: Aba; label: string; admin?: boolean }[] = [
   { id: "materia", label: "Matéria" },
   { id: "assunto", label: "Assunto" },
-  { id: "questao", label: "Questões" },
-  { id: "estudo", label: "Estudo" },
+  { id: "ia", label: "Gerar com IA" },
+  { id: "questao", label: "Questões", admin: true },
+  { id: "estudo", label: "Estudo", admin: true },
 ];
 
-export function ConteudoClient({ conteudo }: { conteudo: ConteudoAdmin }) {
+export function ConteudoClient({
+  conteudo,
+  concursos,
+  isAdmin,
+}: {
+  /** So vem para admin — alimenta as abas Questões e Estudo. */
+  conteudo: ConteudoAdmin | null;
+  concursos: ConcursoArvore[];
+  isAdmin: boolean;
+}) {
   const [aba, setAba] = useState<Aba>("materia");
+  const abas = ABAS.filter((a) => isAdmin || !a.admin);
 
   return (
     <div className="space-y-5">
-      <div className="flex gap-1 rounded-sm border border-slate-800 bg-slate-950/40 p-1">
-        {ABAS.map((a) => (
+      {/* `flex-wrap` porque sao ate cinco abas: em tela estreita elas quebram em
+          duas linhas em vez de espremer o rotulo ate ficar ilegivel. */}
+      <div className="flex flex-wrap gap-1 rounded-sm border border-slate-800 bg-slate-950/40 p-1">
+        {abas.map((a) => (
           <button
             key={a.id}
             type="button"
             onClick={() => setAba(a.id)}
             className={cn(
-              "flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              "flex-1 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+              a.id === "ia" ? "min-w-28" : "min-w-20",
               aba === a.id
                 ? "bg-indigo-600/20 text-indigo-200 ring-1 ring-inset ring-indigo-500/40"
                 : "text-slate-400 hover:text-slate-200"
             )}
           >
+            {a.id === "ia" && <Sparkles className="mr-1.5 inline h-3.5 w-3.5 align-[-2px]" />}
             {a.label}
           </button>
         ))}
       </div>
 
-      {aba === "materia" && <MateriaForm />}
-      {aba === "assunto" && <AssuntoForm materias={conteudo.materias} />}
-      {aba === "questao" && <QuestaoForm assuntos={conteudo.assuntos} />}
-      {aba === "estudo" && <EstudoForm assuntos={conteudo.assuntos} />}
+      {aba === "materia" && <MateriaForm concursos={concursos} />}
+      {aba === "assunto" && <AssuntoForm concursos={concursos} />}
+      {aba === "ia" && <IaForm concursos={concursos} />}
+      {aba === "questao" && conteudo && <QuestaoForm assuntos={conteudo.assuntos} />}
+      {aba === "estudo" && conteudo && <EstudoForm assuntos={conteudo.assuntos} />}
     </div>
   );
 }
 
-// -------------------------------------------------------------- feedback
-
-function Feedback({ erro, ok }: { erro?: string | null; ok?: string | null }) {
-  if (!erro && !ok) return null;
-  return erro ? (
-    <div className="flex items-start gap-2 rounded-sm bg-rose-500/10 px-3 py-2 text-sm text-rose-300">
-      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-      <span className="whitespace-pre-wrap">{erro}</span>
-    </div>
-  ) : (
-    <div className="flex items-start gap-2 rounded-sm bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
-      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-      <span className="whitespace-pre-wrap">{ok}</span>
-    </div>
-  );
-}
-
-function Campo({ label, children }: { label: string; children: React.ReactNode }) {
+/** Select de concurso — o mesmo em matéria e assunto. */
+function SelectConcurso({
+  concursos,
+  value,
+  onChange,
+}: {
+  concursos: ConcursoArvore[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
   return (
-    <div>
-      <p className="mb-1.5 text-sm font-medium text-slate-300">{label}</p>
-      {children}
-    </div>
+    <Campo label="Concurso">
+      <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
+        {concursos.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.nome}
+          </option>
+        ))}
+      </select>
+    </Campo>
   );
 }
 
 // -------------------------------------------------------------- matéria
 
-function MateriaForm() {
+function MateriaForm({ concursos }: { concursos: ConcursoArvore[] }) {
   const router = useRouter();
+  const [concursoId, setConcursoId] = useState(concursos[0]?.id ?? "");
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
+  const concurso = concursos.find((c) => c.id === concursoId);
+
   function salvar() {
     setErro(null);
     setOk(null);
     start(async () => {
       try {
-        await criarMateria({ nome, descricao });
-        setOk(`Matéria "${nome.trim()}" criada.`);
+        await criarMateria({ concursoId, nome, descricao });
+        setOk(`Matéria "${nome.trim()}" criada em ${concurso?.nome ?? "—"}.`);
         setNome("");
         setDescricao("");
         router.refresh();
@@ -114,9 +128,12 @@ function MateriaForm() {
     });
   }
 
+  if (concursos.length === 0) return <SemConcurso />;
+
   return (
     <Card>
       <CardContent className="space-y-4 p-6">
+        <SelectConcurso concursos={concursos} value={concursoId} onChange={setConcursoId} />
         <Campo label="Nome da matéria">
           <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Legislação Social do DF" />
         </Campo>
@@ -125,7 +142,7 @@ function MateriaForm() {
         </Campo>
         <Feedback erro={erro} ok={ok} />
         <div className="flex justify-end">
-          <Button onClick={salvar} disabled={pending || !nome.trim()}>
+          <Button onClick={salvar} disabled={pending || !nome.trim() || !concursoId}>
             <Plus className="h-4 w-4" />
             {pending ? "Criando…" : "Criar matéria"}
           </Button>
@@ -135,10 +152,21 @@ function MateriaForm() {
   );
 }
 
+function SemConcurso() {
+  return (
+    <Card>
+      <CardContent className="p-6 text-sm text-slate-400">
+        Nenhum concurso cadastrado ainda.
+      </CardContent>
+    </Card>
+  );
+}
+
 // -------------------------------------------------------------- assunto
 
-function AssuntoForm({ materias }: { materias: ConteudoAdmin["materias"] }) {
+function AssuntoForm({ concursos }: { concursos: ConcursoArvore[] }) {
   const router = useRouter();
+  const [concursoId, setConcursoId] = useState(concursos[0]?.id ?? "");
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [materiaId, setMateriaId] = useState("");
@@ -146,13 +174,25 @@ function AssuntoForm({ materias }: { materias: ConteudoAdmin["materias"] }) {
   const [ok, setOk] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
+  const concurso = concursos.find((c) => c.id === concursoId);
+  const materias = concurso?.materias ?? [];
+
+  function trocarConcurso(id: string) {
+    setConcursoId(id);
+    // A matéria pertence a UM concurso: manter a seleção anterior deixaria o
+    // formulário apontando para uma matéria de outro concurso.
+    setMateriaId("");
+    setErro(null);
+    setOk(null);
+  }
+
   function salvar() {
     setErro(null);
     setOk(null);
     start(async () => {
       try {
-        await criarAssunto({ nome, descricao, materiaId });
-        setOk(`Assunto "${nome.trim()}" criado.`);
+        await criarAssunto({ concursoId, materiaId, nome, descricao });
+        setOk(`Assunto "${nome.trim()}" criado em ${concurso?.nome ?? "—"}.`);
         setNome("");
         setDescricao("");
         router.refresh();
@@ -162,43 +202,51 @@ function AssuntoForm({ materias }: { materias: ConteudoAdmin["materias"] }) {
     });
   }
 
-  if (materias.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-sm text-slate-400">
-          Crie uma <span className="font-medium text-slate-200">matéria</span> primeiro — todo assunto pertence a uma
-          matéria.
-        </CardContent>
-      </Card>
-    );
-  }
+  if (concursos.length === 0) return <SemConcurso />;
+
+  const semMaterias = materias.length === 0;
 
   return (
     <Card>
       <CardContent className="space-y-4 p-6">
-        <Campo label="Matéria">
-          <select value={materiaId} onChange={(e) => setMateriaId(e.target.value)} className={inputCls}>
-            <option value="">Selecione…</option>
-            {materias.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.nome}
-              </option>
-            ))}
-          </select>
-        </Campo>
-        <Campo label="Nome do assunto">
-          <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Lei nº 840/2011 (Servidores)" />
-        </Campo>
-        <Campo label="Descrição (opcional)">
-          <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={2} className={textareaCls} />
-        </Campo>
-        <Feedback erro={erro} ok={ok} />
-        <div className="flex justify-end">
-          <Button onClick={salvar} disabled={pending || !nome.trim() || !materiaId}>
-            <Plus className="h-4 w-4" />
-            {pending ? "Criando…" : "Criar assunto"}
-          </Button>
-        </div>
+        {/* O seletor de concurso fica SEMPRE visível, mesmo quando o concurso
+            escolhido ainda não tem matéria: sair antes daqui prenderia a pessoa
+            num concurso vazio, sem como trocar. */}
+        <SelectConcurso concursos={concursos} value={concursoId} onChange={trocarConcurso} />
+
+        {semMaterias ? (
+          <p className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-sm text-slate-400">
+            <span className="font-medium text-slate-200">{concurso?.nome}</span> ainda não tem
+            matéria. Crie uma na aba <span className="font-medium text-slate-200">Matéria</span> —
+            todo assunto pertence a uma.
+          </p>
+        ) : (
+          <>
+            <Campo label="Matéria">
+              <select value={materiaId} onChange={(e) => setMateriaId(e.target.value)} className={inputCls}>
+                <option value="">Selecione…</option>
+                {materias.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nome}
+                  </option>
+                ))}
+              </select>
+            </Campo>
+            <Campo label="Nome do assunto">
+              <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex.: Lei nº 840/2011 (Servidores)" />
+            </Campo>
+            <Campo label="Descrição (opcional)">
+              <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} rows={2} className={textareaCls} />
+            </Campo>
+            <Feedback erro={erro} ok={ok} />
+            <div className="flex justify-end">
+              <Button onClick={salvar} disabled={pending || !nome.trim() || !materiaId}>
+                <Plus className="h-4 w-4" />
+                {pending ? "Criando…" : "Criar assunto"}
+              </Button>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );

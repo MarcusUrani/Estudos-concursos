@@ -58,57 +58,9 @@ export async function listarConteudo(): Promise<ConteudoAdmin> {
   };
 }
 
-// ---------------------------------------------------------------- materia
-
-export async function criarMateria(input: { nome: string; descricao?: string }): Promise<void> {
-  await exigirAdmin();
-  const concursoId = await concursoAtual();
-
-  const nome = input.nome?.trim();
-  if (!nome) throw new Error("Informe o nome da matéria.");
-
-  const existe = await prisma.materia.findFirst({ where: { concursoId, nome }, select: { id: true } });
-  if (existe) throw new Error("Já existe uma matéria com esse nome neste concurso.");
-
-  const ordem = await prisma.materia.count({ where: { concursoId } });
-  await prisma.materia.create({
-    data: { nome, descricao: input.descricao?.trim() || null, ordem, concursoId },
-  });
-
-  revalidatePath("/admin/conteudo");
-  revalidatePath("/estudar");
-}
-
-// ---------------------------------------------------------------- assunto
-
-export async function criarAssunto(input: {
-  nome: string;
-  descricao?: string;
-  materiaId: string;
-}): Promise<void> {
-  await exigirAdmin();
-  const concursoId = await concursoAtual();
-
-  const nome = input.nome?.trim();
-  if (!nome) throw new Error("Informe o nome do assunto.");
-
-  const materia = await prisma.materia.findFirst({
-    where: { id: input.materiaId, concursoId },
-    select: { id: true },
-  });
-  if (!materia) throw new Error("Selecione uma matéria válida.");
-
-  const existe = await prisma.assunto.findFirst({ where: { concursoId, nome }, select: { id: true } });
-  if (existe) throw new Error("Já existe um assunto com esse nome neste concurso.");
-
-  const ordem = await prisma.assunto.count({ where: { concursoId } });
-  await prisma.assunto.create({
-    data: { nome, descricao: input.descricao?.trim() || null, ordem, materiaId: materia.id, concursoId },
-  });
-
-  revalidatePath("/admin/conteudo");
-  revalidatePath("/estudar");
-}
+// Criar materia e assunto deixou de ser exclusivo do admin: essas duas acoes
+// vivem agora em `server/conteudo.ts`, onde recebem o concurso por parametro em
+// vez de usar o do cookie.
 
 // ---------------------------------------------------------------- material de estudo
 
@@ -139,7 +91,7 @@ export async function salvarResumoEstudo(assuntoId: string, texto: string): Prom
     data: { resumo: texto.trim() || null },
   });
 
-  revalidatePath("/admin/conteudo");
+  revalidatePath("/conteudo");
   revalidatePath(`/estudar/${assunto.id}`);
   revalidatePath("/estudar");
 }
@@ -218,7 +170,7 @@ export async function criarQuestao(input: {
     },
   });
 
-  revalidatePath("/admin/conteudo");
+  revalidatePath("/conteudo");
 }
 
 // ---------------------------------------------------------------- questoes (lote JSON)
@@ -345,7 +297,7 @@ export async function importarQuestoes(jsonText: string): Promise<ResultadoImpor
     criadas++;
   }
 
-  revalidatePath("/admin/conteudo");
+  revalidatePath("/conteudo");
   return { criadas, ignoradas, erros };
 }
 
