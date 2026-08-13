@@ -1,0 +1,135 @@
+import { NIVEIS, type Nivel } from "@/lib/utils";
+
+/* =============================================================================
+   Prompt do gerador de questoes
+
+   O texto abaixo e o prompt do agente, definido pelo dono do produto. Fica
+   isolado num arquivo proprio de proposito: e conteudo editorial, nao logica —
+   quem ajusta o tom das questoes nao precisa mexer na action nem no client.
+
+   O que o prompt PEDE e o que o codigo GARANTE sao coisas diferentes. Modelo de
+   linguagem erra formato, repete questao e inventa nivel com acento. Por isso
+   toda regra listada aqui tem um equivalente executavel em `normalizarQuestao`
+   e na action — o prompt reduz a taxa de erro, o codigo e quem barra.
+   ============================================================================= */
+
+export const PROMPT_SISTEMA = `Você é um especialista em criar questões de concursos, de forma bem elaborada e com vasto conteúdo. Ao criar as questões, elas devem ser claras, mesmo havendo um tema pré-definido, a questão deve demonstrar, no enunciado, de forma clara que é aquele tema que está sendo abordado. Nunca repita questões, faça sempre de múltipla escolha. Além disso, as questões devem ser retornadas no seguinte formato, nunca gere nenhum tipo de formulário ou arquivo:
+
+[
+  {
+    "assunto": "DF Brincar",
+    "nivel": "Facil",
+    "dificuldade": 2,
+    "enunciado": "O DF Brincar é um programa voltado a:",
+    "alternativas": [
+      { "texto": "garantir o direito ao lazer e ao desenvolvimento infantil por meio do brincar.", "correta": true },
+      { "texto": "regular o comércio de brinquedos no DF.", "correta": false },
+      { "texto": "fiscalizar parques e áreas de lazer privadas.", "correta": false },
+      { "texto": "promover competições esportivas entre escolas.", "correta": false },
+      { "texto": "organizar o transporte escolar.", "correta": false }
+    ],
+    "explicacao": "O DF Brincar promove o direito ao lazer, à convivência e ao desenvolvimento infantil.",
+    "fonteLegal": "Programa DF Social; Decreto nº 42.872/2021",
+    "palavrasChave": ["lazer", "desenvolvimento infantil"]
+  }
+]
+
+Regras obrigatórias:
+1. nivel — apenas "Facil", "Medio" ou "Dificil" (sem acento, sem variações)
+2. alternativas — Exatamente 5 alternativas, exatamente 1 com "correta": true
+3. enunciado — textos duplicados (mesmo conteúdo ignorando acentos) devem ser descartados
+4. assunto — deve ser sempre padronizado
+
+Processamento automático:
+- O campo subassunto é derivado do assunto bruto: se o raw conter " - ", a parte após o traço vira subassunto. Ex: "DF Brincar - Atividades" → assunto="DF Brincar", subassunto="Atividades"
+- Para os assuntos do DF Social, os canônicos são: Programa DF Social (Lei nº 7.008/2021 e Decreto nº 42.872/2021), DF Brincar, Incentiva DF, Agentes da Cidadania (Portaria nº 42/2023), Agentes de Cidadania Ambiental, DF Alfabetização, SOS Mulher
+
+Responda APENAS com o array JSON, sem cercas de código, sem comentários e sem texto antes ou depois.`;
+
+/** Assuntos canonicos do DF Social, citados no prompt. */
+export const ASSUNTOS_CANONICOS = [
+  "Programa DF Social",
+  "DF Brincar",
+  "Incentiva DF",
+  "Agentes da Cidadania",
+  "Agentes de Cidadania Ambiental",
+  "DF Alfabetização",
+  "SOS Mulher",
+] as const;
+
+export type PedidoGeracao = {
+  quantidade: number;
+  materia: string;
+  /** Nome canonico do assunto escolhido no formulario. */
+  assunto: string;
+  banca: string;
+  /** `null` = mistura os tres niveis. */
+  nivel: Nivel | null;
+  /** Texto livre do admin, anexado ao pedido. */
+  instrucoes?: string;
+  /** Enunciados que ja existem no banco, para o modelo nao repetir. */
+  enunciadosExistentes: string[];
+};
+
+/** Monta a mensagem de usuario: o pedido concreto desta geracao. */
+export function montarPedido(p: PedidoGeracao): string {
+  const partes = [
+    `Gere ${p.quantidade} ${p.quantidade === 1 ? "questão inédita" : "questões inéditas"} de concurso público.`,
+    "",
+    `Matéria: ${p.materia}`,
+    `Assunto (use exatamente este valor no campo "assunto"): ${p.assunto}`,
+    `Banca: ${p.banca} — siga o estilo de redação dessa banca.`,
+    p.nivel
+      ? `Nível: ${p.nivel} em todas as questões.`
+      : `Nível: misture "Facil", "Medio" e "Dificil" ao longo do conjunto.`,
+  ];
+
+  if (p.instrucoes?.trim()) {
+    partes.push("", `Instruções adicionais do avaliador: ${p.instrucoes.trim()}`);
+  }
+
+  // Sem esta lista o "nunca repita questões" do prompt e inconsequente: o modelo
+  // nao tem como saber o que ja existe no banco. Com ela, a taxa de descarte por
+  // duplicidade cai bastante.
+  if (p.enunciadosExistentes.length > 0) {
+    partes.push(
+      "",
+      "As questões abaixo JÁ EXISTEM no banco. Não repita nenhuma delas, nem versões reescritas com as mesmas palavras-chave e a mesma resposta:",
+      ...p.enunciadosExistentes.map((e, i) => `${i + 1}. ${e}`)
+    );
+  }
+
+  partes.push("", `Responda com um array JSON de exatamente ${p.quantidade} objetos.`);
+  return partes.join("\n");
+}
+
+/** Compara enunciados ignorando acento, caixa e espaco repetido. */
+export function normalizarTexto(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * "Facil" / "fácil" / "FÁCIL" -> "Facil". Devolve `null` se nao casar com
+ * nenhum dos tres niveis. O prompt pede sem acento, mas o modelo escorrega:
+ * normalizar aqui evita descartar uma questao boa por causa de um til.
+ */
+export function normalizarNivel(bruto: unknown): Nivel | null {
+  if (typeof bruto !== "string") return null;
+  const alvo = normalizarTexto(bruto);
+  return NIVEIS.find((n) => normalizarTexto(n) === alvo) ?? null;
+}
+
+/**
+ * Separa "DF Brincar - Atividades" em assunto + subassunto, conforme a regra de
+ * processamento automatico do prompt. Aceita hifen simples e travessao.
+ */
+export function derivarAssunto(bruto: string): { assunto: string; subassunto: string | null } {
+  const m = bruto.match(/^(.*?)\s+[-–—]\s+(.*)$/);
+  if (!m) return { assunto: bruto.trim(), subassunto: null };
+  return { assunto: m[1].trim(), subassunto: m[2].trim() || null };
+}
