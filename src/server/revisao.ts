@@ -43,7 +43,7 @@ export type QuestaoRevisaoDTO = {
   subassunto: string | null;
   alternativas: AlternativaRevisaoDTO[];
   explicacao: string;
-  fonteLegal: string | null;
+  fonte: string | null;
 };
 
 export type ListaRevisao = {
@@ -96,7 +96,7 @@ export async function listarRevisaoDoDia(): Promise<ListaRevisao> {
       assunto: r.questao.assunto.nome,
       subassunto: r.questao.subassunto?.nome ?? null,
       explicacao: r.questao.explicacao,
-      fonteLegal: r.questao.fonteLegal,
+      fonte: r.questao.fonte,
       alternativas: r.questao.alternativas.map((a) => ({
         id: a.id,
         texto: a.texto,
@@ -149,7 +149,7 @@ export async function listarRevisao(
       assunto: q.assunto.nome,
       subassunto: q.subassunto?.nome ?? null,
       explicacao: q.explicacao,
-      fonteLegal: q.fonteLegal,
+      fonte: q.fonte,
       alternativas: q.alternativas.map((a) => ({
         id: a.id,
         texto: a.texto,

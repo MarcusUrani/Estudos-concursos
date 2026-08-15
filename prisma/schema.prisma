@@ -114,7 +114,12 @@ model Questao {
   nivel         String   @default("Medio") // "Facil" | "Medio" | "Dificil"
   banca         String   @default("QUADRIX")
   explicacao    String
-  fonteLegal    String?
+  // `@map` de proposito: o campo passou a se chamar `fonte` porque o banco de
+  // questoes deixou de ser so legislacao (portugues, informatica etc. tem fonte
+  // que nao e base legal). A COLUNA continua `fonteLegal` para que a mudanca
+  // seja so de nome no codigo — sem ALTER TABLE, sem migration, sem risco no
+  // banco de producao, que e o mesmo usado em desenvolvimento.
+  fonte         String?  @map("fonteLegal")
   palavrasChave String?  // CSV (SQLite nao tem arrays nativos)
   dificuldade   Int      @default(3) // 1..5
   tempoMedio    Int      @default(60) // segundos

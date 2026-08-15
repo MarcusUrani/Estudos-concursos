@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Alfabetização é um programa de alfabetização voltado a jovens, adultos e idosos em situação de vulnerabilidade social que não concluíram a alfabetização na idade adequada.",
-    fonteLegal: "Programa DF Social; Decreto nº 42.872/2021",
+    fonte: "Programa DF Social; Decreto nº 42.872/2021",
     palavrasChave: ["alfabetização", "jovens e adultos", "EJA"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Alfabetização é um dos programas integrantes do Programa DF Social, política guarda-chuva de proteção e desenvolvimento social do Distrito Federal.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["Programa DF Social", "integração"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Alfabetização promove a inclusão educacional de jovens e adultos, ampliando suas oportunidades de cidadania, autonomia e acesso a direitos.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["inclusão educacional", "cidadania", "autonomia"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As aulas do DF Alfabetização ocorrem preferencialmente em CRAS, centros de convivência, associações comunitárias e outros equipamentos públicos de fácil acesso à população vulnerável.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["CRAS", "equipamentos públicos", "comunidade"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Alfabetização demonstra a abordagem intersetorial do Programa DF Social, que trata a educação como instrumento de emancipação e superação da pobreza.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["emancipação", "educação", "superação da pobreza"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Embora seja um programa de alfabetização, sua gestão cabe à SEDES por integrar o Programa DF Social, em articulação com a Secretaria de Educação.",
-    fonteLegal: "Lei nº 7.008/2021, art. 4º",
+    fonte: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "coordenação", "articulação"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Alfabetização atende jovens a partir de 15 anos, adultos e idosos que não tiveram acesso à alfabetização na idade regular, prioritariamente em situação de vulnerabilidade.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["15 anos", "jovens", "adultos", "idosos"],
   },
 ];

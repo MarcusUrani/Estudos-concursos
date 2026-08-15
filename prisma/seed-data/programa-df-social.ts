@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Programa DF Social é uma estratégia de articulação de programas e ações de proteção social e desenvolvimento social no DF, com foco no enfrentamento da pobreza e das vulnerabilidades sociais.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["proteção social", "pobreza", "vulnerabilidade"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A coordenação do Programa DF Social cabe à SEDES, órgão gestor da política de desenvolvimento e assistência social do Distrito Federal, em articulação com outras pastas.",
-    fonteLegal: "Lei nº 7.008/2021, art. 4º",
+    fonte: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "coordenação"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O CadÚnico é o instrumento de identificação e caracterização socioeconômica das famílias de baixa renda, base para a seleção de beneficiários dos programas sociais articulados pelo Programa DF Social.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto federal do Cadastro Único",
+    fonte: "Lei nº 7.008/2021; Decreto federal do Cadastro Único",
     palavrasChave: ["Cadastro Único", "baixa renda", "elegibilidade"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Programa DF Social articula programas de transferência de renda e segurança alimentar (como Cartão Prato Cheio e Cartão Gás), restaurantes comunitários e benefícios eventuais, entre outras ações de proteção social.",
-    fonteLegal: "Lei nº 7.008/2021, art. 2º",
+    fonte: "Lei nº 7.008/2021, art. 2º",
     palavrasChave: ["programas", "segurança alimentar", "transferência de renda"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Programa DF Social adota a lógica intersetorial: a superação da pobreza e da vulnerabilidade demanda ações coordenadas de diferentes políticas públicas.",
-    fonteLegal: "Lei nº 7.008/2021, art. 3º",
+    fonte: "Lei nº 7.008/2021, art. 3º",
     palavrasChave: ["intersetorialidade", "articulação"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O foco do Programa DF Social são as famílias em situação de pobreza, extrema pobreza e vulnerabilidade social, identificadas, em regra, pelo Cadastro Único.",
-    fonteLegal: "Lei nº 7.008/2021, art. 1º",
+    fonte: "Lei nº 7.008/2021, art. 1º",
     palavrasChave: ["público prioritário", "extrema pobreza"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A segurança alimentar e nutricional é promovida por ações como restaurantes comunitários, Cartão Prato Cheio e demais iniciativas que ampliam o acesso a alimentação adequada.",
-    fonteLegal: "Lei nº 7.008/2021; LOSAN (Lei 11.346/2006)",
+    fonte: "Lei nº 7.008/2021; LOSAN (Lei 11.346/2006)",
     palavrasChave: ["segurança alimentar", "acesso a alimentos"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Além da proteção imediata, o Programa DF Social busca a emancipação das famílias por meio de qualificação profissional, inclusão produtiva, emprego e apoio ao empreendedorismo.",
-    fonteLegal: "Lei nº 7.008/2021, art. 2º, II",
+    fonte: "Lei nº 7.008/2021, art. 2º, II",
     palavrasChave: ["trabalho e renda", "inclusão produtiva", "emancipação"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A rede do SUAS (especialmente os CRAS) e o Cadastro Único funcionam como portas de entrada e instrumentos de encaminhamento integrado das famílias aos programas do Programa DF Social.",
-    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
+    fonte: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["porta de entrada", "CRAS", "encaminhamento"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Programa DF Social estrutura-se como política pública de proteção e desenvolvimento social, articulando programas para reduzir desigualdades e promover direitos, e não como mero assistencialismo pontual.",
-    fonteLegal: "Lei nº 7.008/2021, art. 1º",
+    fonte: "Lei nº 7.008/2021, art. 1º",
     palavrasChave: ["política pública", "desigualdades"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A focalização por critérios de renda (via CadÚnico) busca direcionar os recursos públicos às famílias em maior situação de pobreza e vulnerabilidade, ampliando a efetividade da política.",
-    fonteLegal: "Lei nº 7.008/2021, art. 5º",
+    fonte: "Lei nº 7.008/2021, art. 5º",
     palavrasChave: ["focalização", "renda", "priorização"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O monitoramento e a avaliação são essenciais para medir resultados, identificar falhas e aprimorar a gestão e a efetividade dos programas sociais articulados pelo programa.",
-    fonteLegal: "Lei nº 7.008/2021, art. 8º",
+    fonte: "Lei nº 7.008/2021, art. 8º",
     palavrasChave: ["monitoramento", "avaliação", "gestão"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As ações de proteção social do Programa DF Social alinham-se à PNAS e ao SUAS, utilizando a rede socioassistencial e seus instrumentos para alcançar as famílias.",
-    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
+    fonte: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["PNAS", "SUAS", "proteção social"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A combinação de transferência de renda com acompanhamento familiar (PAIF/PAEFI) busca aliviar a pobreza no curto prazo e, ao mesmo tempo, fortalecer vínculos e promover acesso a direitos e à emancipação.",
-    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
+    fonte: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["transferência de renda", "acompanhamento familiar"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O controle social ocorre por meio de conselhos de políticas públicas (como o Conselho de Assistência Social do DF) e demais instâncias participativas, garantindo transparência e accountability.",
-    fonteLegal: "Lei nº 7.008/2021; LOAS",
+    fonte: "Lei nº 7.008/2021; LOAS",
     palavrasChave: ["controle social", "conselhos"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Um objetivo central do programa é reduzir a pobreza e a desigualdade social, promovendo proteção social e oportunidades de desenvolvimento às famílias vulneráveis.",
-    fonteLegal: "Lei nº 7.008/2021, art. 2º",
+    fonte: "Lei nº 7.008/2021, art. 2º",
     palavrasChave: ["redução da pobreza", "desigualdade"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O enfrentamento da fome e da insegurança alimentar é prioridade do programa, materializado em programas de segurança alimentar e nutricional (restaurantes comunitários, Prato Cheio etc.).",
-    fonteLegal: "Lei nº 7.008/2021; LOSAN",
+    fonte: "Lei nº 7.008/2021; LOSAN",
     palavrasChave: ["fome", "insegurança alimentar"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A integração de dados (CadÚnico e sistemas setoriais) melhora a identificação das famílias, reduz duplicidades e lacunas e qualifica o planejamento e a oferta dos programas.",
-    fonteLegal: "Lei nº 7.008/2021, art. 7º",
+    fonte: "Lei nº 7.008/2021, art. 7º",
     palavrasChave: ["integração de dados", "planejamento"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A territorialização leva em conta as desigualdades entre as regiões administrativas do DF, priorizando as áreas de maior vulnerabilidade na oferta de serviços e programas.",
-    fonteLegal: "Lei nº 7.008/2021; PNAS/2004",
+    fonte: "Lei nº 7.008/2021; PNAS/2004",
     palavrasChave: ["territorialização", "regiões administrativas"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Resultados sustentáveis exigem articular a proteção social imediata com estratégias de inclusão produtiva e acesso a direitos, promovendo a autonomia das famílias a médio e longo prazo.",
-    fonteLegal: "Lei nº 7.008/2021, art. 2º, parágrafo único",
+    fonte: "Lei nº 7.008/2021, art. 2º, parágrafo único",
     palavrasChave: ["sustentabilidade", "inclusão produtiva", "autonomia"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais (provisões suplementares e provisórias) integram a rede de proteção articulada pelo programa, atendendo situações temporárias como nascimento, morte, vulnerabilidade temporária e calamidade.",
-    fonteLegal: "Lei nº 7.008/2021; LOAS, art. 22",
+    fonte: "Lei nº 7.008/2021; LOAS, art. 22",
     palavrasChave: ["benefícios eventuais", "provisório"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Alinhado à CF/1988 e à LOAS, o programa trata a proteção social como direito do cidadão e dever do Estado, superando a lógica do assistencialismo e da caridade.",
-    fonteLegal: "Lei nº 7.008/2021; CF/1988, art. 203",
+    fonte: "Lei nº 7.008/2021; CF/1988, art. 203",
     palavrasChave: ["direito", "dever do Estado"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A moradia digna é um determinante social: a articulação com políticas de habitação fortalece a superação da pobreza e a proteção integral das famílias, na lógica intersetorial do programa.",
-    fonteLegal: "Lei nº 7.008/2021, art. 3º, III",
+    fonte: "Lei nº 7.008/2021, art. 3º, III",
     palavrasChave: ["habitação", "moradia", "intersetorialidade"],
   },
   {
@@ -408,7 +408,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Programa DF Social foi instituído pela Lei nº 7.008/2021 e regulamentado pelo Decreto nº 42.872/2021, que estabelece sua organização e funcionamento.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["regulamentação", "decreto"],
   },
   {
@@ -425,7 +425,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Programa DF Social fundamenta-se na articulação intersetorial e na participação social como princípios para a efetividade das ações de proteção e desenvolvimento social.",
-    fonteLegal: "Lei nº 7.008/2021, art. 3º",
+    fonte: "Lei nº 7.008/2021, art. 3º",
     palavrasChave: ["princípios", "intersetorialidade", "participação"],
   },
 ];

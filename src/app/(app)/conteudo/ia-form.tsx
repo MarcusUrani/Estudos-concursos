@@ -18,7 +18,9 @@ import { Bolha } from "@/components/ui/bolha";
 import { Campo, Feedback, inputCls, textareaCls } from "./campos";
 import { Sparkles, Save, Trash2, RotateCcw, Eye, EyeOff } from "lucide-react";
 
-const QUANTIDADES = [5, 10, 15, 20];
+// Teto de 12 vem da cota por minuto do Groq (8.000 tokens no modelo padrao),
+// nao de preferencia — ver `tetoTokens` em server/admin-ia.ts.
+const QUANTIDADES = [3, 5, 8, 12];
 
 /** Item da revisao: a questao gerada mais o estado de aprovacao do admin. */
 type ItemRevisao = QuestaoGerada & { incluir: boolean };
@@ -111,7 +113,7 @@ export function IaForm({ concursos }: { concursos: ConcursoArvore[] }) {
             nivel: it.nivel,
             dificuldade: it.dificuldade,
             explicacao: it.explicacao,
-            fonteLegal: it.fonteLegal,
+            fonte: it.fonte,
             palavrasChave: it.palavrasChave,
             subassunto: it.subassunto,
             alternativas: it.alternativas,
@@ -146,9 +148,9 @@ export function IaForm({ concursos }: { concursos: ConcursoArvore[] }) {
             aparecem abaixo para você revisar e escolher quais entram no banco. O gabarito começa{" "}
             <span className="font-medium text-slate-200">recolhido</span>: julgue primeiro se o
             enunciado se sustenta sozinho e se as alternativas são plausíveis, depois abra e confira a
-            resposta. Enunciados repetidos são descartados sozinhos. No plano gratuito do Groq há um
-            limite por minuto: se pedir 20 duas vezes seguidas, espere cerca de um minuto entre as
-            gerações.
+            resposta. Enunciados repetidos, e questões que mandam ler um texto que não está ali, são
+            descartados sozinhos. No plano gratuito do Groq há um limite por minuto: espere cerca de
+            um minuto entre duas gerações de 12.
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -414,7 +416,9 @@ function Revisao({
                 </button>
               </div>
 
-              <p className="text-sm leading-relaxed text-slate-100">{q.enunciado}</p>
+              <p className="text-sm leading-relaxed whitespace-pre-line text-slate-100">
+                {q.enunciado}
+              </p>
 
               {(() => {
                 const aberto = revelados.has(i);
@@ -453,10 +457,10 @@ function Revisao({
                             <span className="font-medium text-slate-300">Comentário: </span>
                             {q.explicacao}
                           </p>
-                          {q.fonteLegal && (
+                          {q.fonte && (
                             <p>
-                              <span className="font-medium text-slate-300">Base legal: </span>
-                              {q.fonteLegal}
+                              <span className="font-medium text-slate-300">Fonte: </span>
+                              {q.fonte}
                             </p>
                           )}
                           {q.palavrasChave.length > 0 && (
@@ -465,7 +469,7 @@ function Revisao({
                         </div>
                       ) : (
                         <p className="text-xs text-slate-500">
-                          Gabarito, comentário e base legal recolhidos.
+                          Gabarito, comentário e fonte recolhidos.
                         </p>
                       )}
 

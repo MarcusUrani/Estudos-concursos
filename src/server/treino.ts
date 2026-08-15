@@ -97,7 +97,7 @@ export type ResultadoResposta = {
   acertou: boolean;
   alternativaCorretaId: string;
   explicacao: string;
-  fonteLegal: string | null;
+  fonte: string | null;
 };
 
 /** Registra a resposta, atualiza a fila de revisao espacada e devolve o gabarito. */
@@ -137,7 +137,7 @@ export async function responder(
     acertou,
     alternativaCorretaId: correta?.id ?? "",
     explicacao: questao.explicacao,
-    fonteLegal: questao.fonteLegal,
+    fonte: questao.fonte,
   };
 }
 

@@ -19,7 +19,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A CF/1988, no art. 194, organiza a seguridade social como conjunto integrado de ações nas áreas de saúde, previdência e assistência social. A assistência passou a ser dever do Estado e direito do cidadão, prestada a quem dela necessitar, independentemente de contribuição (art. 203).",
-    fonteLegal: "CF/1988, arts. 194, 203 e 204",
+    fonte: "CF/1988, arts. 194, 203 e 204",
     palavrasChave: ["seguridade social", "CF 1988", "direito"],
   },
   {
@@ -38,7 +38,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 203 da CF/1988 estabelece que a assistência social será prestada a quem dela necessitar, independentemente de contribuição à seguridade social, caracterizando seu aspecto não contributivo.",
-    fonteLegal: "CF/1988, art. 203",
+    fonte: "CF/1988, art. 203",
     palavrasChave: ["não contributiva", "assistência social"],
   },
   {
@@ -56,7 +56,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOAS é a Lei Orgânica da Assistência Social (Lei 8.742, de 7 de dezembro de 1993), que dispõe sobre a organização da assistência social e regulamenta os arts. 203 e 204 da CF/1988.",
-    fonteLegal: "Lei 8.742/1993",
+    fonte: "Lei 8.742/1993",
     palavrasChave: ["LOAS", "8.742"],
   },
   {
@@ -75,7 +75,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 2º da LOAS lista os objetivos da assistência social (proteção à família, amparo a crianças e adolescentes, integração ao mercado de trabalho, habilitação/reabilitação de PcD etc.). Aposentadoria por tempo de contribuição é benefício previdenciário, não assistencial.",
-    fonteLegal: "Lei 8.742/1993, art. 2º",
+    fonte: "Lei 8.742/1993, art. 2º",
     palavrasChave: ["objetivos", "LOAS", "previdência"],
   },
   {
@@ -94,7 +94,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 4º da LOAS traz como princípio a supremacia do atendimento às necessidades sociais sobre as exigências de rentabilidade econômica, além da universalização dos direitos sociais e do respeito à dignidade do cidadão.",
-    fonteLegal: "Lei 8.742/1993, art. 4º",
+    fonte: "Lei 8.742/1993, art. 4º",
     palavrasChave: ["princípios", "LOAS", "necessidades sociais"],
   },
   {
@@ -113,7 +113,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 5º da LOAS estabelece como diretrizes a descentralização político-administrativa, a participação da população por meio de organizações representativas e a primazia da responsabilidade do Estado na condução da política.",
-    fonteLegal: "Lei 8.742/1993, art. 5º",
+    fonte: "Lei 8.742/1993, art. 5º",
     palavrasChave: ["diretrizes", "descentralização", "participação"],
   },
   {
@@ -131,7 +131,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SUAS (Sistema Único de Assistência Social) é um sistema público não contributivo, descentralizado e participativo, que organiza a oferta de serviços, programas, projetos e benefícios socioassistenciais.",
-    fonteLegal: "Lei 8.742/1993 (LOAS), art. 6º; PNAS/2004",
+    fonte: "Lei 8.742/1993 (LOAS), art. 6º; PNAS/2004",
     palavrasChave: ["SUAS", "descentralizado", "não contributivo"],
   },
   {
@@ -150,7 +150,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOAS prevê o comando único das ações em cada esfera de governo, princípio que estrutura o SUAS e garante a coordenação federativa da política de assistência social.",
-    fonteLegal: "Lei 8.742/1993, art. 5º, II; NOB-SUAS",
+    fonte: "Lei 8.742/1993, art. 5º, II; NOB-SUAS",
     palavrasChave: ["comando único", "gestão", "SUAS"],
   },
   {
@@ -169,7 +169,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A política de assistência social deve afiançar seguranças como acolhida, renda, convívio ou vivência familiar/comunitária, desenvolvimento de autonomia e apoio/auxílio em situações de calamidade e emergência.",
-    fonteLegal: "PNAS/2004; Tipificação Nacional de Serviços Socioassistenciais",
+    fonte: "PNAS/2004; Tipificação Nacional de Serviços Socioassistenciais",
     palavrasChave: ["seguranças", "acolhida", "convívio"],
   },
   {
@@ -188,7 +188,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SUAS organiza-se em Proteção Social Básica (prevenção) e Proteção Social Especial, esta subdividida em média complexidade (vínculos preservados) e alta complexidade (vínculos rompidos, com acolhimento).",
-    fonteLegal: "PNAS/2004; Tipificação Nacional",
+    fonte: "PNAS/2004; Tipificação Nacional",
     palavrasChave: ["complexidade", "PSB", "PSE"],
   },
   {
@@ -206,7 +206,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Política Nacional de Assistência Social (PNAS/2004) operacionaliza as diretrizes da LOAS, estabelecendo as bases para a implantação do SUAS e a organização territorial dos serviços.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["PNAS", "2004", "LOAS"],
   },
   {
@@ -225,7 +225,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOAS e a PNAS adotam a perspectiva de garantia de mínimos sociais e atendimento às necessidades básicas, voltada à proteção social e à promoção da cidadania, em uma leitura ampliada (não apenas de subsistência).",
-    fonteLegal: "Lei 8.742/1993, art. 1º; PNAS/2004",
+    fonte: "Lei 8.742/1993, art. 1º; PNAS/2004",
     palavrasChave: ["mínimos sociais", "necessidades básicas"],
   },
   {
@@ -244,7 +244,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOAS estrutura a oferta em serviços, programas, projetos e benefícios. O BPC e os benefícios eventuais são benefícios da assistência social, categoria distinta dos serviços e programas.",
-    fonteLegal: "Lei 8.742/1993, arts. 20 a 25",
+    fonte: "Lei 8.742/1993, arts. 20 a 25",
     palavrasChave: ["BPC", "benefícios", "serviços"],
   },
   {
@@ -263,7 +263,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Antes da CF/1988 e da LOAS, a assistência social no Brasil era marcada por práticas assistencialistas e clientelistas, exemplificadas pela LBA e pelo 'primeiro-damismo', em contraste com a atual lógica de direito.",
-    fonteLegal: "Histórico da política de assistência social no Brasil",
+    fonte: "Histórico da política de assistência social no Brasil",
     palavrasChave: ["LBA", "assistencialismo", "histórico"],
   },
   {
@@ -282,7 +282,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Conselhos de Assistência Social (nacional, estaduais, distrital e municipais) são órgãos permanentes e deliberativos, de composição paritária entre governo e sociedade civil, responsáveis pelo controle social da política.",
-    fonteLegal: "Lei 8.742/1993, arts. 16 e 17",
+    fonte: "Lei 8.742/1993, arts. 16 e 17",
     palavrasChave: ["conselhos", "controle social", "paritário"],
   },
   {
@@ -300,7 +300,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O CRAS é a unidade da Proteção Social Básica; o CREAS é a unidade da Proteção Social Especial de média complexidade. São referências territoriais para a oferta de serviços socioassistenciais.",
-    fonteLegal: "PNAS/2004; NOB-SUAS",
+    fonte: "PNAS/2004; NOB-SUAS",
     palavrasChave: ["CRAS", "CREAS", "referência"],
   },
   {
@@ -319,7 +319,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A proteção social demanda intersetorialidade: a assistência social articula-se com saúde, educação, trabalho, previdência e outras políticas para enfrentar de forma integral as vulnerabilidades.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["intersetorialidade", "proteção social"],
   },
   {
@@ -338,7 +338,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Lei 12.435/2011 alterou a LOAS (Lei 8.742/1993) e consolidou, no plano legal, o Sistema Único de Assistência Social (SUAS), antes previsto sobretudo em normas infralegais.",
-    fonteLegal: "Lei 12.435/2011",
+    fonte: "Lei 12.435/2011",
     palavrasChave: ["12.435", "SUAS", "LOAS"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Matricialidade sociofamiliar (família no centro) e territorialização (organização da oferta a partir do território e suas vulnerabilidades) são eixos estruturantes do SUAS.",
-    fonteLegal: "PNAS/2004; NOB-SUAS",
+    fonte: "PNAS/2004; NOB-SUAS",
     palavrasChave: ["matricialidade", "territorialização", "eixos"],
   },
   {
@@ -376,7 +376,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A assistência social destina-se a famílias e indivíduos em situação de vulnerabilidade e risco social e pessoal, com foco em quem dela necessitar, independentemente de contribuição.",
-    fonteLegal: "PNAS/2004; LOAS",
+    fonte: "PNAS/2004; LOAS",
     palavrasChave: ["público", "vulnerabilidade", "risco"],
   },
   {
@@ -395,7 +395,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O PAIF é o serviço de caráter continuado e obrigatório ofertado exclusivamente pelo CRAS, no âmbito da Proteção Social Básica. Já o PAEFI é do CREAS (Proteção Especial).",
-    fonteLegal: "Tipificação Nacional de Serviços Socioassistenciais",
+    fonte: "Tipificação Nacional de Serviços Socioassistenciais",
     palavrasChave: ["PAIF", "CRAS", "PSB"],
   },
   {
@@ -414,7 +414,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Após a LOAS (1993), instalaram-se os mecanismos de participação e controle social, como as Conferências e o Conselho Nacional de Assistência Social (CNAS), consolidando a assistência como política pública de direito.",
-    fonteLegal: "Lei 8.742/1993; histórico do SUAS",
+    fonte: "Lei 8.742/1993; histórico do SUAS",
     palavrasChave: ["conferência", "CNAS", "controle social"],
   },
   {
@@ -433,7 +433,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOAS (art. 6º-A, incluído pela Lei 12.435/2011) prevê como funções da assistência social a proteção social, a vigilância socioassistencial e a defesa de direitos.",
-    fonteLegal: "Lei 8.742/1993, art. 6º-A",
+    fonte: "Lei 8.742/1993, art. 6º-A",
     palavrasChave: ["funções", "vigilância", "defesa de direitos"],
   },
   {
@@ -451,7 +451,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "No pacto federativo do SUAS, a União coordena e normatiza nacionalmente a política e participa do cofinanciamento; a execução dos serviços ocorre de forma descentralizada, sobretudo pelos municípios e DF.",
-    fonteLegal: "LOAS; NOB-SUAS",
+    fonte: "LOAS; NOB-SUAS",
     palavrasChave: ["gestão federal", "cofinanciamento", "SUAS"],
   },
 ];

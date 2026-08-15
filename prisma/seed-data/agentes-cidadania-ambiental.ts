@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Agentes de Cidadania Ambiental é um programa voluntário de educação ambiental que mobiliza a comunidade para práticas sustentáveis e proteção do meio ambiente.",
-    fonteLegal: "Programa DF Social; Decreto nº 42.872/2021",
+    fonte: "Programa DF Social; Decreto nº 42.872/2021",
     palavrasChave: ["educação ambiental", "sustentabilidade", "mobilização"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Agentes de Cidadania Ambiental são voluntários que promovem ações de educação ambiental e sustentabilidade em suas comunidades, sem poder de polícia ou vínculo empregatício.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["voluntários", "sustentabilidade", "comunidade"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Agentes de Cidadania Ambiental realizam ações educativas e práticas como oficinas de reciclagem, mutirões de limpeza urbana, plantio de árvores e campanhas de conscientização.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["reciclagem", "mutirão", "plantio", "conscientização"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Agentes de Cidadania Ambiental integra o Programa DF Social, demonstrando a intersetorialidade entre a política de assistência social e a política ambiental.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["Programa DF Social", "intersetorialidade", "meio ambiente"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Diferentemente dos agentes públicos ambientais, os Agentes de Cidadania Ambiental são voluntários que atuam exclusivamente na educação e conscientização, sem poder de polícia ou poder de fiscalização sancionatória.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["poder de polícia", "conscientização", "educação"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Embora o tema seja ambiental, o programa está sob a gestão da SEDES por integrar o Programa DF Social, em articulação com órgãos ambientais.",
-    fonteLegal: "Lei nº 7.008/2021, art. 4º",
+    fonte: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "gestão", "articulação"],
   },
 ];

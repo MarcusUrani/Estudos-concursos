@@ -8,7 +8,7 @@ export const MOTIVOS_REPORTE: MotivoReporte[] = [
   { id: "mal_elaborada", label: "Pergunta mal elaborada" },
   { id: "gabarito_errado", label: "Resposta (gabarito) errada" },
   { id: "comentario_errado", label: "Comentário/explicação errado" },
-  { id: "fonte_errada", label: "Base legal incorreta" },
+  { id: "fonte_errada", label: "Fonte incorreta" },
   { id: "desatualizada", label: "Questão desatualizada" },
   { id: "erro_digitacao", label: "Erro de digitação" },
   { id: "outro", label: "Outro" },

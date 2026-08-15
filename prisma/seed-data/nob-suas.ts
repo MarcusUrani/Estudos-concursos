@@ -18,7 +18,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Norma Operacional Básica do SUAS (NOB-SUAS) disciplina a gestão pública da política de assistência social, exercida de modo sistêmico pelos entes federativos.",
-    fonteLegal: "NOB-SUAS/2012 (Resolução CNAS nº 33/2012)",
+    fonte: "NOB-SUAS/2012 (Resolução CNAS nº 33/2012)",
     palavrasChave: ["NOB", "gestão", "SUAS"],
   },
   {
@@ -36,7 +36,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A NOB-SUAS estabeleceu níveis de gestão para os municípios — inicial, básica e plena — conforme o cumprimento de requisitos de organização e oferta da política.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["níveis de gestão", "inicial", "plena"],
   },
   {
@@ -54,7 +54,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A pactuação no SUAS ocorre na Comissão Intergestores Tripartite (CIT), com União, estados e municípios, e nas Comissões Intergestores Bipartites (CIB), com estado e municípios.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["CIT", "CIB", "pactuação"],
   },
   {
@@ -72,7 +72,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Enquanto a pactuação ocorre nas comissões intergestores, a deliberação e o controle social cabem aos conselhos de assistência social, paritários e permanentes.",
-    fonteLegal: "NOB-SUAS; LOAS",
+    fonte: "NOB-SUAS; LOAS",
     palavrasChave: ["conselhos", "deliberação", "controle social"],
   },
   {
@@ -90,7 +90,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O financiamento do SUAS adota a lógica fundo a fundo, com repasses regulares e automáticos organizados em blocos de financiamento (proteção social básica, especial e gestão), superando a lógica de convênios.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["fundo a fundo", "blocos", "cofinanciamento"],
   },
   {
@@ -108,7 +108,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os recursos do SUAS são geridos pelos fundos de assistência social (nacional, estaduais, distrital e municipais), sob orientação e controle dos respectivos conselhos.",
-    fonteLegal: "LOAS, art. 28; NOB-SUAS",
+    fonte: "LOAS, art. 28; NOB-SUAS",
     palavrasChave: ["fundos", "FNAS", "financiamento"],
   },
   {
@@ -126,7 +126,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O IGD (do SUAS e do Bolsa Família/Cadastro Único) mede a qualidade da gestão e, com base nele, são transferidos recursos para apoiar o aprimoramento da gestão descentralizada.",
-    fonteLegal: "NOB-SUAS; legislação do IGD",
+    fonte: "NOB-SUAS; legislação do IGD",
     palavrasChave: ["IGD", "gestão", "incentivo"],
   },
   {
@@ -144,7 +144,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A vigilância socioassistencial é uma das funções da assistência social, voltada à produção e sistematização de informações territorializadas sobre necessidades de proteção e sobre a rede de serviços.",
-    fonteLegal: "NOB-SUAS; LOAS, art. 6º-A",
+    fonte: "NOB-SUAS; LOAS, art. 6º-A",
     palavrasChave: ["vigilância", "informação", "função"],
   },
   {
@@ -162,7 +162,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A vigilância socioassistencial atua em duas dimensões: a das situações de vulnerabilidade e risco das famílias/indivíduos e a do padrão e da capacidade de oferta dos serviços socioassistenciais.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["dimensões", "vigilância", "serviços"],
   },
   {
@@ -180,7 +180,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Pacto de Aprimoramento do SUAS é o instrumento de planejamento pactuado que define prioridades e metas para o aprimoramento contínuo da gestão da política nos entes federados.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["pacto", "metas", "aprimoramento"],
   },
   {
@@ -198,7 +198,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A NOB-SUAS e a NOB-RH preveem equipes de referência (composição mínima por porte e serviço), preferencialmente com servidores de carreira, e a educação permanente dos trabalhadores do SUAS.",
-    fonteLegal: "NOB-SUAS; NOB-RH/SUAS",
+    fonte: "NOB-SUAS; NOB-RH/SUAS",
     palavrasChave: ["equipes de referência", "educação permanente", "RH"],
   },
   {
@@ -216,7 +216,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os pisos de proteção social (básica e especial) são referências para a transferência de recursos federais aos demais entes, no cofinanciamento dos serviços socioassistenciais.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["pisos", "cofinanciamento", "serviços"],
   },
   {
@@ -234,7 +234,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O comando único é exercido pelo órgão gestor da assistência social em cada esfera (ex.: a SEDES no DF), responsável pela coordenação da política no respectivo território.",
-    fonteLegal: "LOAS; NOB-SUAS",
+    fonte: "LOAS; NOB-SUAS",
     palavrasChave: ["comando único", "órgão gestor"],
   },
   {
@@ -252,7 +252,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A vigilância socioassistencial utiliza o Cadastro Único e sistemas como o Censo SUAS e o RMA para conhecer o território, dimensionar demandas e planejar e qualificar a oferta de serviços.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["Cadastro Único", "Censo SUAS", "informação"],
   },
   {
@@ -270,7 +270,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Tanto a LOAS quanto a NOB-SUAS afirmam a primazia da responsabilidade do Estado na condução da política de assistência social em cada esfera de governo.",
-    fonteLegal: "LOAS, art. 5º; NOB-SUAS",
+    fonte: "LOAS, art. 5º; NOB-SUAS",
     palavrasChave: ["primazia do Estado", "condução"],
   },
   {
@@ -288,7 +288,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Para habilitar-se à gestão e ao cofinanciamento, o ente deve constituir conselho, fundo e plano de assistência social, além de alocar recursos próprios no respectivo fundo — o tripé exigido pela LOAS/NOB.",
-    fonteLegal: "LOAS, art. 30; NOB-SUAS",
+    fonte: "LOAS, art. 30; NOB-SUAS",
     palavrasChave: ["conselho", "fundo", "plano"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Censo SUAS é uma coleta anual de informações sobre a estrutura e o funcionamento das unidades (CRAS, CREAS etc.), conselhos e gestão, subsidiando a vigilância socioassistencial e o monitoramento.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["Censo SUAS", "monitoramento"],
   },
   {
@@ -324,7 +324,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SUAS funda-se na cooperação federativa, com competências partilhadas entre União, estados, DF e municípios e gestão descentralizada e participativa.",
-    fonteLegal: "NOB-SUAS; CF/1988",
+    fonte: "NOB-SUAS; CF/1988",
     palavrasChave: ["cooperação federativa", "descentralização"],
   },
   {
@@ -342,7 +342,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O RMA registra mensalmente os atendimentos e o volume de serviços ofertados nas unidades (CRAS/CREAS), alimentando a vigilância socioassistencial e o monitoramento da política.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["RMA", "atendimentos", "monitoramento"],
   },
   {
@@ -360,7 +360,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os saldos dos recursos do cofinanciamento permanecem vinculados ao fundo de assistência social e à sua finalidade, podendo ser reprogramados conforme as regras do SUAS, sob controle do conselho.",
-    fonteLegal: "NOB-SUAS",
+    fonte: "NOB-SUAS",
     palavrasChave: ["reprogramação", "vinculação", "fundo"],
   },
   {
@@ -378,7 +378,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A gestão territorializada exige planejar a oferta a partir do conhecimento das vulnerabilidades e da rede disponível em cada território, orientada pela vigilância socioassistencial.",
-    fonteLegal: "NOB-SUAS; PNAS/2004",
+    fonte: "NOB-SUAS; PNAS/2004",
     palavrasChave: ["territorialização", "planejamento", "oferta"],
   },
   {
@@ -396,7 +396,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Por não ser dividido em municípios, o DF acumula as competências estaduais e municipais na gestão do SUAS, organizando a política por meio do seu órgão gestor (a SEDES).",
-    fonteLegal: "CF/1988, art. 32; NOB-SUAS",
+    fonte: "CF/1988, art. 32; NOB-SUAS",
     palavrasChave: ["Distrito Federal", "competências", "SEDES"],
   },
 ];

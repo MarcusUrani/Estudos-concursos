@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher é um programa de proteção à mulher em situação de violência doméstica e familiar, integrando ações de acolhimento, orientação e encaminhamento à rede de proteção.",
-    fonteLegal: "Programa DF Social; Decreto nº 42.872/2021",
+    fonte: "Programa DF Social; Decreto nº 42.872/2021",
     palavrasChave: ["proteção", "violência doméstica", "acolhimento"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher atende todas as mulheres em situação de violência doméstica e familiar no DF, independentemente de renda, profissão ou escolaridade.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["violência doméstica", "acolhimento", "DF"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher oferece acolhimento psicossocial, orientação jurídica, informações sobre direitos e encaminhamento para a rede de serviços de proteção à mulher.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["acolhimento", "jurídico", "psicossocial", "encaminhamento"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher integra o Programa DF Social, articulando ações de proteção social com o enfrentamento à violência contra a mulher, em parceria com a rede de políticas para mulheres.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["Programa DF Social", "violência de gênero"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher atua de forma intersetorial, articulando-se com a assistência social, saúde, segurança pública, justiça e demais políticas para garantir proteção integral à mulher.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["intersetorialidade", "proteção integral", "articulação"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher é gerido pela SEDES por integrar o Programa DF Social, em articulação com a rede de proteção à mulher (DEAM, Casa da Mulher Brasileira, etc.).",
-    fonteLegal: "Lei nº 7.008/2021, art. 4º",
+    fonte: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "gestão"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SOS Mulher está alinhado à Lei Maria da Penha e às políticas de enfrentamento à violência contra a mulher, promovendo acolhimento e encaminhamento adequado.",
-    fonteLegal: "Lei nº 11.340/2006; Decreto nº 42.872/2021",
+    fonte: "Lei nº 11.340/2006; Decreto nº 42.872/2021",
     palavrasChave: ["Lei Maria da Penha", "alinhamento"],
   },
 ];

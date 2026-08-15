@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PDPM é a política pública do DF voltada à promoção da igualdade de gênero, à garantia e ampliação dos direitos das mulheres e ao enfrentamento das desigualdades e violências de gênero.",
-    fonteLegal: "Política Distrital para as Mulheres (DF)",
+    fonte: "Política Distrital para as Mulheres (DF)",
     palavrasChave: ["igualdade de gênero", "direitos das mulheres"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A transversalidade de gênero pressupõe incorporar a perspectiva de gênero em todas as políticas públicas (saúde, educação, trabalho, assistência etc.), de forma articulada e intersetorial.",
-    fonteLegal: "PDPM (DF); diretrizes de política para mulheres",
+    fonte: "PDPM (DF); diretrizes de política para mulheres",
     palavrasChave: ["transversalidade", "intersetorialidade"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As políticas para mulheres costumam organizar-se em eixos como autonomia econômica e igualdade no trabalho, enfrentamento a todas as formas de violência e fortalecimento da participação social e política das mulheres.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["eixos", "autonomia econômica", "enfrentamento à violência"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O enfrentamento à violência integra a PDPM e dialoga com a Lei Maria da Penha e com a rede de proteção (saúde, assistência social, segurança e justiça), de forma intersetorial.",
-    fonteLegal: "PDPM (DF); Lei 11.340/2006",
+    fonte: "PDPM (DF); Lei 11.340/2006",
     palavrasChave: ["enfrentamento", "rede de proteção", "Maria da Penha"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A promoção da autonomia econômica visa ampliar o acesso das mulheres ao trabalho digno, à renda, ao crédito, ao empreendedorismo e à qualificação, reduzindo desigualdades de gênero.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["autonomia econômica", "trabalho", "renda"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As políticas para as mulheres são coordenadas por órgão governamental específico (no DF, vinculado à estrutura da SEDES/Secretaria da Mulher), com atuação articulada e intersetorial.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["coordenação", "órgão gestor"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A construção e o monitoramento das políticas para mulheres contam com instâncias de participação social, como conferências e conselhos dos direitos da mulher, fortalecendo o controle social.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["participação social", "conselhos", "conferências"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A interseccionalidade reconhece que as desigualdades de gênero se combinam com raça, classe, deficiência, idade e território, exigindo respostas específicas para os diferentes grupos de mulheres.",
-    fonteLegal: "PDPM (DF); abordagem de gênero",
+    fonte: "PDPM (DF); abordagem de gênero",
     palavrasChave: ["interseccionalidade", "raça", "classe"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As ações priorizam mulheres em situação de violência, pobreza e vulnerabilidade social, com atenção a grupos historicamente discriminados.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["público prioritário", "vulnerabilidade"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A rede do SUAS (CRAS e CREAS) é fundamental para acolher, acompanhar e encaminhar mulheres em situação de vulnerabilidade e violência, integrando a PDPM à proteção social.",
-    fonteLegal: "PDPM (DF); PNAS/2004",
+    fonte: "PDPM (DF); PNAS/2004",
     palavrasChave: ["SUAS", "CREAS", "rede"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O monitoramento e a avaliação permitem acompanhar metas e resultados, identificar lacunas e aprimorar as ações da política, com transparência e participação social.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["monitoramento", "avaliação", "metas"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A igualdade de gênero busca enfrentar as discriminações e desigualdades estruturais entre homens e mulheres, promovendo equidade de oportunidades e direitos.",
-    fonteLegal: "PDPM (DF); CF/1988, art. 5º, I",
+    fonte: "PDPM (DF); CF/1988, art. 5º, I",
     palavrasChave: ["igualdade de gênero", "equidade"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Mulheres em risco de morte podem ser acolhidas em casas-abrigo e serviços de acolhimento sigiloso, que garantem proteção, segurança e atendimento multidisciplinar.",
-    fonteLegal: "PDPM (DF); Lei 11.340/2006",
+    fonte: "PDPM (DF); Lei 11.340/2006",
     palavrasChave: ["casa-abrigo", "sigilo", "proteção"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A capacitação e a sensibilização de profissionais (saúde, assistência, segurança e justiça) qualificam o atendimento humanizado e o funcionamento da rede de enfrentamento à violência.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["capacitação", "atendimento humanizado"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A política reconhece os direitos sexuais e reprodutivos das mulheres, buscando ampliar o acesso à informação e aos serviços de saúde, em articulação com o SUS.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["direitos reprodutivos", "saúde da mulher"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Informar sobre serviços e canais (como o Ligue 180) amplia o acesso das mulheres à rede de proteção e estimula denúncias, sendo ação relevante da política.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["informação", "Ligue 180", "acesso"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O orçamento sensível a gênero busca planejar, alocar e monitorar recursos públicos considerando os impactos diferenciados das políticas sobre mulheres e homens, promovendo equidade.",
-    fonteLegal: "PDPM (DF); diretrizes de gênero",
+    fonte: "PDPM (DF); diretrizes de gênero",
     palavrasChave: ["orçamento", "gênero", "equidade"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A intersetorialidade é central: o enfrentamento das desigualdades de gênero requer ação coordenada entre múltiplas secretarias e políticas públicas.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["intersetorialidade", "coordenação"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A feminização da pobreza expressa a maior vulnerabilidade econômica das mulheres, sobretudo as chefes de família monoparental; as políticas buscam reduzir essa desigualdade por meio de renda, trabalho e proteção social.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["feminização da pobreza", "chefia familiar"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A divisão desigual do trabalho de cuidado recai sobre as mulheres; ampliar creches e equipamentos de cuidado contribui para sua autonomia, inserção no trabalho e continuidade dos estudos.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["cuidado", "creche", "autonomia"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Dados desagregados por sexo (e outros marcadores) permitem dimensionar as desigualdades e fundamentar o planejamento, o monitoramento e a avaliação das políticas para mulheres.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["dados", "estatísticas", "diagnóstico"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A política distrital complementa e operacionaliza, no território, as diretrizes da legislação federal (como a Lei Maria da Penha), organizando a rede local de prevenção, atendimento e enfrentamento.",
-    fonteLegal: "PDPM (DF); Lei 11.340/2006",
+    fonte: "PDPM (DF); Lei 11.340/2006",
     palavrasChave: ["articulação", "competência", "rede local"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Um dos eixos das políticas para mulheres é o fortalecimento da participação e da representação feminina nos espaços de poder e decisão, enfrentando a sub-representação histórica.",
-    fonteLegal: "PDPM (DF)",
+    fonte: "PDPM (DF)",
     palavrasChave: ["participação política", "representação"],
   },
 ];

@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Restaurantes Comunitários ofertam refeições nutricionalmente adequadas a preço acessível (subsidiado), atuando na promoção da segurança alimentar e nutricional da população em vulnerabilidade.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["refeições", "preço acessível", "SAN"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Embora abertos ao público, os Restaurantes Comunitários priorizam o atendimento à população em situação de vulnerabilidade social e insegurança alimentar.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["vulnerabilidade", "insegurança alimentar"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O preço é subsidiado: o poder público cobre parte significativa do custo, de modo que o usuário paga um valor reduzido pela refeição, viabilizando o acesso à alimentação.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["subsídio", "preço reduzido"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Restaurantes Comunitários compõem a política de segurança alimentar e nutricional do DF, articulada à rede de proteção social e gerida pela SEDES.",
-    fonteLegal: "Programa de Restaurantes Comunitários; LOSAN",
+    fonte: "Programa de Restaurantes Comunitários; LOSAN",
     palavrasChave: ["SAN", "proteção social"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Restaurantes Comunitários são equipamentos públicos de SAN, ao lado de outras estruturas como cozinhas comunitárias e bancos de alimentos, voltadas a ampliar o acesso à alimentação adequada.",
-    fonteLegal: "Programa de Restaurantes Comunitários; LOSAN",
+    fonte: "Programa de Restaurantes Comunitários; LOSAN",
     palavrasChave: ["equipamento público", "SAN"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A gestão dos Restaurantes Comunitários cabe à SEDES, responsável pela política de desenvolvimento e assistência social do DF, incluindo a segurança alimentar.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["SEDES", "gestão"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A instalação prioriza territórios de maior vulnerabilidade social e grande circulação (terminais, centros urbanos), de modo a alcançar quem mais necessita do serviço.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["localização", "vulnerabilidade", "território"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A SAN abrange o acesso a alimentos de qualidade; por isso, as refeições devem ser nutricionalmente adequadas e saudáveis, e não apenas baratas, respeitando hábitos alimentares.",
-    fonteLegal: "Programa de Restaurantes Comunitários; LOSAN",
+    fonte: "Programa de Restaurantes Comunitários; LOSAN",
     palavrasChave: ["qualidade nutricional", "alimentação saudável"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Em regra, o serviço é aberto ao público mediante pagamento de valor simbólico/subsidiado, com atenção prioritária à população vulnerável, incluindo pessoas em situação de rua.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["acesso", "valor simbólico"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Restaurantes Comunitários são importantes para a população em situação de rua, que enfrenta alta insegurança alimentar, articulando-se com serviços como o Centro POP.",
-    fonteLegal: "Programa de Restaurantes Comunitários; SUAS",
+    fonte: "Programa de Restaurantes Comunitários; SUAS",
     palavrasChave: ["população de rua", "Centro POP"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A aquisição de alimentos da agricultura familiar (compras públicas) fortalece a economia local, gera renda no campo e amplia a oferta de alimentos saudáveis nos equipamentos de SAN.",
-    fonteLegal: "Programa de Restaurantes Comunitários; políticas de SAN",
+    fonte: "Programa de Restaurantes Comunitários; políticas de SAN",
     palavrasChave: ["agricultura familiar", "compras públicas"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O programa concretiza o direito humano à alimentação adequada (DHAA), reconhecido na CF/1988 (art. 6º) e na LOSAN.",
-    fonteLegal: "CF/1988, art. 6º; LOSAN",
+    fonte: "CF/1988, art. 6º; LOSAN",
     palavrasChave: ["DHAA", "alimentação adequada"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O serviço é mantido com recursos públicos do DF, que subsidiam o custo das refeições para mantê-las acessíveis à população vulnerável.",
-    fonteLegal: "Programa de Restaurantes Comunitários; LOA do DF",
+    fonte: "Programa de Restaurantes Comunitários; LOA do DF",
     palavrasChave: ["financiamento", "recursos públicos", "subsídio"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Ampliar os tipos de refeições ofertadas (café da manhã, almoço, jantar) aumenta a cobertura da SAN ao longo do dia, beneficiando especialmente quem está em maior vulnerabilidade.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["refeições", "cobertura", "SAN"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Diferentemente da transferência de renda, os Restaurantes Comunitários representam a oferta direta de um serviço público de segurança alimentar (refeições prontas).",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["oferta direta", "serviço público"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Por ofertar alimentos à população, os Restaurantes Comunitários devem cumprir as normas de vigilância sanitária e de boas práticas, assegurando refeições seguras e de qualidade.",
-    fonteLegal: "Programa de Restaurantes Comunitários; normas sanitárias",
+    fonte: "Programa de Restaurantes Comunitários; normas sanitárias",
     palavrasChave: ["vigilância sanitária", "boas práticas"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Ao baratear a alimentação, o serviço libera parte da renda familiar para outras necessidades essenciais (transporte, moradia, saúde), funcionando como uma renda indireta.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["renda disponível", "renda indireta"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O serviço materializa princípios como a universalização do acesso e o respeito à dignidade, oferecendo alimentação em ambiente que evita constrangimentos ao usuário.",
-    fonteLegal: "LOAS, art. 4º; Programa de Restaurantes Comunitários",
+    fonte: "LOAS, art. 4º; Programa de Restaurantes Comunitários",
     palavrasChave: ["universalização", "dignidade"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A articulação com os CRAS possibilita identificar usuários em vulnerabilidade que frequentam o restaurante e encaminhá-los a serviços e benefícios, ampliando a proteção social.",
-    fonteLegal: "Programa de Restaurantes Comunitários; PNAS/2004",
+    fonte: "Programa de Restaurantes Comunitários; PNAS/2004",
     palavrasChave: ["CRAS", "encaminhamento", "rede"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A redução do desperdício é uma boa prática de gestão e contribui para a sustentabilidade e a eficiência dos equipamentos de SAN, sem prejuízo da qualidade e da segurança alimentar.",
-    fonteLegal: "Programa de Restaurantes Comunitários; SAN",
+    fonte: "Programa de Restaurantes Comunitários; SAN",
     palavrasChave: ["desperdício", "sustentabilidade"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "São ações complementares: o restaurante oferece refeições prontas subsidiadas e o Prato Cheio transfere renda para a compra de alimentos, ampliando o leque de respostas à insegurança alimentar.",
-    fonteLegal: "Programas de SAN do DF (GDF/SEDES)",
+    fonte: "Programas de SAN do DF (GDF/SEDES)",
     palavrasChave: ["complementaridade", "Prato Cheio"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O monitoramento e a avaliação acompanham indicadores como demanda atendida, qualidade das refeições e cobertura, subsidiando melhorias e a expansão do serviço.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["monitoramento", "avaliação", "cobertura"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Restaurante Comunitário é um serviço público continuado de SAN; o benefício eventual é uma provisão pontual (em pecúnia ou bens) para contingências específicas como nascimento, morte ou calamidade.",
-    fonteLegal: "Programa de Restaurantes Comunitários; LOAS, art. 22",
+    fonte: "Programa de Restaurantes Comunitários; LOAS, art. 22",
     palavrasChave: ["serviço continuado", "benefício eventual", "diferença"],
   },
   {
@@ -408,7 +408,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Além da alimentação, o restaurante é um espaço de convívio e sociabilidade, contribuindo para o fortalecimento de vínculos comunitários e a dignidade no acesso à alimentação.",
-    fonteLegal: "Programa de Restaurantes Comunitários (GDF/SEDES)",
+    fonte: "Programa de Restaurantes Comunitários (GDF/SEDES)",
     palavrasChave: ["convívio", "sociabilidade"],
   },
 ];

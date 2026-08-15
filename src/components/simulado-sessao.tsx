@@ -182,7 +182,7 @@ export function SimuladoSessao({
                 Questão {String(indice + 1).padStart(2, "0")} de{" "}
                 {String(questoes.length).padStart(2, "0")}
               </p>
-              <p className="mt-2.5 text-[1.0625rem] leading-[1.65] text-slate-100">
+              <p className="mt-2.5 text-[1.0625rem] leading-[1.65] whitespace-pre-line text-slate-100">
                 {atual.enunciado}
               </p>
             </div>

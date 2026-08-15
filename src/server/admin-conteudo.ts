@@ -118,7 +118,7 @@ export async function criarQuestao(input: {
   nivel: string;
   banca?: string;
   explicacao: string;
-  fonteLegal?: string;
+  fonte?: string;
   dificuldade?: number;
   palavrasChave?: string; // separadas por virgula
   alternativas: AlternativaInput[];
@@ -160,7 +160,7 @@ export async function criarQuestao(input: {
       explicacao,
       nivel: input.nivel,
       banca: input.banca?.trim() || "QUADRIX",
-      fonteLegal: input.fonteLegal?.trim() || null,
+      fonte: input.fonte?.trim() || null,
       dificuldade: clampDificuldade(input.dificuldade),
       palavrasChave: palavras,
       concursoId,
@@ -189,6 +189,8 @@ const questaoJsonSchema = z.object({
   nivel: z.string().nullish(),
   banca: z.string().nullish(),
   explicacao: z.string(),
+  fonte: z.string().nullish(),
+  /** Nome antigo do campo. Aceito para nao invalidar JSON ja salvo por ai. */
   fonteLegal: z.string().nullish(),
   dificuldade: z.number().nullish(),
   palavrasChave: z.array(z.string()).nullish(),
@@ -284,7 +286,7 @@ export async function importarQuestoes(jsonText: string): Promise<ResultadoImpor
         explicacao,
         nivel,
         banca: it.banca?.trim() || "QUADRIX",
-        fonteLegal: it.fonteLegal?.trim() || null,
+        fonte: (it.fonte ?? it.fonteLegal)?.trim() || null,
         dificuldade: clampDificuldade(it.dificuldade ?? undefined),
         palavrasChave: it.palavrasChave?.map((s) => s.trim()).filter(Boolean).join(", ") || null,
         concursoId,

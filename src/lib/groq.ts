@@ -11,8 +11,16 @@
 
 const URL_GROQ = "https://api.groq.com/openai/v1/chat/completions";
 
-/** Trocavel por env: id de modelo e algo que o provedor aposenta sem aviso. */
-const MODELO_PADRAO = "llama-3.3-70b-versatile";
+/**
+ * Trocavel por env: id de modelo e algo que o provedor aposenta sem aviso.
+ *
+ * `gpt-oss-120b` no lugar do `llama-3.3-70b-versatile` depois de comparar os
+ * dois no caso que quebrava — portugues com texto de apoio. O llama fugia do
+ * problema: em vez de escrever o texto, encolhia a questao ate ela virar
+ * "O texto 'A vida e bela' expressa uma ideia de:". O gpt-oss escreve o
+ * paragrafo inteiro no enunciado e so depois o comando. Custa ~1,5x o tempo.
+ */
+const MODELO_PADRAO = "openai/gpt-oss-120b";
 
 /** Gerar 20 questoes leva tempo; o limite do lado da Vercel e de 60s. */
 const TIMEOUT_MS = 55_000;

@@ -8,7 +8,7 @@ export type QSeed = {
   enunciado: string;
   alternativas: { texto: string; correta: boolean }[]; // SEMPRE multipla escolha
   explicacao: string;
-  fonteLegal?: string;
+  fonte?: string;
   palavrasChave?: string[];
 };
 

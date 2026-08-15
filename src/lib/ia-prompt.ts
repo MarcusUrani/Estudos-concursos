@@ -29,7 +29,7 @@ export const PROMPT_SISTEMA = `Você é um especialista em criar questões de co
       { "texto": "organizar o transporte escolar.", "correta": false }
     ],
     "explicacao": "O DF Brincar promove o direito ao lazer, à convivência e ao desenvolvimento infantil.",
-    "fonteLegal": "Programa DF Social; Decreto nº 42.872/2021",
+    "fonte": "Programa DF Social; Decreto nº 42.872/2021",
     "palavrasChave": ["lazer", "desenvolvimento infantil"]
   }
 ]
@@ -43,6 +43,8 @@ Regras obrigatórias:
 Processamento automático:
 - O campo subassunto é derivado do assunto bruto: se o raw conter " - ", a parte após o traço vira subassunto. Ex: "DF Brincar - Atividades" → assunto="DF Brincar", subassunto="Atividades"
 - Para os assuntos do DF Social, os canônicos são: Programa DF Social (Lei nº 7.008/2021 e Decreto nº 42.872/2021), DF Brincar, Incentiva DF, Agentes da Cidadania (Portaria nº 42/2023), Agentes de Cidadania Ambiental, DF Alfabetização, SOS Mulher
+
+5. texto de apoio — Se a questão depender de um texto (interpretação, análise de trecho, gramática sobre uma passagem), o texto COMPLETO tem que estar dentro do próprio campo "enunciado": primeiro o texto, uma linha em branco, depois o comando. Nunca escreva "o texto acima", "o trecho a seguir" ou equivalente sem que a passagem esteja ali — não existe anexo, não existe outro campo. O texto de apoio deve ter no mínimo 40 palavras. Escreva uma passagem própria, no estilo pedido; não reproduza de memória obras de autores reais nem atribua a passagem a uma pessoa real.
 
 Responda APENAS com o array JSON, sem cercas de código, sem comentários e sem texto antes ou depois.`;
 
@@ -122,6 +124,59 @@ export function normalizarNivel(bruto: unknown): Nivel | null {
   if (typeof bruto !== "string") return null;
   const alvo = normalizarTexto(bruto);
   return NIVEIS.find((n) => normalizarTexto(n) === alvo) ?? null;
+}
+
+/**
+ * Marcas de que a questao DEPENDE de um texto que deveria vir junto dela.
+ *
+ * A sutileza esta em separar o `texto` DEITICO — que aponta para algo que
+ * deveria estar ali — do `texto` QUALIFICADO, que e só uma figura de linguagem
+ * e se sustenta sozinho. "De acordo com o texto, ..." aponta para fora;
+ * "de acordo com o texto constitucional" / "conforme o texto legal" /
+ * "segundo o texto da Lei nº 8.742/1993" nao apontam para nada.
+ *
+ * Por isso a segunda alternativa exige que `texto` seja seguido de pontuacao:
+ * se vier um qualificador depois, nao e referencia a texto de apoio.
+ */
+const REFERE_TEXTO = new RegExp(
+  [
+    // "texto/trecho/fragmento acima | abaixo | a seguir | apresentado | lido"
+    String.raw`\b(texto|trecho|fragmento|excerto)\s+(acima|abaixo|a seguir|apresentado|lido|base)\b`,
+    // "de acordo com o texto," — deitico: nada qualifica o `texto`
+    String.raw`\b(de acordo com o|com base no|segundo o|conforme o|no|do|ao)\s+texto\s*(?=[,.:;?!]|$)`,
+    // "o texto 'uma frase curta'" — chama de texto o que e uma frase
+    String.raw`\b(o|no|do|ao)\s+texto\s*["“'']`,
+    String.raw`\breferido texto\b`,
+  ].join("|"),
+  "i"
+);
+
+/**
+ * Detecta a questao orfa: ela manda ler um texto que nao esta em lugar nenhum.
+ *
+ * E o erro mais comum em portugues, e o mais traicoeiro — o enunciado parece
+ * completo e so na hora de responder a pessoa percebe que nao ha o que ler. O
+ * prompt pede o texto junto; esta funcao e quem cobra.
+ *
+ * A medida e o "corpo" do enunciado: o que existe alem do comando. Conta o que
+ * esta entre aspas, o maior bloco separado por linha em branco, ou o excedente
+ * sobre o tamanho tipico de um comando isolado. Se nada disso alcanca um
+ * paragrafo curto, o que veio foi so o comando.
+ */
+export function citaTextoAusente(enunciado: string): boolean {
+  if (!REFERE_TEXTO.test(enunciado)) return false;
+
+  const entreAspas = [...enunciado.matchAll(/["“«'']([^"”»'']{20,})["”»'']/g)].reduce(
+    (total, m) => total + m[1].length,
+    0
+  );
+
+  const blocos = enunciado.split(/\n\s*\n/).map((b) => b.trim());
+  const maiorBloco = blocos.length > 1 ? Math.max(...blocos.map((b) => b.length)) : 0;
+
+  // 160 caracteres e a folga para o comando ("De acordo com o texto, ...?").
+  const corpo = Math.max(entreAspas, maiorBloco, enunciado.length - 160);
+  return corpo < 120;
 }
 
 /**

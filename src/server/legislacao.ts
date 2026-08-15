@@ -115,7 +115,7 @@ export async function getLegislacao(assuntoId: string): Promise<LegislacaoDetalh
     where: { assuntoId },
     select: {
       explicacao: true,
-      fonteLegal: true,
+      fonte: true,
       subassunto: { select: { nome: true } },
     },
     orderBy: { createdAt: "asc" },
@@ -130,9 +130,9 @@ export async function getLegislacao(assuntoId: string): Promise<LegislacaoDetalh
     if (!grupos.has(titulo)) grupos.set(titulo, { pontos: new Set(), fontes: new Set() });
     const g = grupos.get(titulo)!;
     if (q.explicacao) g.pontos.add(resumirPonto(q.explicacao));
-    if (q.fonteLegal) {
-      g.fontes.add(q.fonteLegal.trim());
-      fontesGerais.add(q.fonteLegal.trim());
+    if (q.fonte) {
+      g.fontes.add(q.fonte.trim());
+      fontesGerais.add(q.fonte.trim());
     }
   }
 

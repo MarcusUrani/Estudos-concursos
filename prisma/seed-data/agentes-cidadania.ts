@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Agentes da Cidadania é um programa de voluntariado que capacita cidadãos para atuarem em suas comunidades, promovendo a participação social e o acesso a direitos.",
-    fonteLegal: "Portaria nº 42/2023; Programa DF Social",
+    fonte: "Portaria nº 42/2023; Programa DF Social",
     palavrasChave: ["voluntariado", "participação cidadã", "comunidade"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Portaria nº 42/2023 é o ato normativo que regulamenta o programa Agentes da Cidadania no âmbito do Programa DF Social.",
-    fonteLegal: "Portaria nº 42/2023",
+    fonte: "Portaria nº 42/2023",
     palavrasChave: ["Portaria nº 42/2023", "regulamentação"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Agentes da Cidadania atuam na identificação de famílias vulneráveis, orientação sobre programas sociais e articulação com a rede de proteção social do DF.",
-    fonteLegal: "Portaria nº 42/2023, art. 3º",
+    fonte: "Portaria nº 42/2023, art. 3º",
     palavrasChave: ["atribuições", "identificação", "orientação"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O programa baseia-se no voluntariado: os agentes atuam de forma gratuita e voluntária, sem vínculo empregatício com o Estado.",
-    fonteLegal: "Portaria nº 42/2023, art. 2º",
+    fonte: "Portaria nº 42/2023, art. 2º",
     palavrasChave: ["voluntariedade", "gratuidade", "sem vínculo"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os Agentes da Cidadania ampliam o alcance da rede de proteção social ao atuarem diretamente nas comunidades, identificando demandas e facilitando o acesso aos serviços públicos.",
-    fonteLegal: "Portaria nº 42/2023; Programa DF Social",
+    fonte: "Portaria nº 42/2023; Programa DF Social",
     palavrasChave: ["capilaridade", "rede de proteção", "comunidades"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A coordenação do Agentes da Cidadania cabe à SEDES, responsável pela gestão do Programa DF Social como um todo.",
-    fonteLegal: "Portaria nº 42/2023, art. 5º",
+    fonte: "Portaria nº 42/2023, art. 5º",
     palavrasChave: ["SEDES", "coordenação"],
   },
 ];

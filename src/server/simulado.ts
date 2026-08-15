@@ -26,7 +26,7 @@ export type ItemResultado = {
   escolhidaId: string | null;
   acertou: boolean;
   explicacao: string;
-  fonteLegal: string | null;
+  fonte: string | null;
 };
 
 export type ResultadoSimulado = {
@@ -106,7 +106,7 @@ export async function finalizarSimulado(
       nivel: q.nivel,
       banca: q.banca,
       explicacao: q.explicacao,
-      fonteLegal: q.fonteLegal,
+      fonte: q.fonte,
       escolhidaId: escolhida?.id ?? null,
       acertou,
       alternativas: q.alternativas.map((a) => ({

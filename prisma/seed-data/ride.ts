@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "RIDE é a Região Integrada de Desenvolvimento do Distrito Federal e Entorno, instituída para articular a ação administrativa da União, do DF e dos estados e municípios envolvidos.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["RIDE", "DF e Entorno"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE do DF e Entorno foi criada pela Lei Complementar nº 94/1998 e regulamentada por decreto, com posteriores alterações que ampliaram os municípios integrantes.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["LC 94/1998", "instituição"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE abrange o Distrito Federal e municípios dos estados de Goiás e de Minas Gerais, formando uma região para fins de articulação e desenvolvimento integrado.",
-    fonteLegal: "Lei Complementar 94/1998 e alterações",
+    fonte: "Lei Complementar 94/1998 e alterações",
     palavrasChave: ["Goiás", "Minas Gerais", "composição"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE visa articular a ação administrativa da União, do DF, de Goiás, de Minas Gerais e dos municípios, para o desenvolvimento regional e a prestação de serviços públicos de interesse comum.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["articulação", "serviços comuns", "desenvolvimento"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE trata de serviços de interesse comum, como transporte, saneamento, uso de recursos hídricos, saúde, educação, assistência social e infraestrutura, que extrapolam os limites de um único ente.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["serviços comuns", "transporte", "saúde"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE é um arranjo de articulação administrativa entre entes para o desenvolvimento integrado; não constitui novo ente federativo nem possui autonomia política própria.",
-    fonteLegal: "Lei Complementar 94/1998; CF/1988",
+    fonte: "Lei Complementar 94/1998; CF/1988",
     palavrasChave: ["natureza jurídica", "articulação"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Por envolver entes de diferentes estados e o DF, a criação da RIDE é de competência da União, por meio de lei complementar, como ocorreu com a LC 94/1998.",
-    fonteLegal: "CF/1988; Lei Complementar 94/1998",
+    fonte: "CF/1988; Lei Complementar 94/1998",
     palavrasChave: ["competência da União", "lei complementar"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A coordenação das ações da RIDE cabe ao Conselho Administrativo da RIDE (COARIDE), com representação dos entes envolvidos, voltado à articulação das políticas e dos investimentos.",
-    fonteLegal: "Lei Complementar 94/1998 e regulamentação",
+    fonte: "Lei Complementar 94/1998 e regulamentação",
     palavrasChave: ["COARIDE", "coordenação"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "No plano federal, a política de desenvolvimento regional e a articulação das RIDEs cabem ao órgão responsável pela integração/desenvolvimento regional, atualmente o Ministério do Desenvolvimento Regional.",
-    fonteLegal: "Legislação federal de desenvolvimento regional",
+    fonte: "Legislação federal de desenvolvimento regional",
     palavrasChave: ["desenvolvimento regional", "coordenação federal"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A integração regional pode contribuir para articular serviços públicos comuns, inclusive de assistência social, considerando o intenso fluxo populacional entre o DF e os municípios do entorno.",
-    fonteLegal: "Lei Complementar 94/1998; PNAS/2004",
+    fonte: "Lei Complementar 94/1998; PNAS/2004",
     palavrasChave: ["assistência social", "serviços articulados"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O deslocamento pendular diário de trabalhadores e usuários de serviços entre os municípios do entorno e o DF gera demandas comuns (transporte, saúde, assistência), o que justifica a articulação regional.",
-    fonteLegal: "Contexto socioeconômico da RIDE",
+    fonte: "Contexto socioeconômico da RIDE",
     palavrasChave: ["deslocamento pendular", "demanda comum"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE tem por finalidade reduzir desigualdades regionais por meio do planejamento e de ações integradas de desenvolvimento, com investimentos coordenados entre os entes.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["desigualdades regionais", "planejamento integrado"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE, por reunir entes de estados distintos e o DF, é instituída por lei complementar federal; as regiões metropolitanas, em regra, são criadas por lei complementar estadual, agrupando municípios limítrofes de um mesmo estado.",
-    fonteLegal: "CF/1988, art. 25, §3º; Lei Complementar 94/1998",
+    fonte: "CF/1988, art. 25, §3º; Lei Complementar 94/1998",
     palavrasChave: ["região metropolitana", "lei complementar", "diferença"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Dado o forte fluxo pendular, a integração do transporte público é um dos temas centrais da RIDE, viabilizando o acesso da população do entorno a trabalho, estudo e serviços no DF.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["transporte público", "integração"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A maioria dos municípios do entorno integrantes da RIDE situa-se em Goiás (como Luziânia, Águas Lindas, Valparaíso, Formosa, entre outros), além de alguns municípios de Minas Gerais.",
-    fonteLegal: "Lei Complementar 94/1998 e alterações",
+    fonte: "Lei Complementar 94/1998 e alterações",
     palavrasChave: ["Goiás", "entorno", "municípios"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A legislação prevê instrumentos (programas e mecanismos de financiamento) para viabilizar investimentos e ações de interesse comum, fomentando o desenvolvimento integrado da região.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["financiamento", "investimentos", "fundo"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A gestão e a articulação da RIDE envolvem a União, o DF, os estados de Goiás e de Minas Gerais e os municípios integrantes, de forma cooperativa.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["participação", "cooperação federativa"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A composição da RIDE foi ampliada ao longo do tempo por normas específicas, aumentando o número de municípios integrantes, conforme as necessidades de integração regional.",
-    fonteLegal: "Lei Complementar 94/1998 e alterações posteriores",
+    fonte: "Lei Complementar 94/1998 e alterações posteriores",
     palavrasChave: ["composição", "ampliação", "municípios"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE é instrumento de política de desenvolvimento regional, voltado à integração de serviços e ações entre o DF e os municípios do entorno.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["desenvolvimento regional", "integração"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A intensa busca por serviços públicos no DF por moradores do entorno impacta as políticas sociais distritais, tornando a articulação regional relevante para o planejamento da SEDES, ainda que a coordenação da RIDE seja federal.",
-    fonteLegal: "Contexto da RIDE; PNAS/2004",
+    fonte: "Contexto da RIDE; PNAS/2004",
     palavrasChave: ["SEDES", "entorno", "impacto social"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Recursos hídricos e questões ambientais ultrapassam fronteiras administrativas; por isso, a RIDE favorece a gestão integrada desses temas de interesse comum entre os entes.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["recursos hídricos", "meio ambiente", "gestão integrada"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A RIDE é um arranjo de articulação que não suprime a autonomia dos municípios; estes permanecem como entes federativos, apenas cooperando em temas de interesse comum.",
-    fonteLegal: "CF/1988; Lei Complementar 94/1998",
+    fonte: "CF/1988; Lei Complementar 94/1998",
     palavrasChave: ["autonomia municipal", "cooperação"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A efetividade da RIDE depende de forte coordenação intergovernamental, planejamento integrado das políticas e mecanismos de financiamento para viabilizar as ações de interesse comum.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["coordenação", "planejamento", "financiamento"],
   },
   {
@@ -408,7 +408,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O 'entorno' compreende os municípios próximos ao DF (sobretudo em Goiás) que mantêm intensa interdependência socioeconômica com a capital, integrando a RIDE.",
-    fonteLegal: "Lei Complementar 94/1998",
+    fonte: "Lei Complementar 94/1998",
     palavrasChave: ["entorno", "interdependência"],
   },
 ];

@@ -18,7 +18,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PNAS incorpora os princípios da LOAS (art. 4º), entre eles a supremacia do atendimento às necessidades sociais sobre as exigências de rentabilidade econômica.",
-    fonteLegal: "PNAS/2004; LOAS, art. 4º",
+    fonte: "PNAS/2004; LOAS, art. 4º",
     palavrasChave: ["princípios", "necessidades sociais"],
   },
   {
@@ -36,7 +36,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A universalização dos direitos sociais visa tornar o usuário da assistência social alcançável também pelas demais políticas públicas, ampliando a proteção social de forma integrada.",
-    fonteLegal: "PNAS/2004; LOAS, art. 4º",
+    fonte: "PNAS/2004; LOAS, art. 4º",
     palavrasChave: ["universalização", "direitos sociais"],
   },
   {
@@ -54,7 +54,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PNAS tem como objetivos prover serviços, programas, projetos e benefícios de proteção social básica e/ou especial para famílias, indivíduos e grupos que deles necessitarem.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["objetivos", "proteção básica", "proteção especial"],
   },
   {
@@ -72,7 +72,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A matricialidade sociofamiliar coloca a família no centro das ações da política, reconhecendo-a como espaço privilegiado de proteção e socialização, considerados seus vínculos e seu território.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["matricialidade", "família"],
   },
   {
@@ -90,7 +90,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A territorialização orienta a localização dos equipamentos (como o CRAS) e a oferta de serviços conforme as vulnerabilidades e os riscos presentes no território, aproximando a proteção da população.",
-    fonteLegal: "PNAS/2004; NOB-SUAS",
+    fonte: "PNAS/2004; NOB-SUAS",
     palavrasChave: ["território", "vulnerabilidade"],
   },
   {
@@ -108,7 +108,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PSB tem caráter preventivo e visa fortalecer vínculos familiares e comunitários, prevenindo situações de risco por meio de serviços como o PAIF e o SCFV, ofertados no CRAS.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["PSB", "prevenção", "vínculos"],
   },
   {
@@ -126,7 +126,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "São serviços da PSB o PAIF (Serviço de Proteção e Atendimento Integral à Família), o SCFV e o Serviço de Proteção Social Básica no Domicílio para PcD e idosas.",
-    fonteLegal: "Tipificação Nacional de Serviços Socioassistenciais",
+    fonte: "Tipificação Nacional de Serviços Socioassistenciais",
     palavrasChave: ["PAIF", "SCFV", "PSB"],
   },
   {
@@ -144,7 +144,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PSE de média complexidade atende situações de violação de direitos em que os vínculos familiares e comunitários não foram rompidos, sendo o PAEFI, ofertado no CREAS, seu serviço de referência.",
-    fonteLegal: "PNAS/2004; Tipificação Nacional",
+    fonte: "PNAS/2004; Tipificação Nacional",
     palavrasChave: ["PSE", "média complexidade", "PAEFI"],
   },
   {
@@ -162,7 +162,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A alta complexidade oferta serviços de acolhimento (institucional ou em família acolhedora) e proteção integral a indivíduos e famílias com vínculos rompidos ou ameaçados, garantindo moradia, alimentação e proteção.",
-    fonteLegal: "PNAS/2004; Tipificação Nacional",
+    fonte: "PNAS/2004; Tipificação Nacional",
     palavrasChave: ["alta complexidade", "acolhimento"],
   },
   {
@@ -180,7 +180,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O CRAS (Centro de Referência de Assistência Social) é a unidade pública estatal da PSB, porta de entrada do SUAS no território.",
-    fonteLegal: "PNAS/2004; NOB-SUAS",
+    fonte: "PNAS/2004; NOB-SUAS",
     palavrasChave: ["CRAS", "PSB", "porta de entrada"],
   },
   {
@@ -198,7 +198,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Centro de Referência Especializado para População em Situação de Rua (Centro POP) é unidade da PSE que oferta o Serviço Especializado para Pessoas em Situação de Rua.",
-    fonteLegal: "Tipificação Nacional; SUAS",
+    fonte: "Tipificação Nacional; SUAS",
     palavrasChave: ["Centro POP", "situação de rua"],
   },
   {
@@ -216,7 +216,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PNAS organiza a oferta considerando o porte dos municípios (pequeno, médio, grande, metrópole) e a regionalização, adequando os serviços às características e vulnerabilidades de cada território.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["porte", "regionalização", "território"],
   },
   {
@@ -234,7 +234,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Entre os princípios está o respeito à dignidade do cidadão, à sua autonomia e ao direito a benefícios e serviços de qualidade, vedando-se qualquer comprovação vexatória da necessidade.",
-    fonteLegal: "LOAS, art. 4º, III; PNAS/2004",
+    fonte: "LOAS, art. 4º, III; PNAS/2004",
     palavrasChave: ["dignidade", "autonomia", "não vexatório"],
   },
   {
@@ -252,7 +252,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PNAS adota concepção ampliada de família, reconhecendo a diversidade de arranjos e configurações, e não apenas o modelo nuclear tradicional.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["família", "arranjos", "diversidade"],
   },
   {
@@ -270,7 +270,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A PNAS define como usuários cidadãos e grupos em situação de vulnerabilidade e risco social, incluindo famílias com perda ou fragilidade de vínculos, ciclos de vida, exclusão pela pobreza, entre outros.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["usuários", "vulnerabilidade", "risco"],
   },
   {
@@ -288,7 +288,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A vigilância socioassistencial produz informações territorializadas sobre vulnerabilidades, riscos e a oferta de serviços, apoiando o planejamento e a gestão da proteção social.",
-    fonteLegal: "PNAS/2004; NOB-SUAS; LOAS, art. 6º-A",
+    fonte: "PNAS/2004; NOB-SUAS; LOAS, art. 6º-A",
     palavrasChave: ["vigilância", "território", "gestão"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O SCFV é serviço da PSB, organizado em grupos por ciclos de vida, que complementa o PAIF e atua na prevenção de situações de risco, fortalecendo vínculos familiares e comunitários.",
-    fonteLegal: "Tipificação Nacional de Serviços Socioassistenciais",
+    fonte: "Tipificação Nacional de Serviços Socioassistenciais",
     palavrasChave: ["SCFV", "convivência", "vínculos"],
   },
   {
@@ -324,7 +324,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O PAEFI (Serviço de Proteção e Atendimento Especializado a Famílias e Indivíduos) é o serviço de referência da média complexidade, ofertado no CREAS, para situações de violação de direitos.",
-    fonteLegal: "Tipificação Nacional; PNAS/2004",
+    fonte: "Tipificação Nacional; PNAS/2004",
     palavrasChave: ["PAEFI", "CREAS", "média complexidade"],
   },
   {
@@ -342,7 +342,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A igualdade de direitos no acesso ao atendimento, sem discriminação de qualquer natureza, é princípio da assistência social, garantindo a equidade.",
-    fonteLegal: "LOAS, art. 4º, IV; PNAS/2004",
+    fonte: "LOAS, art. 4º, IV; PNAS/2004",
     palavrasChave: ["igualdade", "não discriminação"],
   },
   {
@@ -360,7 +360,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A intersetorialidade pressupõe a articulação da assistência com saúde, educação, trabalho, habitação e outras políticas, buscando respostas integrais às múltiplas vulnerabilidades das famílias.",
-    fonteLegal: "PNAS/2004",
+    fonte: "PNAS/2004",
     palavrasChave: ["intersetorialidade", "articulação"],
   },
   {
@@ -378,7 +378,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O trabalho social com famílias visa fortalecer a função protetiva da família, prevenir a ruptura de vínculos, promover acesso a direitos e melhorar a qualidade de vida, sem culpabilizar as famílias por suas condições.",
-    fonteLegal: "PNAS/2004; Tipificação Nacional (PAIF)",
+    fonte: "PNAS/2004; Tipificação Nacional (PAIF)",
     palavrasChave: ["trabalho com famílias", "função protetiva"],
   },
   {
@@ -396,7 +396,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A busca ativa é estratégia da PSB para localizar e incluir famílias e indivíduos em situação de vulnerabilidade que não acessam espontaneamente os serviços, ampliando a cobertura da proteção.",
-    fonteLegal: "PNAS/2004; NOB-SUAS",
+    fonte: "PNAS/2004; NOB-SUAS",
     palavrasChave: ["busca ativa", "cobertura", "território"],
   },
   {
@@ -414,7 +414,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Entre os serviços de acolhimento da alta complexidade estão abrigo institucional, casa-lar, casa de passagem, residência inclusiva e serviço em família acolhedora.",
-    fonteLegal: "Tipificação Nacional de Serviços Socioassistenciais",
+    fonte: "Tipificação Nacional de Serviços Socioassistenciais",
     palavrasChave: ["acolhimento", "abrigo", "família acolhedora"],
   },
 ];

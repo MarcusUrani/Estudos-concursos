@@ -111,7 +111,9 @@ export function RevisaoVisualizar({
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-base leading-relaxed text-slate-100">{q.enunciado}</p>
+            <p className="text-base leading-relaxed whitespace-pre-line text-slate-100">
+              {q.enunciado}
+            </p>
 
             <div className="space-y-2">
               {q.alternativas.map((alt, i) => (
@@ -143,12 +145,12 @@ export function RevisaoVisualizar({
                 <BookOpen className="h-4 w-4" /> Comentário
               </p>
               <p className="text-sm leading-relaxed text-slate-300">{q.explicacao}</p>
-              {q.fonteLegal && (
+              {q.fonte && (
                 <p className="mt-3 flex items-start gap-2 text-xs text-slate-400">
                   <ScrollText className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
                   <span>
-                    <span className="font-medium text-slate-300">Base legal: </span>
-                    {q.fonteLegal}
+                    <span className="font-medium text-slate-300">Fonte: </span>
+                    {q.fonte}
                   </span>
                 </p>
               )}

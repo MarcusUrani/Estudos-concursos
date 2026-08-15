@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Lei 11.340/2006 cria mecanismos para coibir e prevenir a violência doméstica e familiar contra a mulher, nos termos do art. 226, §8º, da CF e de tratados internacionais ratificados pelo Brasil.",
-    fonteLegal: "Lei 11.340/2006, art. 1º",
+    fonte: "Lei 11.340/2006, art. 1º",
     palavrasChave: ["finalidade", "violência doméstica"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 7º enumera cinco formas: física, psicológica, sexual, patrimonial e moral. O rol é exemplificativo ('entre outras').",
-    fonteLegal: "Lei 11.340/2006, art. 7º",
+    fonte: "Lei 11.340/2006, art. 7º",
     palavrasChave: ["formas de violência", "art. 7º"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A violência patrimonial é entendida como qualquer conduta que configure retenção, subtração, destruição de bens, valores, documentos, instrumentos de trabalho e direitos da mulher.",
-    fonteLegal: "Lei 11.340/2006, art. 7º, IV",
+    fonte: "Lei 11.340/2006, art. 7º, IV",
     palavrasChave: ["violência patrimonial", "bens"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A violência moral é entendida como qualquer conduta que configure calúnia, difamação ou injúria (crimes contra a honra).",
-    fonteLegal: "Lei 11.340/2006, art. 7º, V",
+    fonte: "Lei 11.340/2006, art. 7º, V",
     palavrasChave: ["violência moral", "honra"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O parágrafo único do art. 5º estabelece que as relações pessoais ali enunciadas independem de orientação sexual. A lei protege a mulher em razão do gênero, no contexto doméstico, familiar ou de relação íntima de afeto.",
-    fonteLegal: "Lei 11.340/2006, art. 5º, parágrafo único",
+    fonte: "Lei 11.340/2006, art. 5º, parágrafo único",
     palavrasChave: ["orientação sexual", "gênero"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Configura-se no âmbito da unidade doméstica, da família e em qualquer relação íntima de afeto, na qual o agressor conviva ou tenha convivido com a ofendida, independentemente de coabitação.",
-    fonteLegal: "Lei 11.340/2006, art. 5º",
+    fonte: "Lei 11.340/2006, art. 5º",
     palavrasChave: ["âmbitos", "relação íntima", "coabitação"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 6º declara que a violência doméstica e familiar contra a mulher constitui uma das formas de violação dos direitos humanos.",
-    fonteLegal: "Lei 11.340/2006, art. 6º",
+    fonte: "Lei 11.340/2006, art. 6º",
     palavrasChave: ["direitos humanos", "violência"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Entre as medidas que obrigam o agressor (art. 22) estão o afastamento do lar e a proibição de aproximação/contato com a ofendida, com fixação de distância mínima. As demais alternativas são medidas dirigidas à ofendida (arts. 23 e 24).",
-    fonteLegal: "Lei 11.340/2006, art. 22",
+    fonte: "Lei 11.340/2006, art. 22",
     palavrasChave: ["medidas protetivas", "agressor"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As medidas dirigidas à ofendida (arts. 23 e 24) incluem encaminhá-la, com seus dependentes, a programa de proteção/atendimento e reconduzi-la ao domicílio após o afastamento do agressor, além da proteção de seus bens.",
-    fonteLegal: "Lei 11.340/2006, arts. 23 e 24",
+    fonte: "Lei 11.340/2006, arts. 23 e 24",
     palavrasChave: ["medidas protetivas", "ofendida"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A lei prevê a criação dos Juizados de Violência Doméstica e Familiar contra a Mulher (JVDFM), com competência cível e criminal para as causas decorrentes da violência doméstica.",
-    fonteLegal: "Lei 11.340/2006, art. 14",
+    fonte: "Lei 11.340/2006, art. 14",
     palavrasChave: ["juizado", "competência cível e criminal"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 41 veda expressamente a aplicação da Lei 9.099/95 aos crimes praticados com violência doméstica e familiar contra a mulher, afastando institutos como a transação penal nesses casos.",
-    fonteLegal: "Lei 11.340/2006, art. 41",
+    fonte: "Lei 11.340/2006, art. 41",
     palavrasChave: ["Lei 9.099/95", "vedação", "art. 41"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Segundo a Súmula 542 do STJ, a ação penal relativa ao crime de lesão corporal resultante de violência doméstica contra a mulher é pública incondicionada, dispensando representação da vítima.",
-    fonteLegal: "Súmula 542 STJ; Lei 11.340/2006",
+    fonte: "Súmula 542 STJ; Lei 11.340/2006",
     palavrasChave: ["ação penal", "incondicionada", "lesão corporal"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Nos crimes de ação penal pública condicionada, a retratação da representação só é admitida perante o juiz, em audiência especialmente designada para tal fim, antes do recebimento da denúncia e ouvido o MP (art. 16).",
-    fonteLegal: "Lei 11.340/2006, art. 16",
+    fonte: "Lei 11.340/2006, art. 16",
     palavrasChave: ["retratação", "representação", "audiência"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A assistência à mulher será prestada de forma articulada, conforme os princípios e diretrizes do SUS, do SUAS e de outras normas e políticas públicas de proteção (art. 9º), com atuação intersetorial.",
-    fonteLegal: "Lei 11.340/2006, art. 9º",
+    fonte: "Lei 11.340/2006, art. 9º",
     palavrasChave: ["assistência", "intersetorial", "SUAS"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A lei prevê que a ofendida seja incluída em cadastro de programas assistenciais do governo, conectando a proteção da mulher à rede de assistência social (art. 9º, §1º).",
-    fonteLegal: "Lei 11.340/2006, art. 9º, §1º",
+    fonte: "Lei 11.340/2006, art. 9º, §1º",
     palavrasChave: ["Cadastro Único", "assistência social"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Lei 13.827/2019 incluiu a possibilidade de aplicação de medida protetiva de afastamento do agressor pela autoridade policial (ou pelo delegado), em municípios sem juiz/comarca, quando houver risco atual ou iminente à vida ou integridade da mulher.",
-    fonteLegal: "Lei 11.340/2006, art. 12-C (incluído pela Lei 13.827/2019)",
+    fonte: "Lei 11.340/2006, art. 12-C (incluído pela Lei 13.827/2019)",
     palavrasChave: ["medida protetiva", "autoridade policial", "risco"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A proteção à mulher é prestada de forma gratuita. A ofendida pode requerer medidas protetivas independentemente de custas, sendo-lhe garantido acesso aos serviços de defensoria e assistência judiciária.",
-    fonteLegal: "Lei 11.340/2006 (acesso e gratuidade)",
+    fonte: "Lei 11.340/2006 (acesso e gratuidade)",
     palavrasChave: ["gratuidade", "medidas protetivas"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A violência psicológica é entendida como conduta que cause dano emocional e diminuição da autoestima, prejudique e perturbe o pleno desenvolvimento da mulher ou vise degradar/controlar suas ações e crenças.",
-    fonteLegal: "Lei 11.340/2006, art. 7º, II",
+    fonte: "Lei 11.340/2006, art. 7º, II",
     palavrasChave: ["violência psicológica", "dano emocional"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A lei se fundamenta no art. 226, §8º, da CF/1988, que impõe ao Estado o dever de criar mecanismos para coibir a violência no âmbito das relações familiares, além de convenções internacionais (Belém do Pará e CEDAW).",
-    fonteLegal: "CF/1988, art. 226, §8º; Lei 11.340/2006, art. 1º",
+    fonte: "CF/1988, art. 226, §8º; Lei 11.340/2006, art. 1º",
     palavrasChave: ["fundamento constitucional", "art. 226"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A violência sexual é qualquer conduta que constranja a mulher a presenciar, manter ou participar de relação sexual não desejada, ou que limite/anule o exercício de seus direitos sexuais e reprodutivos.",
-    fonteLegal: "Lei 11.340/2006, art. 7º, III",
+    fonte: "Lei 11.340/2006, art. 7º, III",
     palavrasChave: ["violência sexual", "direitos reprodutivos"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A lei protege a mulher contra a violência doméstica e familiar baseada no gênero, no contexto da unidade doméstica, da família ou de relação íntima de afeto.",
-    fonteLegal: "Lei 11.340/2006, arts. 2º e 5º",
+    fonte: "Lei 11.340/2006, arts. 2º e 5º",
     palavrasChave: ["gênero", "mulher", "proteção"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A Lei 13.641/2018 incluiu o art. 24-A na Lei 11.340/2006, tipificando como crime o descumprimento de medidas protetivas de urgência deferidas pelo juiz.",
-    fonteLegal: "Lei 11.340/2006, art. 24-A (Lei 13.641/2018)",
+    fonte: "Lei 11.340/2006, art. 24-A (Lei 13.641/2018)",
     palavrasChave: ["descumprimento", "medida protetiva", "crime"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As medidas protetivas podem ser concedidas pelo juiz, a requerimento do MP ou a pedido da ofendida, de imediato e independentemente de audiência das partes, podendo ser substituídas ou ampliadas a qualquer tempo.",
-    fonteLegal: "Lei 11.340/2006, arts. 18 e 19",
+    fonte: "Lei 11.340/2006, arts. 18 e 19",
     palavrasChave: ["medidas protetivas", "concessão", "imediata"],
   },
   {
@@ -408,7 +408,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A lei prevê a criação de equipamentos como centros de atendimento integral e multidisciplinar, casas-abrigo, delegacias e núcleos especializados, no âmbito das medidas integradas de prevenção e assistência.",
-    fonteLegal: "Lei 11.340/2006, arts. 8º e 35",
+    fonte: "Lei 11.340/2006, arts. 8º e 35",
     palavrasChave: ["casa-abrigo", "delegacia especializada", "prevenção"],
   },
 ];

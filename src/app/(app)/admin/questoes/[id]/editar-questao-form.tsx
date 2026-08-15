@@ -17,7 +17,7 @@ export function EditarQuestaoForm({ questao }: { questao: QuestaoEdicaoDTO }) {
   const [enunciado, setEnunciado] = useState(questao.enunciado);
   const [nivel, setNivel] = useState(questao.nivel);
   const [explicacao, setExplicacao] = useState(questao.explicacao);
-  const [fonteLegal, setFonteLegal] = useState(questao.fonteLegal ?? "");
+  const [fonte, setFonte] = useState(questao.fonte ?? "");
   const [alternativas, setAlternativas] = useState(
     questao.alternativas.map((a) => ({ id: a.id, texto: a.texto, correta: a.correta }))
   );
@@ -42,7 +42,7 @@ export function EditarQuestaoForm({ questao }: { questao: QuestaoEdicaoDTO }) {
           enunciado,
           nivel,
           explicacao,
-          fonteLegal,
+          fonte,
           alternativas,
         });
         setOk(true);
@@ -147,8 +147,8 @@ export function EditarQuestaoForm({ questao }: { questao: QuestaoEdicaoDTO }) {
             />
           </Campo>
 
-          <Campo label="Base legal">
-            <Input value={fonteLegal} onChange={(e) => setFonteLegal(e.target.value)} />
+          <Campo label="Fonte">
+            <Input value={fonte} onChange={(e) => setFonte(e.target.value)} />
           </Campo>
 
           {erro && (

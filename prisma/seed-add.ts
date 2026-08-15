@@ -77,7 +77,7 @@ async function main() {
         nivel: raw.nivel,
         banca: "QUADRIX",
         explicacao: raw.explicacao,
-        fonteLegal: raw.fonteLegal,
+        fonte: raw.fonte,
         dificuldade: raw.dificuldade,
         palavrasChave: raw.palavrasChave?.join(", "),
         concursoId: concurso.id,

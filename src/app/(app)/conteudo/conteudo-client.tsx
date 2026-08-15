@@ -302,7 +302,7 @@ function QuestaoUnica({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
   const [enunciado, setEnunciado] = useState("");
   const [nivel, setNivel] = useState<string>("Medio");
   const [dificuldade, setDificuldade] = useState(3);
-  const [fonteLegal, setFonteLegal] = useState("");
+  const [fonte, setFonte] = useState("");
   const [palavrasChave, setPalavrasChave] = useState("");
   const [explicacao, setExplicacao] = useState("");
   const [alternativas, setAlternativas] = useState<AltState[]>([
@@ -348,7 +348,7 @@ function QuestaoUnica({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
           enunciado,
           nivel,
           dificuldade,
-          fonteLegal,
+          fonte,
           palavrasChave,
           explicacao,
           alternativas,
@@ -356,7 +356,7 @@ function QuestaoUnica({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
         setOk("Questão criada com sucesso.");
         setEnunciado("");
         setSubassunto("");
-        setFonteLegal("");
+        setFonte("");
         setPalavrasChave("");
         setExplicacao("");
         setAlternativas([
@@ -483,8 +483,12 @@ function QuestaoUnica({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
         </Campo>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Campo label="Base legal (opcional)">
-            <Input value={fonteLegal} onChange={(e) => setFonteLegal(e.target.value)} placeholder="Ex.: Art. 3º da Lei..." />
+          <Campo label="Fonte (opcional)">
+            <Input
+              value={fonte}
+              onChange={(e) => setFonte(e.target.value)}
+              placeholder="Ex.: Art. 3º da Lei nº 8.742/1993; Manual do SUAS; gramática normativa"
+            />
           </Campo>
           <Campo label="Palavras-chave (opcional, separadas por vírgula)">
             <Input value={palavrasChave} onChange={(e) => setPalavrasChave(e.target.value)} placeholder="suas, pnas" />
@@ -618,7 +622,7 @@ function QuestaoLote({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
             enunciado: "Segundo a legislação, o benefício X é concedido a...",
             nivel: "Medio",
             explicacao: "A alternativa correta reflete o disposto no artigo...",
-            fonteLegal: "Art. 1º da Lei nº 0.000/0000",
+            fonte: "Art. 1º da Lei nº 0.000/0000",
             dificuldade: 3,
             palavrasChave: ["exemplo", "modelo"],
             alternativas: [
@@ -654,7 +658,7 @@ function QuestaoLote({ assuntos }: { assuntos: ConteudoAdmin["assuntos"] }) {
           Cole um <span className="font-medium text-slate-200">array JSON</span> de questões. Cada item usa o{" "}
           <span className="font-medium text-slate-200">nome do assunto</span> (deve já existir). Questões com enunciado
           repetido são ignoradas. Campos: <code className="text-indigo-300">assunto, enunciado, explicacao,
-          alternativas[]</code> (obrigatórios); <code className="text-indigo-300">subassunto, nivel, banca, fonteLegal,
+          alternativas[]</code> (obrigatórios); <code className="text-indigo-300">subassunto, nivel, banca, fonte,
           dificuldade, palavrasChave[]</code> (opcionais). Cada questão precisa de exatamente uma alternativa com{" "}
           <code className="text-indigo-300">correta: true</code>.
         </div>

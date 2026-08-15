@@ -23,7 +23,7 @@ export type QuestaoEdicaoDTO = {
   nivel: string;
   banca: string;
   explicacao: string;
-  fonteLegal: string | null;
+  fonte: string | null;
   assunto: string;
   subassunto: string | null;
   alternativas: AlternativaEdicao[];
@@ -49,7 +49,7 @@ export async function getQuestaoParaEdicao(questaoId: string): Promise<QuestaoEd
     nivel: q.nivel,
     banca: q.banca,
     explicacao: q.explicacao,
-    fonteLegal: q.fonteLegal,
+    fonte: q.fonte,
     assunto: q.assunto.nome,
     subassunto: q.subassunto?.nome ?? null,
     alternativas: q.alternativas.map((a) => ({
@@ -66,7 +66,7 @@ export type AtualizarQuestaoInput = {
   enunciado: string;
   nivel: string;
   explicacao: string;
-  fonteLegal?: string | null;
+  fonte?: string | null;
   alternativas: { id: string; texto: string; correta: boolean }[];
 };
 
@@ -99,12 +99,12 @@ export async function atualizarQuestao(input: AtualizarQuestaoInput): Promise<vo
     throw new Error("Marque exatamente uma alternativa como correta.");
   }
 
-  const fonteLegal = input.fonteLegal?.trim() || null;
+  const fonte = input.fonte?.trim() || null;
 
   await prisma.$transaction([
     prisma.questao.update({
       where: { id: input.questaoId },
-      data: { enunciado, explicacao, nivel: input.nivel, fonteLegal },
+      data: { enunciado, explicacao, nivel: input.nivel, fonte },
     }),
     ...alts.map((a) =>
       prisma.alternativa.update({

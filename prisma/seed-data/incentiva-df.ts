@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Incentiva DF é um programa de qualificação profissional e inclusão produtiva que visa promover a autonomia das famílias por meio do acesso ao trabalho e renda.",
-    fonteLegal: "Programa DF Social; Decreto nº 42.872/2021",
+    fonte: "Programa DF Social; Decreto nº 42.872/2021",
     palavrasChave: ["qualificação", "inclusão produtiva", "autonomia"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Incentiva DF atende famílias em situação de vulnerabilidade social, prioritariamente aquelas cadastradas no Cadastro Único, oferecendo oportunidades de qualificação e trabalho.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["Cadastro Único", "vulnerabilidade", "trabalho"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Incentiva DF oferece cursos de capacitação profissional, oficinas de empreendedorismo e ações de intermediação de mão de obra para facilitar a inserção no mercado de trabalho.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["capacitação", "empreendedorismo", "mercado de trabalho"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Incentiva DF tem como objetivo central a emancipação das famílias, promovendo autonomia por meio da qualificação profissional e da inclusão no mercado de trabalho.",
-    fonteLegal: "Decreto nº 42.872/2021, art. 2º",
+    fonte: "Decreto nº 42.872/2021, art. 2º",
     palavrasChave: ["emancipação", "autonomia", "trabalho e renda"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Diferentemente dos programas de transferência de renda, o Incentiva DF atua na inclusão produtiva, oferecendo capacitação profissional e apoio ao empreendedorismo para promover a autonomia das famílias.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["inclusão produtiva", "transferência de renda", "diferencial"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Incentiva DF integra o Programa DF Social, política guarda-chuva que articula diversos programas de proteção e desenvolvimento social no Distrito Federal.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["Programa DF Social", "vinculação"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Incentiva DF é gerido pela SEDES, órgão responsável pela coordenação do Programa DF Social e seus programas integrantes.",
-    fonteLegal: "Lei nº 7.008/2021, art. 4º",
+    fonte: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "gestão"],
   },
 ];

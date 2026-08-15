@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LC 840/2011 institui o regime jurídico dos servidores públicos civis do DF, de suas autarquias e fundações públicas, equivalendo, no âmbito distrital, ao papel da Lei 8.112/1990 na esfera federal.",
-    fonteLegal: "Lei Complementar 840/2011 (DF), art. 1º",
+    fonte: "Lei Complementar 840/2011 (DF), art. 1º",
     palavrasChave: ["regime jurídico", "servidores", "DF"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A investidura em cargo público depende de aprovação prévia em concurso público de provas ou de provas e títulos, salvo as nomeações para cargo em comissão, declarado em lei de livre nomeação e exoneração.",
-    fonteLegal: "Lei 840/2011; CF/1988, art. 37, II",
+    fonte: "Lei 840/2011; CF/1988, art. 37, II",
     palavrasChave: ["concurso público", "investidura"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "São requisitos básicos, entre outros, nacionalidade brasileira, gozo dos direitos políticos, quitação com obrigações militares/eleitorais, escolaridade exigida, idade mínima e aptidão. Filiação partidária não é requisito (e a imparcialidade do servidor é valor protegido).",
-    fonteLegal: "Lei 840/2011 (requisitos de posse)",
+    fonte: "Lei 840/2011 (requisitos de posse)",
     palavrasChave: ["posse", "requisitos básicos"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O estágio probatório corresponde ao período de 36 meses de efetivo exercício, durante o qual a aptidão e a capacidade do servidor são avaliadas para fins de aquisição da estabilidade.",
-    fonteLegal: "Lei 840/2011, art. 22",
+    fonte: "Lei 840/2011, art. 22",
     palavrasChave: ["estágio probatório", "36 meses"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A avaliação do estágio probatório observa fatores como assiduidade, disciplina, capacidade de iniciativa, produtividade e responsabilidade, voltados a verificar a aptidão para o cargo.",
-    fonteLegal: "Lei 840/2011, art. 22",
+    fonte: "Lei 840/2011, art. 22",
     palavrasChave: ["estágio probatório", "avaliação"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A estabilidade é adquirida após 3 anos de efetivo exercício, sendo condição a aprovação em avaliação especial de desempenho por comissão constituída para essa finalidade.",
-    fonteLegal: "Lei 840/2011; CF/1988, art. 41",
+    fonte: "Lei 840/2011; CF/1988, art. 41",
     palavrasChave: ["estabilidade", "3 anos", "avaliação"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A posse é o ato de investidura no cargo público, com a aceitação expressa das atribuições, deveres e responsabilidades, formalizada pela assinatura do termo de posse.",
-    fonteLegal: "Lei 840/2011 (provimento e posse)",
+    fonte: "Lei 840/2011 (provimento e posse)",
     palavrasChave: ["posse", "investidura"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Exercício é o efetivo desempenho das atribuições do cargo. É a partir do início do exercício que se contam, por exemplo, prazos relativos ao estágio probatório.",
-    fonteLegal: "Lei 840/2011 (exercício)",
+    fonte: "Lei 840/2011 (exercício)",
     palavrasChave: ["exercício", "atribuições"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As formas de provimento incluem nomeação, promoção, readaptação, reversão, reintegração, recondução e aproveitamento. Exoneração e demissão são formas de vacância (desligamento), não de provimento.",
-    fonteLegal: "Lei 840/2011 (formas de provimento)",
+    fonte: "Lei 840/2011 (formas de provimento)",
     palavrasChave: ["provimento", "nomeação", "reintegração"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A reintegração é o retorno do servidor estável ao cargo de origem, em razão da invalidação (administrativa ou judicial) de sua demissão, com ressarcimento das vantagens do período de afastamento.",
-    fonteLegal: "Lei 840/2011 (reintegração); CF/1988, art. 41, §2º",
+    fonte: "Lei 840/2011 (reintegração); CF/1988, art. 41, §2º",
     palavrasChave: ["reintegração", "demissão invalidada"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A vacância decorre, entre outras hipóteses, de exoneração, demissão, promoção, aposentadoria, posse em outro cargo inacumulável e falecimento.",
-    fonteLegal: "Lei 840/2011 (vacância)",
+    fonte: "Lei 840/2011 (vacância)",
     palavrasChave: ["vacância", "exoneração", "demissão"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A demissão é penalidade disciplinar aplicada após processo administrativo. A exoneração não tem natureza punitiva (pode ser a pedido ou de ofício, por exemplo, de cargo em comissão).",
-    fonteLegal: "Lei 840/2011",
+    fonte: "Lei 840/2011",
     palavrasChave: ["exoneração", "demissão", "penalidade"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Entre os deveres estão exercer com zelo e dedicação as atribuições, ser leal às instituições, observar normas legais e regulamentares e cumprir as ordens superiores, salvo quando manifestamente ilegais.",
-    fonteLegal: "Lei 840/2011 (deveres)",
+    fonte: "Lei 840/2011 (deveres)",
     palavrasChave: ["deveres", "zelo", "lealdade"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "É vedado ao servidor valer-se do cargo para obter proveito pessoal ou de outrem; as demais alternativas descrevem deveres, não proibições.",
-    fonteLegal: "Lei 840/2011 (proibições)",
+    fonte: "Lei 840/2011 (proibições)",
     palavrasChave: ["proibições", "proveito pessoal"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As penalidades disciplinares são advertência, suspensão, demissão, cassação de aposentadoria ou disponibilidade e destituição de cargo em comissão ou de função, conforme a gravidade da infração.",
-    fonteLegal: "Lei 840/2011 (penalidades)",
+    fonte: "Lei 840/2011 (penalidades)",
     palavrasChave: ["penalidades", "advertência", "demissão"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A advertência é a penalidade mais branda, aplicada a infrações leves (como violação de deveres ou proibições de menor gravidade), normalmente registrada por escrito.",
-    fonteLegal: "Lei 840/2011",
+    fonte: "Lei 840/2011",
     palavrasChave: ["advertência", "infração leve"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Penalidades graves (suspensão prolongada, demissão, cassação) exigem processo administrativo disciplinar, assegurados o contraditório e a ampla defesa, sob pena de nulidade.",
-    fonteLegal: "Lei 840/2011 (PAD); CF/1988, art. 5º, LV",
+    fonte: "Lei 840/2011 (PAD); CF/1988, art. 5º, LV",
     palavrasChave: ["PAD", "ampla defesa", "contraditório"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Em regra, é vedada a acumulação remunerada de cargos públicos, com exceções constitucionais taxativas (dois de professor; um de professor com outro técnico/científico; dois privativos de saúde), sempre exigida a compatibilidade de horários.",
-    fonteLegal: "CF/1988, art. 37, XVI; Lei 840/2011",
+    fonte: "CF/1988, art. 37, XVI; Lei 840/2011",
     palavrasChave: ["acumulação", "exceções", "compatibilidade de horários"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Vencimento é a retribuição pecuniária pelo efetivo exercício do cargo, com valor fixado em lei. A remuneração é o vencimento acrescido das vantagens pecuniárias permanentes ou temporárias.",
-    fonteLegal: "Lei 840/2011 (vencimento e remuneração)",
+    fonte: "Lei 840/2011 (vencimento e remuneração)",
     palavrasChave: ["vencimento", "remuneração"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Entre as licenças previstas estão a licença para tratamento de saúde, a licença à gestante/adotante, a licença-paternidade e a licença por motivo de doença em pessoa da família, conforme requisitos legais.",
-    fonteLegal: "Lei 840/2011 (licenças)",
+    fonte: "Lei 840/2011 (licenças)",
     palavrasChave: ["licenças", "saúde", "gestante"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A readaptação é a investidura do servidor em cargo de atribuições e responsabilidades compatíveis com a limitação que tenha sofrido em sua capacidade física ou mental, apurada em inspeção médica.",
-    fonteLegal: "Lei 840/2011 (readaptação)",
+    fonte: "Lei 840/2011 (readaptação)",
     palavrasChave: ["readaptação", "limitação", "inspeção médica"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A recondução é o retorno do servidor estável ao cargo anteriormente ocupado, decorrente de inabilitação em estágio probatório relativo a outro cargo ou de reintegração do anterior ocupante.",
-    fonteLegal: "Lei 840/2011 (recondução)",
+    fonte: "Lei 840/2011 (recondução)",
     palavrasChave: ["recondução", "estágio probatório", "estável"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O cargo em comissão é de livre nomeação e exoneração, destinado apenas às atribuições de direção, chefia e assessoramento, conforme a Constituição e a Lei 840/2011.",
-    fonteLegal: "Lei 840/2011; CF/1988, art. 37, V",
+    fonte: "Lei 840/2011; CF/1988, art. 37, V",
     palavrasChave: ["cargo em comissão", "livre nomeação"],
   },
   {
@@ -408,7 +408,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "As instâncias civil, penal e administrativa são, em regra, independentes, podendo o servidor responder cumulativamente. A absolvição penal só repercute na esfera administrativa quando negar a existência do fato ou a autoria.",
-    fonteLegal: "Lei 840/2011 (responsabilidades)",
+    fonte: "Lei 840/2011 (responsabilidades)",
     palavrasChave: ["independência das instâncias", "responsabilidade"],
   },
 ];

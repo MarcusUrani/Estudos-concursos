@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O art. 22 da LOAS define os benefícios eventuais como provisões suplementares e provisórias prestadas em razão de nascimento, morte, vulnerabilidade temporária e calamidade pública.",
-    fonteLegal: "Lei 8.742/1993 (LOAS), art. 22",
+    fonte: "Lei 8.742/1993 (LOAS), art. 22",
     palavrasChave: ["benefícios eventuais", "provisório", "suplementar"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOAS estabelece que a concessão e o valor dos benefícios eventuais são definidos pelos municípios e pelo DF, observados critérios e prazos, podendo haver participação estadual e federal no cofinanciamento.",
-    fonteLegal: "Lei 8.742/1993, art. 22; Decreto 6.307/2007",
+    fonte: "Lei 8.742/1993, art. 22; Decreto 6.307/2007",
     palavrasChave: ["competência", "município", "DF"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O auxílio-natalidade (nascimento) e o auxílio-funeral (morte) são as hipóteses clássicas de benefícios eventuais previstas a partir da LOAS e regulamentadas pelo Decreto 6.307/2007.",
-    fonteLegal: "Lei 8.742/1993, art. 22; Decreto 6.307/2007",
+    fonte: "Lei 8.742/1993, art. 22; Decreto 6.307/2007",
     palavrasChave: ["auxílio-natalidade", "auxílio-funeral"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Cabe ao Conselho de Assistência Social (do município ou do DF) regulamentar, por deliberação, os critérios e prazos dos benefícios eventuais, observados os parâmetros legais.",
-    fonteLegal: "Lei 8.742/1993, art. 22, §1º; Decreto 6.307/2007",
+    fonte: "Lei 8.742/1993, art. 22, §1º; Decreto 6.307/2007",
     palavrasChave: ["conselho", "deliberação", "critérios"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais integram organicamente as garantias do SUAS, sendo prestados no âmbito da política de assistência social.",
-    fonteLegal: "Decreto 6.307/2007; LOAS",
+    fonte: "Decreto 6.307/2007; LOAS",
     palavrasChave: ["SUAS", "garantias"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O benefício por vulnerabilidade temporária visa enfrentar situações de riscos, perdas e danos que comprometem temporariamente a sobrevivência e a manutenção do indivíduo e da família.",
-    fonteLegal: "Decreto 6.307/2007, art. 9º",
+    fonte: "Decreto 6.307/2007, art. 9º",
     palavrasChave: ["vulnerabilidade temporária", "contingência"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Em calamidade pública, o benefício eventual destina-se a garantir a sobrevivência das famílias e indivíduos atingidos, contribuindo para o restabelecimento de suas condições de vida.",
-    fonteLegal: "Decreto 6.307/2007, art. 10",
+    fonte: "Decreto 6.307/2007, art. 10",
     palavrasChave: ["calamidade pública", "sobrevivência"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais podem ser prestados em pecúnia ou em bens de consumo, conforme a regulamentação local, sendo vedado o caráter de empréstimo ou contraprestação.",
-    fonteLegal: "Decreto 6.307/2007",
+    fonte: "Decreto 6.307/2007",
     palavrasChave: ["pecúnia", "bens de consumo"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Como benefício assistencial, o acesso é direito do cidadão que dele necessitar, sem exigência de contribuição prévia.",
-    fonteLegal: "LOAS; Decreto 6.307/2007",
+    fonte: "LOAS; Decreto 6.307/2007",
     palavrasChave: ["direito", "não contributivo"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais têm caráter provisório e suplementar, diferenciando-se de benefícios permanentes como o BPC (que assegura um salário mínimo continuado).",
-    fonteLegal: "LOAS, arts. 20 e 22",
+    fonte: "LOAS, arts. 20 e 22",
     palavrasChave: ["BPC", "permanente", "eventual"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A concessão deve articular-se aos serviços (PAIF/PAEFI), de modo que a provisão material seja acompanhada de trabalho social e do acesso a outros direitos, evitando ações isoladas e assistencialistas.",
-    fonteLegal: "Decreto 6.307/2007; PNAS/2004",
+    fonte: "Decreto 6.307/2007; PNAS/2004",
     palavrasChave: ["integração", "serviços", "acompanhamento"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais são custeados com recursos dos fundos de assistência social (municipal/DF), com possível cofinanciamento de outras esferas, sob controle dos conselhos.",
-    fonteLegal: "LOAS; Decreto 6.307/2007",
+    fonte: "LOAS; Decreto 6.307/2007",
     palavrasChave: ["fundo", "custeio", "cofinanciamento"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "É vedada a comprovação vexatória da necessidade, em respeito à dignidade do usuário (princípio da LOAS); o acesso não pode ser condicionado a contrapartidas indevidas.",
-    fonteLegal: "LOAS, art. 4º; Decreto 6.307/2007",
+    fonte: "LOAS, art. 4º; Decreto 6.307/2007",
     palavrasChave: ["vedação", "comprovação vexatória", "dignidade"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Por acumular competências estaduais e municipais, o DF regulamenta seus benefícios eventuais, com deliberação do Conselho de Assistência Social do DF, observados os parâmetros legais federais.",
-    fonteLegal: "LOAS; Decreto 6.307/2007; CF/1988, art. 32",
+    fonte: "LOAS; Decreto 6.307/2007; CF/1988, art. 32",
     palavrasChave: ["Distrito Federal", "regulamentação", "conselho"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais têm natureza temporária e complementar (suplementar), atuando em situações específicas, sem substituir de forma permanente a renda das famílias.",
-    fonteLegal: "LOAS, art. 22; Decreto 6.307/2007",
+    fonte: "LOAS, art. 22; Decreto 6.307/2007",
     palavrasChave: ["temporário", "complementar"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A concessão observa os princípios da assistência social: igualdade de acesso, não discriminação e respeito à dignidade e à autonomia do usuário.",
-    fonteLegal: "LOAS, art. 4º; Decreto 6.307/2007",
+    fonte: "LOAS, art. 4º; Decreto 6.307/2007",
     palavrasChave: ["igualdade", "dignidade", "não discriminação"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O auxílio por morte pode custear despesas como urna funerária, traslado, sepultamento e outras decorrentes do óbito, conforme regulamentação local.",
-    fonteLegal: "Decreto 6.307/2007",
+    fonte: "Decreto 6.307/2007",
     palavrasChave: ["auxílio-funeral", "óbito", "despesas"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O auxílio-natalidade visa atender as necessidades do recém-nascido e da família (como enxoval e itens essenciais), conforme regulamentação do ente.",
-    fonteLegal: "Decreto 6.307/2007",
+    fonte: "Decreto 6.307/2007",
     palavrasChave: ["auxílio-natalidade", "recém-nascido", "enxoval"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais são direito previsto em lei; a regulamentação detalha critérios e prazos, mas sua ausência não afasta o dever do ente de prover a proteção, observados os parâmetros da LOAS.",
-    fonteLegal: "LOAS, art. 22; Decreto 6.307/2007",
+    fonte: "LOAS, art. 22; Decreto 6.307/2007",
     palavrasChave: ["regulamentação", "direito", "dever do ente"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O benefício eventual é uma provisão pontual (pecúnia/bens) para contingências; o serviço socioassistencial (como PAIF e SCFV) é atividade continuada de atendimento, acompanhamento e fortalecimento de vínculos.",
-    fonteLegal: "LOAS; Tipificação Nacional; Decreto 6.307/2007",
+    fonte: "LOAS; Tipificação Nacional; Decreto 6.307/2007",
     palavrasChave: ["benefício", "serviço", "diferença"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios eventuais materializam a proteção social ao responder a riscos e contingências (nascimento, morte, vulnerabilidade temporária, calamidade) que afetam as famílias.",
-    fonteLegal: "LOAS, art. 22; PNAS/2004",
+    fonte: "LOAS, art. 22; PNAS/2004",
     palavrasChave: ["proteção social", "contingências"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A concessão pressupõe o atendimento e a avaliação técnica da equipe de assistência social, que identifica a necessidade e articula o benefício ao acompanhamento da família.",
-    fonteLegal: "Decreto 6.307/2007; PNAS/2004",
+    fonte: "Decreto 6.307/2007; PNAS/2004",
     palavrasChave: ["avaliação técnica", "equipe", "necessidade"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A previsão orçamentária e no plano de assistência social assegura recursos e planejamento para a oferta regular dos benefícios eventuais, evitando descontinuidades.",
-    fonteLegal: "LOAS; NOB-SUAS; Decreto 6.307/2007",
+    fonte: "LOAS; NOB-SUAS; Decreto 6.307/2007",
     palavrasChave: ["orçamento", "planejamento", "plano"],
   },
 ];

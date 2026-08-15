@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Brincar é um programa que promove o direito ao lazer, à convivência e ao desenvolvimento infantil por meio de atividades lúdicas e recreativas.",
-    fonteLegal: "Programa DF Social; Decreto nº 42.872/2021",
+    fonte: "Programa DF Social; Decreto nº 42.872/2021",
     palavrasChave: ["lazer", "desenvolvimento infantil", "brincar"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Brincar tem como foco crianças e adolescentes em situação de vulnerabilidade social, promovendo inclusão por meio de atividades lúdicas e recreativas.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["crianças", "adolescentes", "vulnerabilidade"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Brincar oferece atividades lúdicas como oficinas de arte, recreação, esportes e brincadeiras dirigidas, sempre com foco no desenvolvimento infantil e na inclusão social.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["oficinas", "recreação", "esportes"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Brincar é um dos programas que integram o Programa DF Social, política guarda-chuva de proteção e desenvolvimento social do Distrito Federal.",
-    fonteLegal: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
+    fonte: "Lei nº 7.008/2021; Decreto nº 42.872/2021",
     palavrasChave: ["Programa DF Social", "integração"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Brincar atua na proteção social ao fortalecer vínculos familiares e comunitários e desenvolver habilidades socioemocionais por meio de atividades lúdicas.",
-    fonteLegal: "Decreto nº 42.872/2021; PNAS/2004",
+    fonte: "Decreto nº 42.872/2021; PNAS/2004",
     palavrasChave: ["convivência", "vínculos", "socioemocionais"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O DF Brincar utiliza espaços comunitários, parques e equipamentos públicos como CRAS e centros de convivência para realizar suas atividades lúdicas e recreativas.",
-    fonteLegal: "Decreto nº 42.872/2021",
+    fonte: "Decreto nº 42.872/2021",
     palavrasChave: ["espaços comunitários", "CRAS", "equipamentos públicos"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Assim como os demais programas do Programa DF Social, o DF Brincar é coordenado pela SEDES, órgão gestor da política de desenvolvimento social do DF.",
-    fonteLegal: "Lei nº 7.008/2021, art. 4º",
+    fonte: "Lei nº 7.008/2021, art. 4º",
     palavrasChave: ["SEDES", "coordenação"],
   },
 ];

@@ -7,7 +7,7 @@ import { getConcursoAtualId } from "@/server/concurso";
 import { requireUserId } from "@/server/usuario";
 
 // Flashcards "automaticos": derivados das proprias questoes. Frente = enunciado;
-// verso = alternativa correta + comentario + base legal. A auto-avaliacao
+// verso = alternativa correta + comentario + fonte. A auto-avaliacao
 // ("sabia" / "nao sabia") alimenta a MESMA fila de revisao espacada das
 // questoes (modelo Revisao), sem criar tabela nova.
 
@@ -16,7 +16,7 @@ export type FlashcardDTO = {
   frente: string;
   verso: string;
   explicacao: string;
-  fonteLegal: string | null;
+  fonte: string | null;
   assunto: string;
   subassunto: string | null;
   nivel: string;
@@ -75,7 +75,7 @@ export async function gerarFlashcards(opts?: {
       frente: q.enunciado,
       verso: q.alternativas[0]?.texto ?? "—",
       explicacao: q.explicacao,
-      fonteLegal: q.fonteLegal,
+      fonte: q.fonte,
       assunto: q.assunto.nome,
       subassunto: q.subassunto?.nome ?? null,
       nivel: q.nivel,

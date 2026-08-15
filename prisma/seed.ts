@@ -113,7 +113,7 @@ async function main() {
         nivel: q.nivel,
         banca: "QUADRIX",
         explicacao: q.explicacao,
-        fonteLegal: q.fonteLegal,
+        fonte: q.fonte,
         dificuldade: q.dificuldade,
         palavrasChave: q.palavrasChave?.join(", "),
         concursoId: concurso.id,

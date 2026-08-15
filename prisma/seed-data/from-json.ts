@@ -16,7 +16,7 @@ type Raw = {
   enunciado: string;
   alternativas: { texto: string; correta: boolean }[];
   explicacao: string;
-  fonteLegal?: string;
+  fonte?: string;
   palavrasChave?: string[];
 };
 
@@ -153,7 +153,7 @@ const questoes: QSeed[] = load()
     enunciado: q.enunciado,
     alternativas: q.alternativas,
     explicacao: q.explicacao,
-    fonteLegal: q.fonteLegal,
+    fonte: q.fonte,
     palavrasChave: q.palavrasChave,
   }))
   // O assunto "Fundamentos" foi removido do banco: descarta as questoes que

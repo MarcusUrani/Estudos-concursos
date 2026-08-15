@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Cartão Gás é um benefício de transferência de renda do GDF voltado a auxiliar famílias de baixa renda na compra do gás de cozinha (GLP), atuando na segurança alimentar e na proteção social.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["GLP", "gás de cozinha", "transferência de renda"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O benefício destina-se a famílias de baixa renda em situação de vulnerabilidade social, em regra inscritas no Cadastro Único.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["baixa renda", "vulnerabilidade"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A identificação e a seleção das famílias beneficiárias têm como base o Cadastro Único, instrumento que caracteriza socioeconomicamente as famílias de baixa renda.",
-    fonteLegal: "Programa Cartão Gás; Cadastro Único",
+    fonte: "Programa Cartão Gás; Cadastro Único",
     palavrasChave: ["CadÚnico", "seleção"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Cartão Gás integra a rede de proteção social e de segurança alimentar e nutricional articulada pelo Plano DF Social, sob gestão da SEDES.",
-    fonteLegal: "Programa Cartão Gás; Plano DF Social",
+    fonte: "Programa Cartão Gás; Plano DF Social",
     palavrasChave: ["proteção social", "segurança alimentar"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A gestão do programa cabe à SEDES, órgão responsável pela política de desenvolvimento e assistência social do Distrito Federal.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["SEDES", "gestão"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Trata-se de transferência de renda com finalidade específica: auxiliar na aquisição do gás de cozinha, sem caráter de empréstimo ou de benefício contributivo.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["transferência de renda", "finalidade específica"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O gás de cozinha viabiliza o preparo dos alimentos em casa; garantir seu acesso a famílias vulneráveis contribui diretamente para a segurança alimentar e nutricional.",
-    fonteLegal: "Programa Cartão Gás; LOSAN",
+    fonte: "Programa Cartão Gás; LOSAN",
     palavrasChave: ["segurança alimentar", "preparo de alimentos"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A atualização periódica do Cadastro Único garante que as informações reflitam a realidade das famílias, preservando a focalização e a correta concessão do benefício.",
-    fonteLegal: "Programa Cartão Gás; Cadastro Único",
+    fonte: "Programa Cartão Gás; Cadastro Único",
     palavrasChave: ["atualização cadastral", "focalização"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Como benefício assistencial, o Cartão Gás é não contributivo, custeado com recursos públicos do Distrito Federal.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["não contributivo", "recursos públicos"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A rede do SUAS, em especial os CRAS, contribui para identificar, encaminhar e acompanhar as famílias beneficiárias, integrando o benefício à proteção social básica.",
-    fonteLegal: "Programa Cartão Gás; PNAS/2004",
+    fonte: "Programa Cartão Gás; PNAS/2004",
     palavrasChave: ["SUAS", "CRAS", "acompanhamento"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Programas de transferência de renda como o Cartão Gás costumam adotar critério de renda familiar per capita (limite de baixa renda), aferida pelo Cadastro Único.",
-    fonteLegal: "Programa Cartão Gás; Cadastro Único",
+    fonte: "Programa Cartão Gás; Cadastro Único",
     palavrasChave: ["renda per capita", "elegibilidade"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Sem acesso ao gás de cozinha, famílias vulneráveis podem recorrer a meios inadequados e perigosos (como lenha ou álcool) para cozinhar; o benefício reduz esse risco e melhora a segurança alimentar.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["risco", "GLP", "segurança"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Como política pública, a concessão observa critérios objetivos e princípios de transparência e controle social, sujeitando-se à fiscalização dos órgãos de controle e dos conselhos.",
-    fonteLegal: "Programa Cartão Gás; princípios da administração pública",
+    fonte: "Programa Cartão Gás; princípios da administração pública",
     palavrasChave: ["transparência", "controle social", "critérios"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os programas se complementam dentro da rede de proteção: o Cartão Gás (acesso ao GLP) e o Prato Cheio (alimentação) atuam de forma articulada para enfrentar a insegurança alimentar.",
-    fonteLegal: "Programa Cartão Gás; Plano DF Social",
+    fonte: "Programa Cartão Gás; Plano DF Social",
     palavrasChave: ["complementaridade", "rede de proteção"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O uso de cartão magnético facilita o acesso da família ao recurso, melhora o controle dos gastos e amplia a transparência da gestão do benefício.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["cartão magnético", "controle"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A revisão periódica assegura que apenas as famílias que continuam atendendo aos critérios permaneçam no programa, mantendo a focalização e a boa aplicação dos recursos.",
-    fonteLegal: "Programa Cartão Gás; Cadastro Único",
+    fonte: "Programa Cartão Gás; Cadastro Único",
     palavrasChave: ["revisão", "elegibilidade"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Por ser benefício custeado pelo DF, sua concessão depende da disponibilidade orçamentária e financeira prevista nas leis orçamentárias distritais.",
-    fonteLegal: "Programa Cartão Gás; LDO/LOA do DF",
+    fonte: "Programa Cartão Gás; LDO/LOA do DF",
     palavrasChave: ["orçamento", "disponibilidade financeira"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O benefício materializa um direito social relacionado à alimentação e à dignidade humana, no âmbito da proteção social do DF.",
-    fonteLegal: "Programa Cartão Gás; CF/1988, art. 6º",
+    fonte: "Programa Cartão Gás; CF/1988, art. 6º",
     palavrasChave: ["direito social", "dignidade"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O acompanhamento pelos CRAS conecta as famílias a outros serviços e benefícios, favorecendo a proteção integral e a superação das vulnerabilidades, para além do benefício pontual.",
-    fonteLegal: "Programa Cartão Gás; PNAS/2004",
+    fonte: "Programa Cartão Gás; PNAS/2004",
     palavrasChave: ["CRAS", "proteção integral"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Ao focalizar nas famílias de baixa renda (via CadÚnico), o programa direciona melhor os recursos do que subsídios universais, que beneficiam também quem não necessita.",
-    fonteLegal: "Programa Cartão Gás (GDF/SEDES)",
+    fonte: "Programa Cartão Gás (GDF/SEDES)",
     palavrasChave: ["focalização", "eficiência", "recursos públicos"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O programa contribui para o objetivo fundamental da República de erradicar a pobreza e reduzir as desigualdades sociais (art. 3º, III, da CF).",
-    fonteLegal: "Programa Cartão Gás; CF/1988, art. 3º",
+    fonte: "Programa Cartão Gás; CF/1988, art. 3º",
     palavrasChave: ["erradicar pobreza", "desigualdades"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os benefícios focalizados são revistos conforme a evolução da situação das famílias; superada a condição de elegibilidade, o benefício pode ser encerrado, liberando recursos para quem ainda necessita.",
-    fonteLegal: "Programa Cartão Gás; Cadastro Único",
+    fonte: "Programa Cartão Gás; Cadastro Único",
     palavrasChave: ["revisão", "elegibilidade", "desligamento"],
   },
 ];

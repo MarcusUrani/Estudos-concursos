@@ -11,7 +11,7 @@ type Raw = {
   enunciado: string;
   alternativas: { texto: string; correta: boolean }[];
   explicacao: string;
-  fonteLegal?: string;
+  fonte?: string;
   palavrasChave?: string[];
 };
 
@@ -80,7 +80,7 @@ async function main() {
         nivel,
         banca: "QUADRIX",
         explicacao: q.explicacao,
-        fonteLegal: q.fonteLegal,
+        fonte: q.fonte,
         dificuldade: q.dificuldade,
         palavrasChave: q.palavrasChave?.join(", "),
         concursoId: concurso.id,

@@ -266,7 +266,12 @@ function Questao({
           {/* A coluna agora e so do enunciado, entao ele pode assumir o corpo
               de leitura de verdade: 17px com entrelinha aberta. E o texto que
               precisa ser relido duas ou tres vezes. */}
-          <p className="text-[1.0625rem] leading-[1.65] text-slate-100">{questao.enunciado}</p>
+          {/* `whitespace-pre-line`: questao de interpretacao traz o texto de
+              apoio no proprio enunciado, separado do comando por linha em
+              branco. Sem isto o texto e o comando viram um paragrafo so. */}
+          <p className="text-[1.0625rem] leading-[1.65] whitespace-pre-line text-slate-100">
+            {questao.enunciado}
+          </p>
 
           <div className="space-y-2">
             {questao.alternativas.map((alt, i) => {
@@ -354,12 +359,12 @@ function Questao({
                     <BookOpen className="h-4 w-4" /> Comentário
                   </p>
                   <p className="text-sm leading-relaxed text-slate-300">{resultado.explicacao}</p>
-                  {resultado.fonteLegal && (
+                  {resultado.fonte && (
                     <p className="mt-3 flex items-start gap-2 text-xs text-slate-400">
                       <ScrollText className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
                       <span>
-                        <span className="font-medium text-slate-300">Base legal: </span>
-                        {resultado.fonteLegal}
+                        <span className="font-medium text-slate-300">Fonte: </span>
+                        {resultado.fonte}
                       </span>
                     </p>
                   )}

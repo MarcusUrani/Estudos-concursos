@@ -17,7 +17,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O Cartão Prato Cheio é um programa de segurança alimentar e nutricional do DF que concede benefício financeiro destinado à compra de alimentos por famílias em situação de insegurança alimentar e vulnerabilidade social.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["alimentos", "segurança alimentar", "transferência de renda"],
   },
   {
@@ -34,7 +34,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O programa destina-se a famílias em insegurança alimentar e vulnerabilidade social, em regra identificadas pelo Cadastro Único.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["insegurança alimentar", "vulnerabilidade"],
   },
   {
@@ -51,7 +51,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O programa integra a política de segurança alimentar e nutricional e a rede de proteção social do DF, articulada pelo Plano DF Social e gerida pela SEDES.",
-    fonteLegal: "Programa Cartão Prato Cheio; Plano DF Social; LOSAN",
+    fonte: "Programa Cartão Prato Cheio; Plano DF Social; LOSAN",
     palavrasChave: ["SAN", "proteção social"],
   },
   {
@@ -68,7 +68,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Como nos demais programas sociais, a identificação e a seleção das famílias têm como base o Cadastro Único.",
-    fonteLegal: "Programa Cartão Prato Cheio; Cadastro Único",
+    fonte: "Programa Cartão Prato Cheio; Cadastro Único",
     palavrasChave: ["CadÚnico", "seleção"],
   },
   {
@@ -85,7 +85,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O cartão é destinado à compra de alimentos, geralmente em estabelecimentos credenciados, reforçando a finalidade de segurança alimentar do benefício.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["gêneros alimentícios", "credenciados"],
   },
   {
@@ -102,7 +102,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A LOSAN define SAN como o direito de todos ao acesso regular e permanente a alimentos de qualidade, em quantidade suficiente, sem comprometer o acesso a outras necessidades essenciais, respeitada a diversidade cultural.",
-    fonteLegal: "LOSAN (Lei 11.346/2006); Programa Prato Cheio",
+    fonte: "LOSAN (Lei 11.346/2006); Programa Prato Cheio",
     palavrasChave: ["SAN", "acesso regular", "qualidade"],
   },
   {
@@ -119,7 +119,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A gestão do programa cabe à SEDES, responsável pela política de desenvolvimento e assistência social do DF.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["SEDES", "gestão"],
   },
   {
@@ -136,7 +136,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "É uma transferência de renda de natureza assistencial (não contributiva), com finalidade específica de garantir o acesso a alimentos.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["não contributivo", "transferência de renda"],
   },
   {
@@ -153,7 +153,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Ao direcionar a compra de alimentos a estabelecimentos credenciados, o programa também movimenta a economia local, além de garantir a segurança alimentar das famílias.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["economia local", "credenciamento"],
   },
   {
@@ -170,7 +170,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A finalidade central do programa é combater a fome e a insegurança alimentar, garantindo o acesso a alimentos às famílias vulneráveis.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["combate à fome", "insegurança alimentar"],
   },
   {
@@ -187,7 +187,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A rede do SUAS (CRAS/CREAS) acompanha as famílias beneficiárias, conectando-as a outros serviços e benefícios, na lógica da proteção integral.",
-    fonteLegal: "Programa Cartão Prato Cheio; PNAS/2004",
+    fonte: "Programa Cartão Prato Cheio; PNAS/2004",
     palavrasChave: ["SUAS", "acompanhamento", "proteção integral"],
   },
   {
@@ -204,7 +204,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A focalização por renda (via CadÚnico) prioriza as famílias mais pobres e em maior insegurança alimentar, otimizando o uso dos recursos públicos.",
-    fonteLegal: "Programa Cartão Prato Cheio; Cadastro Único",
+    fonte: "Programa Cartão Prato Cheio; Cadastro Único",
     palavrasChave: ["focalização", "renda"],
   },
   {
@@ -221,7 +221,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "São ações complementares de SAN: o Prato Cheio repassa recursos para a família comprar alimentos; o restaurante comunitário fornece refeições prontas e nutritivas a preço subsidiado.",
-    fonteLegal: "Programas de SAN do DF (GDF/SEDES)",
+    fonte: "Programas de SAN do DF (GDF/SEDES)",
     palavrasChave: ["Prato Cheio", "restaurante comunitário", "complementaridade"],
   },
   {
@@ -238,7 +238,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O cartão magnético facilita o acesso da família ao recurso e amplia o controle e a transparência sobre o uso do benefício.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["cartão magnético", "transparência"],
   },
   {
@@ -255,7 +255,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A revisão periódica garante a focalização do benefício, mantendo no programa as famílias que continuam atendendo aos critérios de elegibilidade.",
-    fonteLegal: "Programa Cartão Prato Cheio; Cadastro Único",
+    fonte: "Programa Cartão Prato Cheio; Cadastro Único",
     palavrasChave: ["revisão", "elegibilidade"],
   },
   {
@@ -272,7 +272,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A alimentação é direito social expresso no art. 6º da CF/1988 (incluído pela EC 64/2010); o programa concretiza esse direito para as famílias vulneráveis.",
-    fonteLegal: "CF/1988, art. 6º; Programa Prato Cheio",
+    fonte: "CF/1988, art. 6º; Programa Prato Cheio",
     palavrasChave: ["direito à alimentação", "art. 6º"],
   },
   {
@@ -289,7 +289,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A concessão observa os critérios objetivos do programa e a disponibilidade orçamentária e financeira do DF, sem qualquer caráter contributivo ou político-partidário.",
-    fonteLegal: "Programa Cartão Prato Cheio; LOA do DF",
+    fonte: "Programa Cartão Prato Cheio; LOA do DF",
     palavrasChave: ["critérios", "orçamento"],
   },
   {
@@ -306,7 +306,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A articulação com inclusão produtiva (qualificação, emprego, empreendedorismo) busca combinar o alívio imediato da insegurança alimentar com a promoção da autonomia e da emancipação das famílias.",
-    fonteLegal: "Programa Prato Cheio; Plano DF Social",
+    fonte: "Programa Prato Cheio; Plano DF Social",
     palavrasChave: ["inclusão produtiva", "autonomia"],
   },
   {
@@ -323,7 +323,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Como política pública, o programa sujeita-se ao controle social (conselhos) e ao controle institucional (órgãos de controle), com transparência das informações.",
-    fonteLegal: "Programa Prato Cheio; LOAS; princípios da administração",
+    fonte: "Programa Prato Cheio; LOAS; princípios da administração",
     palavrasChave: ["controle social", "transparência"],
   },
   {
@@ -340,7 +340,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Os critérios de priorização costumam considerar a extrema pobreza e a presença de agravantes de vulnerabilidade (crianças, idosos, pessoas com deficiência, gestantes etc.).",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["priorização", "extrema pobreza", "agravantes"],
   },
   {
@@ -357,7 +357,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "O programa articula segurança alimentar com assistência social e outras políticas, na lógica intersetorial de enfrentamento integral da pobreza e da insegurança alimentar.",
-    fonteLegal: "Programa Prato Cheio; Plano DF Social",
+    fonte: "Programa Prato Cheio; Plano DF Social",
     palavrasChave: ["intersetorialidade", "proteção integral"],
   },
   {
@@ -374,7 +374,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "Trata-se de transferência de renda focalizada nas famílias de baixa renda em situação de insegurança alimentar, e não de benefício universal ou contributivo.",
-    fonteLegal: "Programa Cartão Prato Cheio (GDF/SEDES)",
+    fonte: "Programa Cartão Prato Cheio (GDF/SEDES)",
     palavrasChave: ["focalizado", "baixa renda"],
   },
   {
@@ -391,7 +391,7 @@ const questoes: QSeed[] = [
     ],
     explicacao:
       "A segurança alimentar tem efeitos positivos indiretos sobre saúde, aprendizagem, frequência escolar e desenvolvimento infantil, reforçando a importância do programa.",
-    fonteLegal: "Programa Cartão Prato Cheio; determinantes sociais",
+    fonte: "Programa Cartão Prato Cheio; determinantes sociais",
     palavrasChave: ["saúde", "educação", "desenvolvimento infantil"],
   },
 ];

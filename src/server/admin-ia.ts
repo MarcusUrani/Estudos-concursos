@@ -12,6 +12,7 @@ import {
   normalizarTexto,
   normalizarNivel,
   derivarAssunto,
+  citaTextoAusente,
 } from "@/lib/ia-prompt";
 
 /* =============================================================================
@@ -25,37 +26,38 @@ import {
    devolve o que o modelo produziu ja validado. Quem grava e
    `salvarQuestoesGeradas`, depois da revisao na tela.
 
-   Isso nao e cerimonia: questao gerada por modelo erra base legal e inventa
+   Isso nao e cerimonia: questao gerada por modelo erra a fonte e inventa
    numero de decreto com a maior naturalidade, e o banco alimenta o estudo de
    uma pessoa que vai fazer a prova. Revisar antes de gravar e o unico jeito
    honesto de usar isso.
    ============================================================================= */
 
-/** Teto por geracao — acima disso a chamada estoura o limite de tempo da Vercel. */
-const MAX_QUANTIDADE = 20;
+/* -----------------------------------------------------------------------------
+   Orcamento de tokens
 
-/**
- * Quantos enunciados existentes mandamos como "nao repita".
- *
- * Enxuto de proposito: o tier gratuito do Groq trabalha com 12 mil tokens por
- * MINUTO, e tudo que vai no prompt consome essa cota. 30 enunciados ja evitam a
- * maior parte das repeticoes sem comer o orcamento da resposta.
- */
-const MAX_CONTEXTO_EXISTENTES = 30;
+   O tier gratuito do Groq limita TOKENS POR MINUTO, e o limite varia por
+   modelo: 8.000 no gpt-oss-120b (o padrao) e 12.000 no llama-3.3-70b. Medido
+   nos headers `x-ratelimit-limit-tokens`.
 
-/**
- * Teto de tokens da resposta, proporcional ao pedido.
- *
- * Isto NAO e microtuning: o Groq debita o `max_tokens` RESERVADO da cota por
- * minuto, nao o que a resposta de fato gastou. Com um valor fixo alto, gerar
- * 5 questoes custava o mesmo que gerar 20 e estourava o limite na segunda
- * tentativa seguida.
- */
+   Pior: o Groq debita o `max_tokens` RESERVADO, nao o que a resposta gastou.
+   Entao pedir um teto folgado "por seguranca" e o que estoura a cota — e o
+   orcamento inteiro do minuto some numa requisicao so.
+
+   Os numeros abaixo cabem no menor limite (8.000), somando entrada e saida.
+   ----------------------------------------------------------------------------- */
+
+/** Teto por geracao. Limitado pela cota por minuto, nao pelo tempo. */
+const MAX_QUANTIDADE = 12;
+
+/** Quantos enunciados existentes mandamos como "nao repita" — entram na cota. */
+const MAX_CONTEXTO_EXISTENTES = 20;
+
+/** Teto de saida, proporcional ao pedido. */
 function tetoTokens(quantidade: number): number {
-  // 450 por questao vem da medicao: 380 truncava lotes verbosos. O teto de 7800
-  // deixa margem para o prompt de entrada dentro dos 12 mil tokens/minuto — se
-  // ainda assim a resposta cortar, o parser resgata as questoes ja fechadas.
-  return Math.min(7800, quantidade * 450 + 500);
+  // 450 por questao vem da medicao: 380 truncava lotes verbosos. O teto de 5800
+  // deixa ~2.200 para a entrada dentro dos 8.000 do minuto. Se ainda assim a
+  // resposta cortar, o parser resgata as questoes ja fechadas.
+  return Math.min(5800, quantidade * 450 + 500);
 }
 
 async function exigirUsuario() {
@@ -75,7 +77,7 @@ export type QuestaoGerada = {
   nivel: Nivel;
   dificuldade: number;
   explicacao: string;
-  fonteLegal: string | null;
+  fonte: string | null;
   palavrasChave: string[];
   subassunto: string | null;
   alternativas: AlternativaGerada[];
@@ -103,6 +105,8 @@ const itemSchema = z.object({
   nivel: z.unknown().nullish(),
   dificuldade: z.coerce.number().nullish(),
   explicacao: z.string().nullish(),
+  fonte: z.string().nullish(),
+  /** Nome antigo. O modelo as vezes reproduz o formato anterior. */
   fonteLegal: z.string().nullish(),
   palavrasChave: z.array(z.string()).nullish(),
   alternativas: z.array(alternativaSchema),
@@ -219,6 +223,13 @@ export async function gerarQuestoesIA(input: {
       continue;
     }
 
+    // Regra 5: nao existe anexo. Se o enunciado manda ler um texto, o texto
+    // precisa estar nele.
+    if (citaTextoAusente(enunciado)) {
+      descartadas.push(`${pos}: manda ler um texto de apoio que não está no enunciado.`);
+      continue;
+    }
+
     // Regra 4 + processamento automatico: o assunto e sempre o canonico
     // escolhido no formulario. Se o modelo devolveu "Assunto - Parte", a parte
     // depois do traco vira subassunto.
@@ -230,7 +241,7 @@ export async function gerarQuestoesIA(input: {
       nivel,
       dificuldade: Math.min(5, Math.max(1, Math.round(it.dificuldade ?? 3))),
       explicacao,
-      fonteLegal: it.fonteLegal?.trim() || null,
+      fonte: (it.fonte ?? it.fonteLegal)?.trim() || null,
       palavrasChave: (it.palavrasChave ?? []).map((p) => p.trim()).filter(Boolean),
       subassunto,
       alternativas: alts,
@@ -306,6 +317,10 @@ export async function salvarQuestoesGeradas(input: {
       erros.push(`${pos}: nível inválido.`);
       continue;
     }
+    if (citaTextoAusente(enunciado)) {
+      erros.push(`${pos}: cita um texto de apoio que não está no enunciado.`);
+      continue;
+    }
 
     const alts = (q.alternativas ?? []).map((a) => ({
       texto: a.texto?.trim() ?? "",
@@ -333,7 +348,7 @@ export async function salvarQuestoesGeradas(input: {
         explicacao,
         nivel: q.nivel,
         banca,
-        fonteLegal: q.fonteLegal?.trim() || null,
+        fonte: q.fonte?.trim() || null,
         dificuldade: Math.min(5, Math.max(1, Math.round(q.dificuldade ?? 3))),
         palavrasChave: (q.palavrasChave ?? []).map((p) => p.trim()).filter(Boolean).join(", ") || null,
         concursoId: input.concursoId,
