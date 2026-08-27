@@ -88,9 +88,13 @@ export function RedacaoClient({
     setErro(null);
     startGerar(async () => {
       try {
-        const t = await gerarTemaRedacao({ concursoId, banca, orientacao });
-        setTemas((prev) => [t, ...prev]);
-        setTemaAtivo(t);
+        const r = await gerarTemaRedacao({ concursoId, banca, orientacao });
+        if (!r.ok) {
+          setErro(r.erro);
+          return;
+        }
+        setTemas((prev) => [r.dados, ...prev]);
+        setTemaAtivo(r.dados);
         setVista("escrever");
         setOrientacao("");
       } catch (e) {
@@ -287,7 +291,12 @@ function Escrever({
     setErro(null);
     start(async () => {
       try {
-        onCorrigida(await enviarRedacao({ temaId: tema.id, texto }));
+        const r = await enviarRedacao({ temaId: tema.id, texto });
+        if (!r.ok) {
+          setErro(r.erro);
+          return;
+        }
+        onCorrigida(r.dados);
       } catch (e) {
         setErro(e instanceof Error ? e.message : "Não foi possível corrigir a redação.");
       }

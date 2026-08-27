@@ -28,6 +28,32 @@ import {
    pessoa ve o texto e a nota. Toda consulta de redacao filtra por userId.
    ============================================================================= */
 
+/* -----------------------------------------------------------------------------
+   Erro como VALOR, nao como excecao
+
+   Em producao o Next apaga a mensagem de qualquer erro lancado numa server
+   action e devolve 500 com um digest. Ou seja: mensagens escritas para a
+   usuaria ("GROQ_API_KEY nao configurada", "o modelo demorou demais") nunca
+   chegavam na tela — ela via um 500 opaco, e nem o log ajudava sem acesso ao
+   painel.
+
+   Por isso as acoes que podem falhar por motivo esperado devolvem
+   `{ ok: false, erro }` em vez de lancar. A excecao continua existindo para
+   falha de programacao, que e o que deve mesmo virar 500.
+   ----------------------------------------------------------------------------- */
+
+export type Resultado<T> = { ok: true; dados: T } | { ok: false; erro: string };
+
+function falha(contexto: string, e: unknown): { ok: false; erro: string } {
+  // Registrado no servidor tambem: o log da Vercel guarda a pilha completa.
+  console.error(`[redacao] ${contexto}:`, e);
+  const erro =
+    e instanceof Error && e.message
+      ? e.message
+      : "Erro inesperado. Tente novamente em alguns instantes.";
+  return { ok: false, erro };
+}
+
 async function exigirUsuario(): Promise<string> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Você precisa estar autenticada.");
@@ -91,6 +117,18 @@ const temaSchema = z.object({
 });
 
 export async function gerarTemaRedacao(input: {
+  concursoId: string;
+  banca?: string;
+  orientacao?: string;
+}): Promise<Resultado<TemaDTO>> {
+  try {
+    return { ok: true, dados: await gerar(input) };
+  } catch (e) {
+    return falha("gerarTemaRedacao", e);
+  }
+}
+
+async function gerar(input: {
   concursoId: string;
   banca?: string;
   orientacao?: string;
@@ -262,6 +300,17 @@ const correcaoSchema = z.object({
 
 /** Grava a redacao, manda corrigir e devolve o resultado. */
 export async function enviarRedacao(input: {
+  temaId: string;
+  texto: string;
+}): Promise<Resultado<RedacaoDTO>> {
+  try {
+    return { ok: true, dados: await corrigir(input) };
+  } catch (e) {
+    return falha("enviarRedacao", e);
+  }
+}
+
+async function corrigir(input: {
   temaId: string;
   texto: string;
 }): Promise<RedacaoDTO> {

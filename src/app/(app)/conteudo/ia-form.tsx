@@ -88,9 +88,14 @@ export function IaForm({ concursos }: { concursos: ConcursoArvore[] }) {
           nivel: nivel || null,
           instrucoes,
         });
-        setItens(r.questoes.map((q) => ({ ...q, incluir: true })));
-        setDescartadas(r.descartadas);
-        setModelo(r.modelo);
+        if (!r.ok) {
+          setItens(null);
+          setErro(r.erro);
+          return;
+        }
+        setItens(r.dados.questoes.map((q) => ({ ...q, incluir: true })));
+        setDescartadas(r.dados.descartadas);
+        setModelo(r.dados.modelo);
       } catch (e) {
         setItens(null);
         setErro(e instanceof Error ? e.message : "Não foi possível gerar as questões.");
@@ -119,7 +124,11 @@ export function IaForm({ concursos }: { concursos: ConcursoArvore[] }) {
             alternativas: it.alternativas,
           })),
         });
-        setGravacao(r);
+        if (!r.ok) {
+          setErro(r.erro);
+          return;
+        }
+        setGravacao(r.dados);
         setItens(null);
         router.refresh();
       } catch (e) {

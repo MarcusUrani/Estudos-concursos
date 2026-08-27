@@ -60,6 +60,22 @@ function tetoTokens(quantidade: number): number {
   return Math.min(5800, quantidade * 450 + 500);
 }
 
+/* Erro como VALOR — mesma razao explicada em `server/redacao.ts`: em producao o
+   Next apaga a mensagem de erro lancado numa server action e devolve 500 sem
+   detalhe, entao mensagem util nunca chegava na tela. */
+export type ResultadoIA<T> = { ok: true; dados: T } | { ok: false; erro: string };
+
+function falha(contexto: string, e: unknown): { ok: false; erro: string } {
+  console.error(`[admin-ia] ${contexto}:`, e);
+  return {
+    ok: false,
+    erro:
+      e instanceof Error && e.message
+        ? e.message
+        : "Erro inesperado. Tente novamente em alguns instantes.",
+  };
+}
+
 async function exigirUsuario() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Você precisa estar autenticada.");
@@ -113,6 +129,21 @@ const itemSchema = z.object({
 });
 
 export async function gerarQuestoesIA(input: {
+  concursoId: string;
+  assuntoId: string;
+  banca: string;
+  quantidade: number;
+  nivel?: string | null;
+  instrucoes?: string;
+}): Promise<ResultadoIA<ResultadoGeracao>> {
+  try {
+    return { ok: true, dados: await gerar(input) };
+  } catch (e) {
+    return falha("gerarQuestoesIA", e);
+  }
+}
+
+async function gerar(input: {
   concursoId: string;
   assuntoId: string;
   banca: string;
@@ -276,6 +307,19 @@ export type ResultadoGravacao = { criadas: number; ignoradas: number; erros: str
  * cliente: confiar na validacao ja feita seria confiar no navegador.
  */
 export async function salvarQuestoesGeradas(input: {
+  concursoId: string;
+  assuntoId: string;
+  banca: string;
+  questoes: QuestaoGerada[];
+}): Promise<ResultadoIA<ResultadoGravacao>> {
+  try {
+    return { ok: true, dados: await salvar(input) };
+  } catch (e) {
+    return falha("salvarQuestoesGeradas", e);
+  }
+}
+
+async function salvar(input: {
   concursoId: string;
   assuntoId: string;
   banca: string;
