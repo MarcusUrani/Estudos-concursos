@@ -1,0 +1,580 @@
+"use client";
+
+import { useMemo, useState, useTransition } from "react";
+import {
+  gerarTemaRedacao,
+  listarTemasRedacao,
+  enviarRedacao,
+  type TemaDTO,
+  type RedacaoDTO,
+} from "@/server/redacao";
+import type { ConcursoDTO } from "@/server/concurso";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { PaginaLeitura, TrilhoBloco, TrilhoDado } from "@/components/ui/pagina";
+import { cn } from "@/lib/utils";
+import {
+  Sparkles,
+  PenLine,
+  ArrowLeft,
+  ExternalLink,
+  ShieldCheck,
+  ShieldAlert,
+  Send,
+  History,
+  FileText,
+} from "lucide-react";
+
+const inputCls =
+  "w-full rounded-sm border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+
+const MIN_PALAVRAS = 80;
+const MAX_PALAVRAS = 900;
+const NOTA_MAX = 1000;
+
+const COMP_TITULOS: Record<number, string> = {
+  1: "Domínio da norma culta",
+  2: "Compreensão do tema",
+  3: "Argumentação",
+  4: "Coesão e coerência",
+  5: "Proposta de intervenção",
+};
+
+const fmtData = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
+
+type Vista = "temas" | "escrever" | "resultado" | "historico";
+
+export function RedacaoClient({
+  concursos,
+  concursoInicial,
+  temasIniciais,
+  redacoesIniciais,
+}: {
+  concursos: ConcursoDTO[];
+  concursoInicial: string | null;
+  temasIniciais: TemaDTO[];
+  redacoesIniciais: RedacaoDTO[];
+}) {
+  const [concursoId, setConcursoId] = useState(concursoInicial ?? "");
+  const [temas, setTemas] = useState(temasIniciais);
+  const [redacoes, setRedacoes] = useState(redacoesIniciais);
+
+  const [vista, setVista] = useState<Vista>("temas");
+  const [temaAtivo, setTemaAtivo] = useState<TemaDTO | null>(null);
+  const [resultado, setResultado] = useState<RedacaoDTO | null>(null);
+
+  const [banca, setBanca] = useState("");
+  const [orientacao, setOrientacao] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [gerando, startGerar] = useTransition();
+  const [trocando, startTrocar] = useTransition();
+
+  function trocarConcurso(id: string) {
+    setConcursoId(id);
+    setErro(null);
+    startTrocar(async () => {
+      try {
+        setTemas(await listarTemasRedacao(id));
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : "Não foi possível carregar os temas.");
+      }
+    });
+  }
+
+  function gerar() {
+    setErro(null);
+    startGerar(async () => {
+      try {
+        const t = await gerarTemaRedacao({ concursoId, banca, orientacao });
+        setTemas((prev) => [t, ...prev]);
+        setTemaAtivo(t);
+        setVista("escrever");
+        setOrientacao("");
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : "Não foi possível gerar o tema.");
+      }
+    });
+  }
+
+  if (vista === "escrever" && temaAtivo) {
+    return (
+      <Escrever
+        tema={temaAtivo}
+        onVoltar={() => setVista("temas")}
+        onCorrigida={(r) => {
+          setRedacoes((prev) => [r, ...prev]);
+          setTemas((prev) =>
+            prev.map((t) => (t.id === r.temaId ? { ...t, minhasRedacoes: t.minhasRedacoes + 1 } : t))
+          );
+          setResultado(r);
+          setVista("resultado");
+        }}
+      />
+    );
+  }
+
+  if (vista === "resultado" && resultado) {
+    return (
+      <Resultado
+        redacao={resultado}
+        onVoltar={() => {
+          setResultado(null);
+          setVista("temas");
+        }}
+      />
+    );
+  }
+
+  if (vista === "historico") {
+    return (
+      <Historico
+        redacoes={redacoes}
+        onAbrir={(r) => {
+          setResultado(r);
+          setVista("resultado");
+        }}
+        onVoltar={() => setVista("temas")}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-5">
+      <Card>
+        <CardHeader className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Sparkles className="h-4 w-4 text-indigo-400" />
+            Nova proposta
+          </CardTitle>
+          {redacoes.length > 0 && (
+            <Button variant="ghost" size="sm" onClick={() => setVista("historico")}>
+              <History className="h-4 w-4" />
+              Minhas redações ({redacoes.length})
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-4 p-6">
+          <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-xs leading-relaxed text-slate-400">
+            A proposta vem com <span className="font-medium text-slate-200">dois textos de apoio
+            reais</span>, buscados na web. Cada citação é conferida contra a página de origem antes
+            de aparecer aqui — mas confira a fonte antes de usar o dado numa prova.
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="mb-1.5 text-sm font-medium text-slate-300">Concurso</p>
+              <select
+                value={concursoId}
+                onChange={(e) => trocarConcurso(e.target.value)}
+                className={inputCls}
+              >
+                {concursos.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <p className="mb-1.5 text-sm font-medium text-slate-300">Banca (opcional)</p>
+              <Input
+                value={banca}
+                onChange={(e) => setBanca(e.target.value)}
+                placeholder="Ex.: QUADRIX"
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-1.5 text-sm font-medium text-slate-300">
+              Orientação para o tema (opcional)
+            </p>
+            <textarea
+              value={orientacao}
+              onChange={(e) => setOrientacao(e.target.value)}
+              rows={2}
+              className={cn(inputCls, "resize-y")}
+              placeholder="Ex.: algo ligado a população em situação de rua no DF."
+            />
+          </div>
+
+          {erro && (
+            <p className="rounded-sm bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{erro}</p>
+          )}
+
+          <div className="flex justify-end">
+            <Button onClick={gerar} disabled={gerando || !concursoId}>
+              <Sparkles className="h-4 w-4" />
+              {gerando ? "Buscando fontes…" : "Gerar proposta"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div>
+        <p className="etiqueta mb-3 border-b border-slate-800 pb-2">
+          {trocando ? "Carregando…" : `Propostas deste concurso (${temas.length})`}
+        </p>
+
+        {temas.length === 0 ? (
+          <Card>
+            <CardContent className="p-8 text-center text-sm text-slate-400">
+              Nenhuma proposta ainda. Gere a primeira acima.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-3 lg:grid-cols-2">
+            {temas.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  setTemaAtivo(t);
+                  setVista("escrever");
+                }}
+                className="min-w-0 rounded-sm border border-slate-800 bg-slate-900 p-4 text-left transition-colors hover:border-indigo-600/50"
+              >
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  {t.banca && <Badge variant="neutral">{t.banca}</Badge>}
+                  <Badge variant="neutral">
+                    {t.textos.length} {t.textos.length === 1 ? "texto" : "textos"}
+                  </Badge>
+                  {t.minhasRedacoes > 0 && (
+                    <Badge variant="success">
+                      {t.minhasRedacoes} {t.minhasRedacoes === 1 ? "envio" : "envios"}
+                    </Badge>
+                  )}
+                  <span className="etiqueta ml-auto">{fmtData.format(new Date(t.criadoEm))}</span>
+                </div>
+                <p className="text-sm font-semibold text-slate-100">{t.tema}</p>
+                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-400">
+                  {t.comando}
+                </p>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------- escrever
+
+function Escrever({
+  tema,
+  onVoltar,
+  onCorrigida,
+}: {
+  tema: TemaDTO;
+  onVoltar: () => void;
+  onCorrigida: (r: RedacaoDTO) => void;
+}) {
+  const [texto, setTexto] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, start] = useTransition();
+
+  const palavras = useMemo(
+    () => texto.trim().split(/\s+/).filter(Boolean).length,
+    [texto]
+  );
+  const podeEnviar = palavras >= MIN_PALAVRAS && palavras <= MAX_PALAVRAS;
+
+  function enviar() {
+    setErro(null);
+    start(async () => {
+      try {
+        onCorrigida(await enviarRedacao({ temaId: tema.id, texto }));
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : "Não foi possível corrigir a redação.");
+      }
+    });
+  }
+
+  const trilho = (
+    <>
+      <TrilhoBloco>
+        <p className="etiqueta">Proposta</p>
+        <p className="mt-1.5 text-sm font-semibold leading-snug text-slate-100">{tema.tema}</p>
+        <p className="mt-2 text-xs leading-relaxed text-slate-400">{tema.comando}</p>
+      </TrilhoBloco>
+
+      <TrilhoBloco titulo="Sua redação">
+        <div className="space-y-2">
+          <TrilhoDado rotulo="Palavras" valor={palavras} />
+          <TrilhoDado rotulo="Mínimo" valor={MIN_PALAVRAS} />
+        </div>
+        <div className="mt-3">
+          <Progress
+            value={Math.min(100, (palavras / MIN_PALAVRAS) * 100)}
+            barClassName={podeEnviar ? "bg-emerald-500" : "bg-indigo-500"}
+          />
+        </div>
+        {erro && <p className="mt-3 text-xs text-rose-300">{erro}</p>}
+        <Button className="mt-3 w-full" onClick={enviar} disabled={!podeEnviar || enviando}>
+          <Send className="h-4 w-4" />
+          {enviando ? "Corrigindo…" : "Enviar para correção"}
+        </Button>
+        <button
+          type="button"
+          onClick={onVoltar}
+          disabled={enviando}
+          className="mt-3 flex w-full items-center justify-center gap-1.5 text-xs text-slate-500 transition-colors hover:text-slate-300"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Voltar às propostas
+        </button>
+      </TrilhoBloco>
+    </>
+  );
+
+  return (
+    <PaginaLeitura trilho={trilho}>
+      <div className="space-y-4">
+        {tema.textos.map((t, i) => (
+          <Card key={t.id}>
+            <CardHeader className="flex flex-wrap items-center justify-between gap-2">
+              <CardTitle className="text-sm">Texto de apoio {i + 1}</CardTitle>
+              {t.conferido ? (
+                <span
+                  className="flex items-center gap-1.5 text-xs text-emerald-300"
+                  title="O trecho foi encontrado literalmente na página de origem."
+                >
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  citação conferida
+                </span>
+              ) : (
+                <span
+                  className="flex items-center gap-1.5 text-xs text-amber-300"
+                  title="Não foi possível abrir a página para conferir o trecho. Confira você antes de usar o dado."
+                >
+                  <ShieldAlert className="h-3.5 w-3.5" />
+                  não conferida
+                </span>
+              )}
+            </CardHeader>
+            <CardContent className="px-5 py-5">
+              <p className="text-[1.0625rem] leading-[1.65] whitespace-pre-line text-slate-100">
+                {t.trecho}
+              </p>
+              <a
+                href={t.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs text-indigo-300 transition-colors hover:text-indigo-200"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                {t.veiculo}
+              </a>
+            </CardContent>
+          </Card>
+        ))}
+
+        <Card>
+          <CardHeader className="flex flex-wrap items-center justify-between gap-2">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <PenLine className="h-4 w-4 text-indigo-400" />
+              Sua redação
+            </CardTitle>
+            <span
+              className={cn(
+                "tabular text-xs",
+                palavras > MAX_PALAVRAS ? "text-rose-300" : "text-slate-500"
+              )}
+            >
+              {palavras} / {MAX_PALAVRAS} palavras
+            </span>
+          </CardHeader>
+          <CardContent className="p-5">
+            <textarea
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              rows={22}
+              disabled={enviando}
+              className={cn(
+                inputCls,
+                "resize-y text-[1.0625rem] leading-[1.7]",
+                enviando && "opacity-60"
+              )}
+              placeholder="Escreva aqui o seu texto dissertativo-argumentativo…"
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </PaginaLeitura>
+  );
+}
+
+// ---------------------------------------------------------------- resultado
+
+function faixaCor(pct: number) {
+  if (pct >= 0.8) return "bg-emerald-500";
+  if (pct >= 0.6) return "bg-indigo-500";
+  if (pct >= 0.4) return "bg-amber-500";
+  return "bg-rose-500";
+}
+
+function Resultado({ redacao, onVoltar }: { redacao: RedacaoDTO; onVoltar: () => void }) {
+  const total = redacao.total ?? 0;
+
+  return (
+    <PaginaLeitura>
+      <div className="space-y-5">
+        <Card>
+          <CardHeader className="flex flex-wrap items-baseline justify-between gap-2">
+            <CardTitle className="text-base">Correção</CardTitle>
+            <p className="etiqueta">{redacao.palavras} palavras</p>
+          </CardHeader>
+          <CardContent className="px-5 py-6">
+            <p className="etiqueta">Nota final</p>
+            <p className="tabular mt-1 text-5xl font-bold leading-none text-slate-100">
+              {total}
+              <span className="text-2xl text-slate-500"> / {NOTA_MAX}</span>
+            </p>
+            <div className="mt-4">
+              <Progress value={(total / NOTA_MAX) * 100} barClassName={faixaCor(total / NOTA_MAX)} />
+            </div>
+            {redacao.resumo && (
+              <p className="mt-4 text-sm leading-relaxed text-slate-300">{redacao.resumo}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Competências</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5 px-5 py-5">
+            {redacao.competencias.map((c) => (
+              <div key={c.numero}>
+                <div className="mb-1.5 flex items-baseline justify-between gap-3">
+                  <p className="text-sm font-medium text-slate-200">
+                    <span className="tabular text-slate-500">C{c.numero}</span>{" "}
+                    {COMP_TITULOS[c.numero] ?? "Competência"}
+                  </p>
+                  <p className="tabular shrink-0 text-sm font-semibold text-slate-100">
+                    {c.nota}
+                    <span className="text-slate-500">/200</span>
+                  </p>
+                </div>
+                <Progress value={(c.nota / 200) * 100} barClassName={faixaCor(c.nota / 200)} />
+                <p className="mt-2 text-xs leading-relaxed text-slate-400">{c.comentario}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {(redacao.pontosFortes.length > 0 || redacao.aMelhorar.length > 0) && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {redacao.pontosFortes.length > 0 && (
+              <Card className="min-w-0">
+                <CardHeader>
+                  <CardTitle className="text-sm text-emerald-300">Pontos fortes</CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 py-4">
+                  <ul className="space-y-1.5 text-sm leading-relaxed text-slate-300">
+                    {redacao.pontosFortes.map((p, i) => (
+                      <li key={i}>— {p}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+            {redacao.aMelhorar.length > 0 && (
+              <Card className="min-w-0">
+                <CardHeader>
+                  <CardTitle className="text-sm text-amber-300">A melhorar</CardTitle>
+                </CardHeader>
+                <CardContent className="px-5 py-4">
+                  <ul className="space-y-1.5 text-sm leading-relaxed text-slate-300">
+                    {redacao.aMelhorar.map((p, i) => (
+                      <li key={i}>— {p}</li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <FileText className="h-4 w-4 text-slate-400" />
+              O que você escreveu
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-5 py-5">
+            <p className="text-sm leading-relaxed whitespace-pre-line text-slate-300">
+              {redacao.texto}
+            </p>
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-center">
+          <Button variant="secondary" onClick={onVoltar}>
+            <ArrowLeft className="h-4 w-4" />
+            Voltar às propostas
+          </Button>
+        </div>
+      </div>
+    </PaginaLeitura>
+  );
+}
+
+// ---------------------------------------------------------------- histórico
+
+function Historico({
+  redacoes,
+  onAbrir,
+  onVoltar,
+}: {
+  redacoes: RedacaoDTO[];
+  onAbrir: (r: RedacaoDTO) => void;
+  onVoltar: () => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <p className="font-display text-base font-semibold text-slate-100">
+          Minhas redações ({redacoes.length})
+        </p>
+        <Button variant="ghost" size="sm" onClick={onVoltar}>
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
+        </Button>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-2">
+        {redacoes.map((r) => {
+          const total = r.total ?? 0;
+          return (
+            <button
+              key={r.id}
+              type="button"
+              onClick={() => onAbrir(r)}
+              className="min-w-0 rounded-sm border border-slate-800 bg-slate-900 p-4 text-left transition-colors hover:border-indigo-600/50"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="min-w-0 truncate text-sm font-semibold text-slate-100">{r.tema}</p>
+                <span className="tabular shrink-0 text-sm font-bold text-slate-100">
+                  {total}
+                  <span className="text-slate-500">/{NOTA_MAX}</span>
+                </span>
+              </div>
+              <div className="mt-2">
+                <Progress value={(total / NOTA_MAX) * 100} barClassName={faixaCor(total / NOTA_MAX)} />
+              </div>
+              <p className="tabular mt-2 text-xs text-slate-500">
+                {fmtData.format(new Date(r.enviadaEm))} · {r.palavras} palavras
+              </p>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

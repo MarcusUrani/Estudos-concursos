@@ -29,6 +29,16 @@ export function modeloGroq(): string {
   return process.env.GROQ_MODEL?.trim() || MODELO_PADRAO;
 }
 
+/**
+ * Modelo com busca na web. Usado onde a resposta precisa vir do mundo real e
+ * nao da memoria do modelo — hoje, os textos de apoio da redacao. Tem cota bem
+ * maior (70 mil tokens/min contra 8 mil do padrao), o que ajuda: pagina de
+ * noticia inteira entra no contexto dele.
+ */
+export function modeloGroqComBusca(): string {
+  return process.env.GROQ_MODEL_BUSCA?.trim() || "groq/compound";
+}
+
 export class ErroGroq extends Error {}
 
 type RespostaGroq = {
@@ -50,6 +60,42 @@ export async function conversarGroq(opcoes: {
   usuario: string;
   temperatura?: number;
   maxTokens?: number;
+  /** Sobrescreve o modelo padrao — ex.: o de busca, para textos reais. */
+  modelo?: string;
+  /**
+   * Repete a chamada quando a falha e transitoria (413 e 5xx).
+   *
+   * Existe por causa do modelo de busca: quando a pesquisa web puxa paginas
+   * grandes demais, o Groq devolve 413 de forma intermitente — a mesma
+   * pergunta passa na tentativa seguinte, porque o resultado da busca muda.
+   * NAO repete 429: a cota por minuto so piora com insistencia.
+   */
+  tentativas?: number;
+  /** Teto por tentativa. Com retry, o total precisa caber nos 60s da Vercel. */
+  timeoutMs?: number;
+}): Promise<{ texto: string; modelo: string }> {
+  const total = Math.max(1, opcoes.tentativas ?? 1);
+  let ultimo: unknown;
+  for (let i = 0; i < total; i++) {
+    try {
+      return await umaConversa(opcoes);
+    } catch (e) {
+      ultimo = e;
+      const transitoria = e instanceof ErroGroq && /estourou o tamanho|HTTP 5\d\d/.test(e.message);
+      if (!transitoria || i === total - 1) throw e;
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+  }
+  throw ultimo;
+}
+
+async function umaConversa(opcoes: {
+  sistema: string;
+  usuario: string;
+  temperatura?: number;
+  maxTokens?: number;
+  modelo?: string;
+  timeoutMs?: number;
 }): Promise<{ texto: string; modelo: string }> {
   const chave = process.env.GROQ_API_KEY?.trim();
   if (!chave) {
@@ -58,7 +104,7 @@ export async function conversarGroq(opcoes: {
     );
   }
 
-  const modelo = modeloGroq();
+  const modelo = opcoes.modelo?.trim() || modeloGroq();
 
   let resposta: Response;
   try {
@@ -77,7 +123,7 @@ export async function conversarGroq(opcoes: {
           { role: "user", content: opcoes.usuario },
         ],
       }),
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      signal: AbortSignal.timeout(opcoes.timeoutMs ?? TIMEOUT_MS),
     });
   } catch (e) {
     if (e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError")) {
@@ -99,6 +145,11 @@ export async function conversarGroq(opcoes: {
     }
     if (resposta.status === 429) {
       throw new ErroGroq(`Limite de uso do Groq atingido. Aguarde e tente de novo. Detalhe: ${detalhe}`);
+    }
+    if (resposta.status === 413) {
+      throw new ErroGroq(
+        "O modelo de busca trouxe conteúdo demais e a requisição estourou o tamanho. Tente de novo — costuma passar na segunda tentativa."
+      );
     }
     if (resposta.status === 404 || /decommission|not exist|does not exist/i.test(detalhe)) {
       throw new ErroGroq(
@@ -214,4 +265,30 @@ function objetosCompletos(texto: string): unknown[] {
   }
 
   return encontrados;
+}
+
+/**
+ * Igual ao `extrairArrayJson`, mas para resposta de UM objeto — o caso do tema
+ * de redacao. Mesmo tratamento de cerca de codigo e de texto solto em volta.
+ */
+export function extrairObjetoJson(texto: string): Record<string, unknown> {
+  const semCerca = texto
+    .replace(/^\s*```(?:json)?\s*/i, "")
+    .replace(/\s*```\s*$/i, "")
+    .trim();
+
+  try {
+    const d = JSON.parse(semCerca);
+    if (d && typeof d === "object" && !Array.isArray(d)) return d as Record<string, unknown>;
+  } catch {
+    // segue para o recorte
+  }
+
+  const encontrados = objetosCompletos(semCerca);
+  const obj = encontrados.find((o) => o && typeof o === "object");
+  if (obj) return obj as Record<string, unknown>;
+
+  throw new ErroGroq(
+    "A resposta do Groq não veio em JSON válido. Tente gerar o tema novamente."
+  );
 }

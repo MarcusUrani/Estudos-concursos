@@ -19,6 +19,7 @@ import {
   X,
   ShieldAlert,
   FolderPlus,
+  PenLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MarcaSimbolo } from "@/components/ui/marca";
@@ -35,6 +36,7 @@ const links = [
   { href: "/flashcards", label: "Flashcards", icon: Layers },
   { href: "/estudar", label: "Estudar", icon: BookText },
   { href: "/simulado", label: "Simulado", icon: TimerReset },
+  { href: "/redacao", label: "Redação", icon: PenLine },
   { href: "/favoritas", label: "Favoritas", icon: Star },
   { href: "/erradas", label: "Que errei", icon: XCircle },
   { href: "/historico", label: "Histórico", icon: History },

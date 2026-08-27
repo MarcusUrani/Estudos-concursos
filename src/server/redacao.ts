@@ -1,0 +1,395 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { conversarGroq, extrairObjetoJson, modeloGroqComBusca, ErroGroq } from "@/lib/groq";
+import { verificarCitacao } from "@/lib/verificar-citacao";
+import {
+  PROMPT_TEMA,
+  PROMPT_CORRECAO,
+  montarPedidoTema,
+  montarPedidoCorrecao,
+  COMPETENCIAS,
+  NOTA_MAX_COMPETENCIA,
+  MIN_PALAVRAS,
+  MAX_PALAVRAS,
+} from "@/lib/redacao-prompt";
+
+/* =============================================================================
+   Modulo de redacao
+
+   Tres passos: a IA propoe um tema para o concurso com dois textos de apoio
+   REAIS, a pessoa escreve, a IA corrige em cinco competencias (0 a 1000).
+
+   O TEMA e compartilhado, como o resto do conteudo: fica visivel para todos que
+   estudam aquele concurso. A REDACAO nao — ela e de quem escreveu, e so essa
+   pessoa ve o texto e a nota. Toda consulta de redacao filtra por userId.
+   ============================================================================= */
+
+async function exigirUsuario(): Promise<string> {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error("Você precisa estar autenticada.");
+  return session.user.id;
+}
+
+function palavrasDe(texto: string): number {
+  return texto.trim().split(/\s+/).filter(Boolean).length;
+}
+
+// ---------------------------------------------------------------- tipos
+
+export type TextoApoioDTO = {
+  id: string;
+  trecho: string;
+  veiculo: string;
+  url: string;
+  conferido: boolean;
+};
+
+export type TemaDTO = {
+  id: string;
+  tema: string;
+  comando: string;
+  banca: string | null;
+  criadoEm: string;
+  concursoNome: string | null;
+  textos: TextoApoioDTO[];
+  /** Quantas redacoes a pessoa logada ja enviou para este tema. */
+  minhasRedacoes: number;
+};
+
+export type CompetenciaDTO = { numero: number; nota: number; comentario: string };
+
+export type RedacaoDTO = {
+  id: string;
+  temaId: string;
+  tema: string;
+  texto: string;
+  palavras: number;
+  enviadaEm: string;
+  total: number | null;
+  resumo: string | null;
+  pontosFortes: string[];
+  aMelhorar: string[];
+  competencias: CompetenciaDTO[];
+};
+
+// ---------------------------------------------------------------- geracao do tema
+
+const textoApoioSchema = z.object({
+  trecho: z.string(),
+  veiculo: z.string().nullish(),
+  url: z.string(),
+});
+
+const temaSchema = z.object({
+  tema: z.string(),
+  comando: z.string(),
+  textosApoio: z.array(textoApoioSchema).nullish(),
+});
+
+export async function gerarTemaRedacao(input: {
+  concursoId: string;
+  banca?: string;
+  orientacao?: string;
+}): Promise<TemaDTO> {
+  const userId = await exigirUsuario();
+
+  const concurso = await prisma.concurso.findUnique({
+    where: { id: input.concursoId },
+    select: { id: true, nome: true },
+  });
+  if (!concurso) throw new Error("Selecione um concurso válido.");
+
+  const { texto } = await conversarGroq({
+    // Modelo COM busca: os textos de apoio precisam existir de verdade.
+    modelo: modeloGroqComBusca(),
+    // Busca web falha por tamanho de vez em quando; a segunda tentativa passa.
+    tentativas: 2,
+    // 2 tentativas de 22s cabem nos 60s de teto da Vercel, com folga para a
+    // conferencia das citacoes depois.
+    timeoutMs: 22_000,
+    temperatura: 0.6,
+    maxTokens: 3000,
+    sistema: PROMPT_TEMA,
+    usuario: montarPedidoTema({
+      concurso: concurso.nome,
+      banca: input.banca,
+      orientacao: input.orientacao,
+    }),
+  });
+
+  const parsed = temaSchema.safeParse(extrairObjetoJson(texto));
+  if (!parsed.success) {
+    throw new ErroGroq("A proposta veio em formato inesperado. Tente gerar de novo.");
+  }
+
+  const tema = parsed.data.tema.trim();
+  const comando = parsed.data.comando.trim();
+  if (!tema || !comando) throw new ErroGroq("A proposta veio incompleta. Tente de novo.");
+
+  // Duas citacoes da MESMA pagina nao sao dois textos de apoio. Mantem a
+  // primeira de cada URL para a pessoa ter de fato dois pontos de partida.
+  const vistas = new Set<string>();
+  const candidatos = (parsed.data.textosApoio ?? [])
+    .map((t) => ({
+      trecho: t.trecho.trim(),
+      veiculo: t.veiculo?.trim() || "Fonte não identificada",
+      url: t.url.trim(),
+    }))
+    .filter((t) => {
+      if (!t.trecho || !t.url) return false;
+      const chave = t.url.replace(/[#?].*$/, "");
+      if (vistas.has(chave)) return false;
+      vistas.add(chave);
+      return true;
+    })
+    .slice(0, 3);
+
+  if (candidatos.length === 0) {
+    throw new ErroGroq(
+      "O modelo não trouxe nenhum texto de apoio com fonte. Tente gerar novamente."
+    );
+  }
+
+  // Confere as citacoes em paralelo — cada uma custa uma ida a pagina.
+  //
+  // Pedimos TRES e ficamos com DOIS. Na pratica boa parte das citacoes nao
+  // confere — pagina fora do ar, PDF, e de vez em quando uma URL que o modelo
+  // simplesmente inventou. Com um candidato de reserva, a chance de entregar
+  // dois textos conferidos sobe bastante, e o custo e uma requisicao HTTP a
+  // mais. A ordenacao e estavel: entre dois conferidos, vale a ordem original.
+  const conferidas = await Promise.all(
+    candidatos.map(async (c) => ({ ...c, ...(await verificarCitacao(c.url, c.trecho)) }))
+  );
+  const escolhidos = conferidas
+    .map((c, i) => ({ c, i }))
+    .sort((a, b) => Number(b.c.conferido) - Number(a.c.conferido) || a.i - b.i)
+    .slice(0, 2)
+    .map(({ c }) => c);
+
+  const criado = await prisma.temaRedacao.create({
+    data: {
+      tema,
+      comando,
+      banca: input.banca?.trim() || null,
+      concursoId: concurso.id,
+      autorId: userId,
+      textos: {
+        create: escolhidos.map((c, i) => ({
+          trecho: c.trecho,
+          veiculo: c.veiculo,
+          url: c.url,
+          ordem: i,
+          conferido: c.conferido,
+        })),
+      },
+    },
+    include: { textos: { orderBy: { ordem: "asc" } }, concurso: { select: { nome: true } } },
+  });
+
+  revalidatePath("/redacao");
+  return paraTemaDTO(criado, 0);
+}
+
+// ---------------------------------------------------------------- leitura
+
+type TemaComTextos = {
+  id: string;
+  tema: string;
+  comando: string;
+  banca: string | null;
+  criadoEm: Date;
+  concurso: { nome: string } | null;
+  textos: { id: string; trecho: string; veiculo: string; url: string; conferido: boolean }[];
+};
+
+function paraTemaDTO(t: TemaComTextos, minhasRedacoes: number): TemaDTO {
+  return {
+    id: t.id,
+    tema: t.tema,
+    comando: t.comando,
+    banca: t.banca,
+    criadoEm: t.criadoEm.toISOString(),
+    concursoNome: t.concurso?.nome ?? null,
+    textos: t.textos.map((x) => ({
+      id: x.id,
+      trecho: x.trecho,
+      veiculo: x.veiculo,
+      url: x.url,
+      conferido: x.conferido,
+    })),
+    minhasRedacoes,
+  };
+}
+
+/** Temas do concurso, do mais novo para o mais antigo. */
+export async function listarTemasRedacao(concursoId: string | null): Promise<TemaDTO[]> {
+  const userId = await exigirUsuario();
+  if (!concursoId) return [];
+
+  const temas = await prisma.temaRedacao.findMany({
+    where: { concursoId },
+    orderBy: { criadoEm: "desc" },
+    take: 30,
+    include: {
+      textos: { orderBy: { ordem: "asc" } },
+      concurso: { select: { nome: true } },
+      _count: { select: { redacoes: { where: { userId } } } },
+    },
+  });
+
+  return temas.map((t) => paraTemaDTO(t, t._count.redacoes));
+}
+
+// ---------------------------------------------------------------- envio e correcao
+
+const competenciaSchema = z.object({
+  numero: z.coerce.number(),
+  nota: z.coerce.number(),
+  comentario: z.string().nullish(),
+});
+
+const correcaoSchema = z.object({
+  competencias: z.array(competenciaSchema),
+  total: z.coerce.number().nullish(),
+  resumo: z.string().nullish(),
+  pontosFortes: z.array(z.string()).nullish(),
+  aMelhorar: z.array(z.string()).nullish(),
+});
+
+/** Grava a redacao, manda corrigir e devolve o resultado. */
+export async function enviarRedacao(input: {
+  temaId: string;
+  texto: string;
+}): Promise<RedacaoDTO> {
+  const userId = await exigirUsuario();
+
+  const texto = input.texto?.trim() ?? "";
+  const palavras = palavrasDe(texto);
+  if (palavras < MIN_PALAVRAS) {
+    throw new Error(
+      `A redação precisa de pelo menos ${MIN_PALAVRAS} palavras — esta tem ${palavras}.`
+    );
+  }
+  if (palavras > MAX_PALAVRAS) {
+    throw new Error(`A redação passou de ${MAX_PALAVRAS} palavras — esta tem ${palavras}.`);
+  }
+
+  const tema = await prisma.temaRedacao.findUnique({
+    where: { id: input.temaId },
+    select: { id: true, tema: true, comando: true },
+  });
+  if (!tema) throw new Error("Tema não encontrado.");
+
+  const { texto: bruto } = await conversarGroq({
+    // Correcao NAO usa busca: e leitura fechada do que a pessoa escreveu, e
+    // busca so abriria espaco para o modelo inventar contexto.
+    temperatura: 0.3,
+    maxTokens: 2500,
+    sistema: PROMPT_CORRECAO,
+    usuario: montarPedidoCorrecao({
+      tema: tema.tema,
+      comando: tema.comando,
+      texto,
+      palavras,
+    }),
+  });
+
+  const parsed = correcaoSchema.safeParse(extrairObjetoJson(bruto));
+  if (!parsed.success) {
+    throw new ErroGroq("A correção veio em formato inesperado. Tente enviar novamente.");
+  }
+
+  // Sempre as cinco competencias, sempre dentro da faixa. O modelo as vezes
+  // pula uma ou estoura o teto; aqui a escala e garantida.
+  const notas = COMPETENCIAS.map((c) => {
+    const achada = parsed.data.competencias.find((x) => Math.round(x.numero) === c.numero);
+    return {
+      numero: c.numero,
+      nota: Math.min(NOTA_MAX_COMPETENCIA, Math.max(0, Math.round(achada?.nota ?? 0))),
+      comentario: achada?.comentario?.trim() || "Sem comentário para esta competência.",
+    };
+  });
+
+  // O total e SOMADO aqui, nao aceito do modelo: ele erra a conta com alguma
+  // frequencia, e uma nota que nao bate com as partes destroi a confianca em
+  // toda a correcao.
+  const total = notas.reduce((soma, n) => soma + n.nota, 0);
+
+  const criada = await prisma.redacao.create({
+    data: {
+      texto,
+      palavras,
+      userId,
+      temaId: tema.id,
+      corrigidaEm: new Date(),
+      total,
+      resumo: parsed.data.resumo?.trim() || null,
+      pontosFortes:
+        (parsed.data.pontosFortes ?? []).map((s) => s.trim()).filter(Boolean).join("\n") || null,
+      aMelhorar:
+        (parsed.data.aMelhorar ?? []).map((s) => s.trim()).filter(Boolean).join("\n") || null,
+      competencias: { create: notas },
+    },
+    include: {
+      competencias: { orderBy: { numero: "asc" } },
+      tema: { select: { tema: true } },
+    },
+  });
+
+  revalidatePath("/redacao");
+  return paraRedacaoDTO(criada);
+}
+
+type RedacaoComRelacoes = {
+  id: string;
+  temaId: string;
+  texto: string;
+  palavras: number;
+  enviadaEm: Date;
+  total: number | null;
+  resumo: string | null;
+  pontosFortes: string | null;
+  aMelhorar: string | null;
+  tema: { tema: string };
+  competencias: { numero: number; nota: number; comentario: string }[];
+};
+
+function paraRedacaoDTO(r: RedacaoComRelacoes): RedacaoDTO {
+  const linhas = (s: string | null) => (s ? s.split("\n").filter(Boolean) : []);
+  return {
+    id: r.id,
+    temaId: r.temaId,
+    tema: r.tema.tema,
+    texto: r.texto,
+    palavras: r.palavras,
+    enviadaEm: r.enviadaEm.toISOString(),
+    total: r.total,
+    resumo: r.resumo,
+    pontosFortes: linhas(r.pontosFortes),
+    aMelhorar: linhas(r.aMelhorar),
+    competencias: r.competencias.map((c) => ({
+      numero: c.numero,
+      nota: c.nota,
+      comentario: c.comentario,
+    })),
+  };
+}
+
+/** Historico de quem esta logada. Redacao e privada: filtrado por userId. */
+export async function listarMinhasRedacoes(): Promise<RedacaoDTO[]> {
+  const userId = await exigirUsuario();
+  const rs = await prisma.redacao.findMany({
+    where: { userId },
+    orderBy: { enviadaEm: "desc" },
+    take: 30,
+    include: {
+      competencias: { orderBy: { numero: "asc" } },
+      tema: { select: { tema: true } },
+    },
+  });
+  return rs.map(paraRedacaoDTO);
+}

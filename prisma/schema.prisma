@@ -18,29 +18,32 @@ model User {
   role      String   @default("user") // "user" | "admin"
   createdAt DateTime @default(now())
 
-  respostas Resposta[]
-  revisoes  Revisao[]
-  favoritos Favorito[]
-  metas     Meta[]
-  simulados Simulado[]
-  reportes  Reporte[]
-  sessoes   SessaoEmAndamento[]
+  respostas    Resposta[]
+  revisoes     Revisao[]
+  favoritos    Favorito[]
+  metas        Meta[]
+  simulados    Simulado[]
+  reportes     Reporte[]
+  sessoes      SessaoEmAndamento[]
+  redacoes     Redacao[]
+  temasRedacao TemaRedacao[]
 }
 
 // Concurso = topo da hierarquia de conteudo. Cada concurso tem suas proprias
 // Materias/Assuntos/Questoes. Concursos diferentes PODEM ter materias com o
 // mesmo nome (por isso a unicidade de materia/assunto e por concurso).
 model Concurso {
-  id        String   @id @default(cuid())
-  nome      String   @unique
-  sigla     String?
-  ordem     Int      @default(0)
+  id    String  @id @default(cuid())
+  nome  String  @unique
+  sigla String?
+  ordem Int     @default(0)
 
-  materias  Materia[]
-  assuntos  Assunto[]
-  questoes  Questao[]
-  simulados Simulado[]
-  sessoes   SessaoEmAndamento[]
+  materias     Materia[]
+  assuntos     Assunto[]
+  questoes     Questao[]
+  simulados    Simulado[]
+  sessoes      SessaoEmAndamento[]
+  temasRedacao TemaRedacao[]
 }
 
 // Sessao (treino/simulado/flashcards) iniciada mas nao concluida. Guarda o
@@ -66,10 +69,10 @@ model SessaoEmAndamento {
 // Materia = disciplina/area (ex.: "Beneficios e Programas Sociais do DF") que
 // agrupa varios Assuntos (cada assunto = uma lei/programa/tema).
 model Materia {
-  id        String    @id @default(cuid())
+  id        String  @id @default(cuid())
   nome      String
   descricao String?
-  ordem     Int       @default(0)
+  ordem     Int     @default(0)
 
   concursoId String?
   concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
@@ -80,11 +83,11 @@ model Materia {
 }
 
 model Assunto {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   nome      String
   descricao String?
   resumo    String? // material de estudo escrito pelo admin (aba "Estudar")
-  ordem     Int      @default(0)
+  ordem     Int     @default(0)
 
   concursoId String?
   concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
@@ -120,7 +123,7 @@ model Questao {
   // seja so de nome no codigo — sem ALTER TABLE, sem migration, sem risco no
   // banco de producao, que e o mesmo usado em desenvolvimento.
   fonte         String?  @map("fonteLegal")
-  palavrasChave String?  // CSV (SQLite nao tem arrays nativos)
+  palavrasChave String? // CSV (SQLite nao tem arrays nativos)
   dificuldade   Int      @default(3) // 1..5
   tempoMedio    Int      @default(60) // segundos
   createdAt     DateTime @default(now())
@@ -154,10 +157,10 @@ model Alternativa {
 }
 
 model Resposta {
-  id            String   @id @default(cuid())
-  acertou       Boolean
-  tempo         Int      @default(0) // segundos gastos
-  respondidaEm  DateTime @default(now())
+  id           String   @id @default(cuid())
+  acertou      Boolean
+  tempo        Int      @default(0) // segundos gastos
+  respondidaEm DateTime @default(now())
 
   userId        String
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -194,13 +197,13 @@ model Favorito {
 }
 
 model Meta {
-  id        String   @id @default(cuid())
-  data      DateTime @default(now())
-  questoes  Int      @default(30)
-  acerto    Int      @default(80) // % alvo
-  minutos   Int      @default(60)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id       String   @id @default(cuid())
+  data     DateTime @default(now())
+  questoes Int      @default(30)
+  acerto   Int      @default(80) // % alvo
+  minutos  Int      @default(60)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -241,4 +244,81 @@ model Reporte {
 
   @@index([status])
   @@index([questaoId])
+}
+
+// ===================== Redacao =====================
+// Modulo de redacao: a IA propoe um tema para o concurso com dois textos de
+// apoio REAIS (buscados na web e conferidos contra a fonte), a pessoa escreve,
+// e a IA corrige em cinco competencias de 0 a 200 — total de 0 a 1000.
+
+model TemaRedacao {
+  id       String   @id @default(cuid())
+  tema     String
+  comando  String
+  banca    String?
+  criadoEm DateTime @default(now())
+
+  concursoId String?
+  concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
+  // Quem gerou. O tema fica visivel para todos do concurso, como o resto do
+  // conteudo — isto e so autoria.
+  autorId    String?
+  autor      User?     @relation(fields: [autorId], references: [id], onDelete: SetNull)
+
+  textos   TextoApoio[]
+  redacoes Redacao[]
+
+  @@index([concursoId])
+}
+
+model TextoApoio {
+  id        String  @id @default(cuid())
+  trecho    String
+  veiculo   String
+  url       String
+  ordem     Int     @default(0)
+  // `true` = o trecho foi encontrado literalmente na pagina da URL. Quando
+  // falso, a tela avisa que a citacao nao pode ser conferida automaticamente.
+  conferido Boolean @default(false)
+
+  temaId String
+  tema   TemaRedacao @relation(fields: [temaId], references: [id], onDelete: Cascade)
+
+  @@index([temaId])
+}
+
+model Redacao {
+  id          String    @id @default(cuid())
+  texto       String
+  palavras    Int       @default(0)
+  enviadaEm   DateTime  @default(now())
+  corrigidaEm DateTime?
+
+  // Resultado da correcao (nulos ate corrigir).
+  total        Int?
+  resumo       String?
+  pontosFortes String? // uma por linha
+  aMelhorar    String? // uma por linha
+
+  userId String
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  temaId String
+  tema   TemaRedacao @relation(fields: [temaId], references: [id], onDelete: Cascade)
+
+  competencias CompetenciaNota[]
+
+  @@index([userId])
+  @@index([temaId])
+}
+
+model CompetenciaNota {
+  id         String @id @default(cuid())
+  numero     Int // 1..5
+  nota       Int // 0..200
+  comentario String
+
+  redacaoId String
+  redacao   Redacao @relation(fields: [redacaoId], references: [id], onDelete: Cascade)
+
+  @@unique([redacaoId, numero])
 }
