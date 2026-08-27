@@ -162,9 +162,11 @@ export function RedacaoClient({
         </CardHeader>
         <CardContent className="space-y-4 p-6">
           <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-xs leading-relaxed text-slate-400">
-            A proposta vem com <span className="font-medium text-slate-200">dois textos de apoio
-            reais</span>, buscados na web. Cada citação é conferida contra a página de origem antes
-            de aparecer aqui — mas confira a fonte antes de usar o dado numa prova.
+            A proposta vem com <span className="font-medium text-slate-200">textos de apoio
+            reais</span>, buscados na web. Cada citação é aberta e conferida contra a página de
+            origem: o que não confere é descartado, e uma proposta sem nenhuma fonte confirmada não
+            é salva. Ainda assim, leia a fonte antes de usar o dado numa prova — a conferência
+            garante que o trecho está lá, não que a fonte seja boa.
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

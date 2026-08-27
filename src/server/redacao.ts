@@ -141,23 +141,99 @@ async function gerar(input: {
   });
   if (!concurso) throw new Error("Selecione um concurso válido.");
 
+  const inicio = Date.now();
+
+  /*
+   * Uma proposta so vale com FONTE CONFERIDA.
+   *
+   * Medido em producao: o modelo de busca inventou duas URLs perfeitamente
+   * plausiveis (uma do G1, uma da UnB) — as duas davam 404, com trecho e dados
+   * igualmente inventados. Marcar como "nao conferida" e deixar passar nao
+   * resolve: quem esta estudando sob pressao usa o que esta na tela, e citar
+   * dado falso na prova e pior do que nao citar nada.
+   *
+   * Entao: so entram textos que a conferencia aprovou. Se nenhum passar,
+   * tentamos de novo (busca nova costuma trazer resultado diferente) e, se
+   * ainda assim nao houver fonte real, a proposta NAO e salva.
+   */
+  let ultimoMotivo = "";
+
+  for (let tentativa = 0; tentativa < 2; tentativa++) {
+    const proposta = await pedirProposta(concurso.nome, input, inicio);
+
+    const conferidas = await Promise.all(
+      proposta.candidatos.map(async (c) => ({
+        ...c,
+        ...(await verificarCitacao(c.url, c.trecho)),
+      }))
+    );
+
+    const validos = conferidas.filter((c) => c.conferido).slice(0, 2);
+
+    if (validos.length > 0) {
+      const criado = await prisma.temaRedacao.create({
+        data: {
+          tema: proposta.tema,
+          comando: proposta.comando,
+          banca: input.banca?.trim() || null,
+          concursoId: concurso.id,
+          autorId: userId,
+          textos: {
+            create: validos.map((c, i) => ({
+              trecho: c.trecho,
+              veiculo: c.veiculo,
+              url: c.url,
+              ordem: i,
+              conferido: true,
+            })),
+          },
+        },
+        include: {
+          textos: { orderBy: { ordem: "asc" } },
+          concurso: { select: { nome: true } },
+        },
+      });
+
+      revalidatePath("/redacao");
+      return paraTemaDTO(criado, 0);
+    }
+
+    ultimoMotivo = conferidas.map((c) => c.motivo ?? "não conferida").join("; ");
+
+    // Nao comeca outra rodada se nao houver tempo — a funcao tem teto de 60s.
+    if (Date.now() - inicio > 30_000) break;
+  }
+
+  throw new ErroGroq(
+    "Não consegui confirmar nenhuma fonte real para este tema — as páginas citadas não abriram ou o trecho não estava nelas. " +
+      "Nenhuma proposta foi salva. Tente de novo, ou use o campo de orientação para apontar um assunto mais noticiado. " +
+      `(motivos: ${ultimoMotivo || "sem candidatos"})`
+  );
+}
+
+type Candidato = { trecho: string; veiculo: string; url: string };
+
+/** Uma ida ao modelo de busca: devolve o tema e os candidatos a texto de apoio. */
+async function pedirProposta(
+  concursoNome: string,
+  input: { banca?: string; orientacao?: string },
+  inicio: number
+): Promise<{ tema: string; comando: string; candidatos: Candidato[] }> {
+  // O orcamento encolhe a cada rodada, para as duas caberem no teto da funcao.
+  const gasto = Date.now() - inicio;
+  const orcamento = Math.max(8_000, 38_000 - gasto);
+
   const { texto } = await conversarGroq({
     // Modelo COM busca: os textos de apoio precisam existir de verdade.
     modelo: modeloGroqComBusca(),
-    // Busca web falha por tamanho de vez em quando; a segunda tentativa passa.
     tentativas: 2,
-    // Medido em producao: 22s era curto e a geracao morria por timeout. A
-    // busca web do compound varia muito (10s a 50s nas medicoes). Uma sonda
-    // confirmou que 45s de funcao respondem 200 com maxDuration=60, entao o
-    // orcamento aqui e 42s para o Groq, deixando ~15s para conferir as
-    // citacoes e gravar.
-    timeoutMs: 40_000,
-    orcamentoMs: 42_000,
+    timeoutMs: orcamento,
+    orcamentoMs: orcamento,
     temperatura: 0.6,
     maxTokens: 3000,
     sistema: PROMPT_TEMA,
     usuario: montarPedidoTema({
-      concurso: concurso.nome,
+      concurso: concursoNome,
       banca: input.banca,
       orientacao: input.orientacao,
     }),
@@ -172,8 +248,7 @@ async function gerar(input: {
   const comando = parsed.data.comando.trim();
   if (!tema || !comando) throw new ErroGroq("A proposta veio incompleta. Tente de novo.");
 
-  // Duas citacoes da MESMA pagina nao sao dois textos de apoio. Mantem a
-  // primeira de cada URL para a pessoa ter de fato dois pontos de partida.
+  // Duas citacoes da MESMA pagina nao sao dois textos de apoio.
   const vistas = new Set<string>();
   const candidatos = (parsed.data.textosApoio ?? [])
     .map((t) => ({
@@ -190,50 +265,7 @@ async function gerar(input: {
     })
     .slice(0, 3);
 
-  if (candidatos.length === 0) {
-    throw new ErroGroq(
-      "O modelo não trouxe nenhum texto de apoio com fonte. Tente gerar novamente."
-    );
-  }
-
-  // Confere as citacoes em paralelo — cada uma custa uma ida a pagina.
-  //
-  // Pedimos TRES e ficamos com DOIS. Na pratica boa parte das citacoes nao
-  // confere — pagina fora do ar, PDF, e de vez em quando uma URL que o modelo
-  // simplesmente inventou. Com um candidato de reserva, a chance de entregar
-  // dois textos conferidos sobe bastante, e o custo e uma requisicao HTTP a
-  // mais. A ordenacao e estavel: entre dois conferidos, vale a ordem original.
-  const conferidas = await Promise.all(
-    candidatos.map(async (c) => ({ ...c, ...(await verificarCitacao(c.url, c.trecho)) }))
-  );
-  const escolhidos = conferidas
-    .map((c, i) => ({ c, i }))
-    .sort((a, b) => Number(b.c.conferido) - Number(a.c.conferido) || a.i - b.i)
-    .slice(0, 2)
-    .map(({ c }) => c);
-
-  const criado = await prisma.temaRedacao.create({
-    data: {
-      tema,
-      comando,
-      banca: input.banca?.trim() || null,
-      concursoId: concurso.id,
-      autorId: userId,
-      textos: {
-        create: escolhidos.map((c, i) => ({
-          trecho: c.trecho,
-          veiculo: c.veiculo,
-          url: c.url,
-          ordem: i,
-          conferido: c.conferido,
-        })),
-      },
-    },
-    include: { textos: { orderBy: { ordem: "asc" } }, concurso: { select: { nome: true } } },
-  });
-
-  revalidatePath("/redacao");
-  return paraTemaDTO(criado, 0);
+  return { tema, comando, candidatos };
 }
 
 // ---------------------------------------------------------------- leitura
