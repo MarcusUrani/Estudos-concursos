@@ -32,11 +32,18 @@ export function modeloGroq(): string {
 /**
  * Modelo com busca na web. Usado onde a resposta precisa vir do mundo real e
  * nao da memoria do modelo — hoje, os textos de apoio da redacao. Tem cota bem
- * maior (70 mil tokens/min contra 8 mil do padrao), o que ajuda: pagina de
- * noticia inteira entra no contexto dele.
+ * maior (70 mil tokens/min contra 8 mil do padrao).
+ *
+ * `compound-mini` e nao `compound`: o irmao maior passou a devolver 413
+ * ("Request Entity Too Large") de forma sistematica — 4 de 4 tentativas na
+ * medicao, nao intermitente como antes. Ele puxa conteudo demais da busca e
+ * estoura o proprio limite de requisicao. O mini responde 200, em 14s, e nos
+ * testes trouxe DUAS fontes conferidas de orgaos oficiais.
+ *
+ * Se o compound voltar a funcionar, GROQ_MODEL_BUSCA troca sem alterar codigo.
  */
 export function modeloGroqComBusca(): string {
-  return process.env.GROQ_MODEL_BUSCA?.trim() || "groq/compound";
+  return process.env.GROQ_MODEL_BUSCA?.trim() || "groq/compound-mini";
 }
 
 export class ErroGroq extends Error {}
