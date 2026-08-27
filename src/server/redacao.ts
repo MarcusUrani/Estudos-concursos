@@ -146,9 +146,13 @@ async function gerar(input: {
     modelo: modeloGroqComBusca(),
     // Busca web falha por tamanho de vez em quando; a segunda tentativa passa.
     tentativas: 2,
-    // 2 tentativas de 22s cabem nos 60s de teto da Vercel, com folga para a
-    // conferencia das citacoes depois.
-    timeoutMs: 22_000,
+    // Medido em producao: 22s era curto e a geracao morria por timeout. A
+    // busca web do compound varia muito (10s a 50s nas medicoes). Uma sonda
+    // confirmou que 45s de funcao respondem 200 com maxDuration=60, entao o
+    // orcamento aqui e 42s para o Groq, deixando ~15s para conferir as
+    // citacoes e gravar.
+    timeoutMs: 40_000,
+    orcamentoMs: 42_000,
     temperatura: 0.6,
     maxTokens: 3000,
     sistema: PROMPT_TEMA,

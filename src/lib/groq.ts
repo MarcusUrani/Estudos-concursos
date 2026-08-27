@@ -71,19 +71,37 @@ export async function conversarGroq(opcoes: {
    * NAO repete 429: a cota por minuto so piora com insistencia.
    */
   tentativas?: number;
-  /** Teto por tentativa. Com retry, o total precisa caber nos 60s da Vercel. */
+  /** Teto por tentativa. */
   timeoutMs?: number;
+  /**
+   * Teto do CONJUNTO de tentativas.
+   *
+   * Sem ele, `tentativas: 2` com timeout de 40s podia gastar 80s e estourar o
+   * limite da funcao na Vercel. Cada tentativa recebe o que sobrou do
+   * orcamento, e a ultima nem comeca se o que resta for curto demais para
+   * valer a pena.
+   */
+  orcamentoMs?: number;
 }): Promise<{ texto: string; modelo: string }> {
   const total = Math.max(1, opcoes.tentativas ?? 1);
+  const orcamento = opcoes.orcamentoMs ?? Number.POSITIVE_INFINITY;
+  const inicio = Date.now();
   let ultimo: unknown;
+
   for (let i = 0; i < total; i++) {
+    const restante = orcamento - (Date.now() - inicio);
+    if (i > 0 && restante < 5_000) break;
+
     try {
-      return await umaConversa(opcoes);
+      return await umaConversa({
+        ...opcoes,
+        timeoutMs: Math.min(opcoes.timeoutMs ?? TIMEOUT_MS, restante),
+      });
     } catch (e) {
       ultimo = e;
       const transitoria = e instanceof ErroGroq && /estourou o tamanho|HTTP 5\d\d/.test(e.message);
       if (!transitoria || i === total - 1) throw e;
-      await new Promise((r) => setTimeout(r, 1500));
+      await new Promise((r) => setTimeout(r, 1200));
     }
   }
   throw ultimo;
@@ -128,7 +146,7 @@ async function umaConversa(opcoes: {
   } catch (e) {
     if (e instanceof Error && (e.name === "TimeoutError" || e.name === "AbortError")) {
       throw new ErroGroq(
-        "O Groq demorou demais para responder. Tente novamente pedindo menos questões de uma vez."
+        "O Groq demorou demais para responder. Tente novamente — se persistir, peça menos itens de uma vez."
       );
     }
     throw new ErroGroq(

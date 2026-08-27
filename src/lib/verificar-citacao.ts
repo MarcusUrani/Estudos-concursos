@@ -11,7 +11,7 @@
    fora de contexto. Isso continua sendo leitura humana.
    ============================================================================= */
 
-const TIMEOUT_MS = 12_000;
+const TIMEOUT_MS = 6_000;
 /** Janela do trecho usada na comparacao. Curta o bastante para sobreviver a
  *  diferenca de pontuacao, longa o bastante para nao casar por acaso. */
 const JANELA = 60;
