@@ -4,12 +4,20 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { conversarGroq, extrairObjetoJson, modeloGroqComBusca, ErroGroq } from "@/lib/groq";
+import {
+  conversarGroq,
+  extrairObjetoJson,
+  extrairArrayJson,
+  modeloGroqComBusca,
+  ErroGroq,
+} from "@/lib/groq";
 import { verificarCitacao } from "@/lib/verificar-citacao";
 import {
-  PROMPT_TEMA,
+  PROMPT_FONTES,
+  PROMPT_PROPOSTA,
   PROMPT_CORRECAO,
-  montarPedidoTema,
+  montarPedidoFontes,
+  montarPedidoProposta,
   montarPedidoCorrecao,
   COMPETENCIAS,
   NOTA_MAX_COMPETENCIA,
@@ -110,10 +118,16 @@ const textoApoioSchema = z.object({
   url: z.string(),
 });
 
-const temaSchema = z.object({
+/** Passo 1: so as fontes. Aceita `textos` ou `textosApoio` — o modelo varia. */
+const fontesSchema = z.object({
+  textos: z.array(textoApoioSchema).nullish(),
+  textosApoio: z.array(textoApoioSchema).nullish(),
+});
+
+/** Passo 2: a proposta escrita a partir das fontes ja conferidas. */
+const propostaSchema = z.object({
   tema: z.string(),
   comando: z.string(),
-  textosApoio: z.array(textoApoioSchema).nullish(),
 });
 
 export async function gerarTemaRedacao(input: {
@@ -148,29 +162,39 @@ async function gerar(input: {
    *
    * Medido em producao: o modelo de busca inventou duas URLs perfeitamente
    * plausiveis (uma do G1, uma da UnB) — as duas davam 404, com trecho e dados
-   * igualmente inventados. Marcar como "nao conferida" e deixar passar nao
-   * resolve: quem esta estudando sob pressao usa o que esta na tela, e citar
-   * dado falso na prova e pior do que nao citar nada.
-   *
-   * Entao: so entram textos que a conferencia aprovou. Se nenhum passar,
-   * tentamos de novo (busca nova costuma trazer resultado diferente) e, se
-   * ainda assim nao houver fonte real, a proposta NAO e salva.
+   * igualmente inventados, e uma delas com fala atribuida a uma pessoa real.
+   * Marcar como "nao conferida" e deixar passar nao resolve: quem estuda sob
+   * pressao usa o que esta na tela, e citar dado falso na prova e pior do que
+   * nao citar nada.
    */
   let ultimoMotivo = "";
 
-  for (let tentativa = 0; tentativa < 2; tentativa++) {
-    const proposta = await pedirProposta(concurso.nome, input, inicio);
+  for (let rodada = 0; rodada < 2; rodada++) {
+    // Uma rodada ruim (resposta fora de formato, busca vazia) nao derruba a
+    // geracao: o modelo de busca e instavel e a rodada seguinte costuma vir
+    // limpa. So desistimos quando as duas falham.
+    let candidatos: Candidato[] = [];
+    try {
+      candidatos = await buscarFontes(concurso.nome, input, inicio);
+    } catch (e) {
+      ultimoMotivo = e instanceof Error ? e.message : "falha na busca";
+      if (Date.now() - inicio > 28_000) break;
+      continue;
+    }
+    if (candidatos.length === 0) {
+      ultimoMotivo = "a busca não retornou nenhuma fonte";
+      if (Date.now() - inicio > 28_000) break;
+      continue;
+    }
 
     const conferidas = await Promise.all(
-      proposta.candidatos.map(async (c) => ({
-        ...c,
-        ...(await verificarCitacao(c.url, c.trecho)),
-      }))
+      candidatos.map(async (c) => ({ ...c, ...(await verificarCitacao(c.url, c.trecho)) }))
     );
-
     const validos = conferidas.filter((c) => c.conferido).slice(0, 2);
 
     if (validos.length > 0) {
+      const proposta = await redigirProposta(concurso.nome, input, validos);
+
       const criado = await prisma.temaRedacao.create({
         data: {
           tema: proposta.tema,
@@ -199,9 +223,7 @@ async function gerar(input: {
     }
 
     ultimoMotivo = conferidas.map((c) => c.motivo ?? "não conferida").join("; ");
-
-    // Nao comeca outra rodada se nao houver tempo — a funcao tem teto de 60s.
-    if (Date.now() - inicio > 30_000) break;
+    if (Date.now() - inicio > 28_000) break;
   }
 
   throw new ErroGroq(
@@ -213,44 +235,56 @@ async function gerar(input: {
 
 type Candidato = { trecho: string; veiculo: string; url: string };
 
-/** Uma ida ao modelo de busca: devolve o tema e os candidatos a texto de apoio. */
-async function pedirProposta(
+/**
+ * Passo 1 — busca na web.
+ *
+ * O pedido e curto de proposito: com o prompt longo que existia antes, este
+ * modelo respondia 413 sistematicamente (ver o comentario em
+ * `lib/redacao-prompt.ts`). Aqui ele so acha fonte e copia trecho.
+ */
+async function buscarFontes(
   concursoNome: string,
-  input: { banca?: string; orientacao?: string },
+  input: { orientacao?: string },
   inicio: number
-): Promise<{ tema: string; comando: string; candidatos: Candidato[] }> {
-  // O orcamento encolhe a cada rodada, para as duas caberem no teto da funcao.
-  const gasto = Date.now() - inicio;
-  const orcamento = Math.max(8_000, 38_000 - gasto);
+): Promise<Candidato[]> {
+  const orcamento = Math.max(8_000, 30_000 - (Date.now() - inicio));
 
   const { texto } = await conversarGroq({
-    // Modelo COM busca: os textos de apoio precisam existir de verdade.
     modelo: modeloGroqComBusca(),
     tentativas: 2,
     timeoutMs: orcamento,
     orcamentoMs: orcamento,
     temperatura: 0.6,
-    maxTokens: 3000,
-    sistema: PROMPT_TEMA,
-    usuario: montarPedidoTema({
-      concurso: concursoNome,
-      banca: input.banca,
-      orientacao: input.orientacao,
-    }),
+    maxTokens: 3200,
+    sistema: PROMPT_FONTES,
+    usuario: montarPedidoFontes({ concurso: concursoNome, orientacao: input.orientacao }),
   });
 
-  const parsed = temaSchema.safeParse(extrairObjetoJson(texto));
-  if (!parsed.success) {
-    throw new ErroGroq("A proposta veio em formato inesperado. Tente gerar de novo.");
+  // Trecho literal e longo, entao a resposta as vezes corta no meio e o
+  // envelope {"textos":[...]} nunca fecha. Nesse caso o parser de OBJETO falha,
+  // mas o de ARRAY resgata os itens que ja fecharam — melhor duas fontes
+  // aproveitadas do que a geracao inteira perdida por causa da terceira.
+  let lista: unknown[];
+  try {
+    const obj = fontesSchema.safeParse(extrairObjetoJson(texto));
+    if (!obj.success) throw new Error("envelope inesperado");
+    lista = obj.data.textos ?? obj.data.textosApoio ?? [];
+  } catch {
+    try {
+      lista = extrairArrayJson(texto);
+    } catch {
+      // Nem objeto nem array aproveitavel: rodada perdida, quem chamou tenta
+      // de novo em vez de estourar para a usuaria.
+      return [];
+    }
   }
 
-  const tema = parsed.data.tema.trim();
-  const comando = parsed.data.comando.trim();
-  if (!tema || !comando) throw new ErroGroq("A proposta veio incompleta. Tente de novo.");
+  const itens = z.array(textoApoioSchema).safeParse(lista);
+  if (!itens.success) return [];
 
   // Duas citacoes da MESMA pagina nao sao dois textos de apoio.
   const vistas = new Set<string>();
-  const candidatos = (parsed.data.textosApoio ?? [])
+  return itens.data
     .map((t) => ({
       trecho: t.trecho.trim(),
       veiculo: t.veiculo?.trim() || "Fonte não identificada",
@@ -264,8 +298,41 @@ async function pedirProposta(
       return true;
     })
     .slice(0, 3);
+}
 
-  return { tema, comando, candidatos };
+/**
+ * Passo 2 — redige tema e comando, SEM busca.
+ *
+ * Recebe as fontes ja conferidas, entao o comando pode dialogar com o que a
+ * pessoa vai ter na frente. Modelo padrao (sem busca): mais forte para escrever
+ * e sem o risco de estourar o contexto.
+ */
+async function redigirProposta(
+  concursoNome: string,
+  input: { banca?: string; orientacao?: string },
+  textos: Candidato[]
+): Promise<{ tema: string; comando: string }> {
+  const { texto } = await conversarGroq({
+    temperatura: 0.7,
+    maxTokens: 900,
+    timeoutMs: 20_000,
+    sistema: PROMPT_PROPOSTA,
+    usuario: montarPedidoProposta({
+      concurso: concursoNome,
+      banca: input.banca,
+      orientacao: input.orientacao,
+      textos: textos.map((t) => ({ trecho: t.trecho, veiculo: t.veiculo })),
+    }),
+  });
+
+  const parsed = propostaSchema.safeParse(extrairObjetoJson(texto));
+  if (!parsed.success) {
+    throw new ErroGroq("A proposta veio em formato inesperado. Tente gerar de novo.");
+  }
+  const tema = parsed.data.tema.trim();
+  const comando = parsed.data.comando.trim();
+  if (!tema || !comando) throw new ErroGroq("A proposta veio incompleta. Tente de novo.");
+  return { tema, comando };
 }
 
 // ---------------------------------------------------------------- leitura

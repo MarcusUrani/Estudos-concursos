@@ -11,7 +11,10 @@
    fora de contexto. Isso continua sendo leitura humana.
    ============================================================================= */
 
-const TIMEOUT_MS = 6_000;
+// 9s e nao 6s: portal de orgao publico brasileiro costuma responder devagar, e
+// 6s descartava fonte boa por lentidao. As paginas sao buscadas em paralelo,
+// entao isso custa 9s de relogio, nao 9s por fonte.
+const TIMEOUT_MS = 9_000;
 /** Janela do trecho usada na comparacao. Curta o bastante para sobreviver a
  *  diferenca de pontuacao, longa o bastante para nao casar por acaso. */
 const JANELA = 60;

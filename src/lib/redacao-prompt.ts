@@ -51,44 +51,74 @@ export const MAX_PALAVRAS = 900;
 
 // ---------------------------------------------------------------- tema
 
-export const PROMPT_TEMA = `Você elabora propostas de redação para concursos públicos brasileiros, no modelo dissertativo-argumentativo.
+/* -----------------------------------------------------------------------------
+   Duas chamadas, nao uma
 
-O tema precisa fazer sentido para o concurso informado: deve conversar com a área de atuação do órgão e com o que costuma ser cobrado na prova discursiva dele. Nada de tema genérico que serviria para qualquer concurso.
+   A geracao do tema era UM pedido so ao modelo de busca: "ache duas fontes
+   reais E escreva o tema E o comando no estilo da banca, seguindo estas
+   regras". Ele respondia 413 (Request Entity Too Large) de forma sistematica.
 
-Use a busca na web para localizar TRÊS textos de apoio REAIS, de fontes DIFERENTES umas das outras, publicados preferencialmente nos últimos três anos. Serão aproveitados os dois melhores — o terceiro é reserva, caso alguma página não abra. Para cada um traga:
-- "trecho": de 40 a 150 palavras COPIADAS LITERALMENTE da página, sem reescrever, sem resumir, sem juntar partes distantes;
-- "veiculo": nome do jornal, órgão ou instituição;
-- "url": o endereço exato de onde o trecho saiu.
+   Medido, com o mesmo modelo e a mesma pergunta:
+     prompt atual (3 fontes, 40-150 palavras, varias regras) -> 413, 413
+     prompt enxuto (2 fontes, 30-70 palavras)                -> 200, 413
+     prompt minimo                                            -> 200, 200
 
-Prefira fontes de TEXTO: jornal, portal de órgão público, agência oficial, universidade ou instituto de pesquisa. Não use vídeo, YouTube, rede social, podcast, PDF ou página cujo conteúdo não esteja escrito em HTML na própria página — o trecho precisa poder ser lido e conferido no endereço informado.
+   Ou seja: o estouro vinha do MEU pedido. Quanto mais eu exigia, mais paginas
+   ele abria, ate o proprio contexto nao caber na requisicao.
 
-Nunca invente fonte, número, data ou autoria. Não atribua frase a quem não a disse. Se só encontrar uma ou duas fontes confiáveis, devolva só o que encontrou — é melhor do que inventar. Confira que a URL é de uma página que existe: endereço inventado é descartado automaticamente.
+   Entao o trabalho foi separado. A busca fica minima — so achar fonte e copiar
+   trecho. Redigir tema e comando no estilo da banca passou para uma segunda
+   chamada, SEM busca, num modelo mais forte. Sai mais barato, mais confiavel e
+   o comando ainda melhora, porque e escrito ja sabendo quais textos de apoio a
+   pessoa vai ter na frente.
+   ----------------------------------------------------------------------------- */
 
-Responda APENAS com JSON, sem cercas de código e sem texto antes ou depois:
-{
-  "tema": "frase curta que nomeia o tema",
-  "comando": "instrução ao candidato, no estilo de banca, dizendo o que ele deve discutir e propor",
-  "textosApoio": [
-    { "trecho": "...", "veiculo": "...", "url": "https://..." }
-  ]
-}`;
+/** Passo 1 — busca. Curto de proposito: pedido grande faz o modelo estourar. */
+export const PROMPT_FONTES = `Busque na web notícias e publicações oficiais recentes sobre o assunto pedido.
 
-export function montarPedidoTema(p: {
+Busque sobre o PROBLEMA SOCIAL e a política pública que o enfrenta — dados, cobertura, desafios, resultados. Nunca sobre concurso, edital ou prova, e nunca páginas de apresentação institucional do órgão (quem somos, organograma, planejamento). Prefira jornal, agência oficial de notícias ou instituto de pesquisa, em página HTML comum — PDF, vídeo, enciclopédia e blog de curso servem mal. Traga o que encontrar: se achar só uma ou duas fontes boas, devolva essas.
+
+Para cada fonte devolva um trecho de 30 a 80 palavras copiado literalmente da página, o nome do veículo e a URL exata. Não invente fonte, número nem URL.
+
+Responda só com JSON: {"textos":[{"trecho":"...","veiculo":"...","url":"https://..."}]}`;
+
+export function montarPedidoFontes(p: { concurso: string; orientacao?: string }): string {
+  // Descreve o CAMPO TEMATICO, nao o concurso: pedir "o concurso SEDES-DF"
+  // fez a busca voltar com blog de cursinho e verbete de enciclopedia sobre o
+  // proprio orgao, que nao servem de texto de apoio para redacao.
+  const assunto = p.orientacao?.trim()
+    ? p.orientacao.trim()
+    : `políticas públicas e problemas sociais da área em que atua o órgão "${p.concurso}"`;
+  return `Assunto: ${assunto}
+
+Traga 3 fontes de veículos diferentes.`;
+}
+
+/** Passo 2 — redacao da proposta, SEM busca, com as fontes ja conferidas. */
+export const PROMPT_PROPOSTA = `Você elabora propostas de redação para concursos públicos brasileiros, no modelo dissertativo-argumentativo.
+
+Recebe textos de apoio já verificados e escreve a proposta que vai acompanhá-los. O tema precisa fazer sentido para o concurso informado: deve conversar com a área de atuação do órgão e com o que costuma ser cobrado na prova discursiva dele. Nada de tema genérico que serviria para qualquer concurso.
+
+O comando deve dizer, no estilo da banca, o que o candidato precisa discutir e propor, e deve dialogar com os textos de apoio que ele terá em mãos — sem repetir o conteúdo deles.
+
+Responda APENAS com JSON, sem cercas de código:
+{"tema":"frase curta que nomeia o tema","comando":"instrução ao candidato"}`;
+
+export function montarPedidoProposta(p: {
   concurso: string;
   banca?: string;
   orientacao?: string;
+  textos: { trecho: string; veiculo: string }[];
 }): string {
   const partes = [
     `Concurso: ${p.concurso}`,
     p.banca?.trim() ? `Banca: ${p.banca.trim()} — siga o estilo de comando dessa banca.` : "",
+    p.orientacao?.trim() ? `Orientação de quem pediu: ${p.orientacao.trim()}` : "",
     "",
-    "Proponha UM tema de redação dissertativo-argumentativa adequado a esse concurso, com os dois textos de apoio reais.",
+    "TEXTOS DE APOIO que o candidato vai receber:",
+    ...p.textos.map((t, i) => `[${i + 1}] (${t.veiculo}) ${t.trecho}`),
   ].filter(Boolean);
-
-  if (p.orientacao?.trim()) {
-    partes.push("", `Orientação de quem pediu: ${p.orientacao.trim()}`);
-  }
-  return partes.join("\n");
+  return partes.join(String.fromCharCode(10));
 }
 
 // ---------------------------------------------------------------- correcao
