@@ -75,7 +75,12 @@ export async function conversarGroq(opcoes: {
    * Existe por causa do modelo de busca: quando a pesquisa web puxa paginas
    * grandes demais, o Groq devolve 413 de forma intermitente — a mesma
    * pergunta passa na tentativa seguinte, porque o resultado da busca muda.
-   * NAO repete 429: a cota por minuto so piora com insistencia.
+   *
+   * Repete 429 TAMBEM, mas so quando a propria API diz quanto falta esperar
+   * ("try again in 8s"), esse tempo e curto e cabe no orcamento. Esperar o prazo que o
+   * servidor informou nao e insistir as cegas — e a unica forma de a geracao
+   * sobreviver a cota de 8 mil tokens por minuto, que uma unica busca quase
+   * esgota sozinha.
    */
   tentativas?: number;
   /** Teto por tentativa. */
@@ -106,9 +111,22 @@ export async function conversarGroq(opcoes: {
       });
     } catch (e) {
       ultimo = e;
-      const transitoria = e instanceof ErroGroq && /estourou o tamanho|HTTP 5\d\d/.test(e.message);
-      if (!transitoria || i === total - 1) throw e;
-      await new Promise((r) => setTimeout(r, 1200));
+      if (i === total - 1) throw e;
+
+      const msg = e instanceof ErroGroq ? e.message : "";
+      const estouro = /estourou o tamanho|HTTP 5\d\d/.test(msg);
+
+      // A API informa o tempo exato de espera quando a cota estoura.
+      const sugerido = Number(msg.match(/try again in ([\d.]+)s/i)?.[1] ?? 0);
+      // Ate 12s a espera cabe no orcamento da funcao; acima disso e melhor
+      // devolver a mensagem, que ja explica o limite por minuto.
+      const cota = sugerido > 0 && sugerido <= 12;
+
+      if (!estouro && !cota) throw e;
+
+      const espera = cota ? Math.ceil(sugerido * 1000) + 500 : 1200;
+      if (orcamento - (Date.now() - inicio) < espera + 5_000) throw e;
+      await new Promise((r) => setTimeout(r, espera));
     }
   }
   throw ultimo;

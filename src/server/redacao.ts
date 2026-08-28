@@ -255,7 +255,10 @@ async function buscarFontes(
     timeoutMs: orcamento,
     orcamentoMs: orcamento,
     temperatura: 0.6,
-    maxTokens: 3200,
+    // 2200 e nao 3200: o Groq debita o max_tokens RESERVADO, e a busca sozinha
+    // pedia 7.272 de uma cota de 8.000 por minuto — nao sobrava nada para o
+    // passo 2 nem para a geracao de questoes, que dividem o mesmo balde.
+    maxTokens: 2200,
     sistema: PROMPT_FONTES,
     usuario: montarPedidoFontes({ concurso: concursoNome, orientacao: input.orientacao }),
   });
@@ -315,7 +318,11 @@ async function redigirProposta(
   const { texto } = await conversarGroq({
     temperatura: 0.7,
     maxTokens: 900,
-    timeoutMs: 20_000,
+    // Passo curto, mas com direito a esperar uma cota estourada: seria uma pena
+    // perder as fontes ja conferidas por causa de um 429 de poucos segundos.
+    tentativas: 2,
+    timeoutMs: 14_000,
+    orcamentoMs: 16_000,
     sistema: PROMPT_PROPOSTA,
     usuario: montarPedidoProposta({
       concurso: concursoNome,
