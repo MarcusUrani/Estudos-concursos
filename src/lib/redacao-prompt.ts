@@ -73,14 +73,21 @@ export const MAX_PALAVRAS = 900;
    pessoa vai ter na frente.
    ----------------------------------------------------------------------------- */
 
-/** Passo 1 — busca. Curto de proposito: pedido grande faz o modelo estourar. */
-export const PROMPT_FONTES = `Busque na web notícias e publicações oficiais recentes sobre o assunto pedido.
+/**
+ * Passo 1 — busca. Pede SO a URL.
+ *
+ * Pedir o trecho literal era o que inchava a resposta do modelo de busca (ele
+ * precisa ler a pagina inteira para copiar) e disparava 413 na Vercel. Era
+ * tambem a porta por onde entrava citacao inventada. Agora ele so aponta o
+ * endereco; o trecho e recortado da propria pagina, do nosso lado.
+ */
+export const PROMPT_FONTES = `Pesquise na web notícias e publicações oficiais recentes sobre o assunto pedido.
 
-Busque sobre o PROBLEMA SOCIAL e a política pública que o enfrenta — dados, cobertura, desafios, resultados. Nunca sobre concurso, edital ou prova, e nunca páginas de apresentação institucional do órgão (quem somos, organograma, planejamento). Prefira jornal, agência oficial de notícias ou instituto de pesquisa, em página HTML comum — PDF, vídeo, enciclopédia e blog de curso servem mal. Traga o que encontrar: se achar só uma ou duas fontes boas, devolva essas.
+Busque sobre o PROBLEMA SOCIAL e a política pública que o enfrenta. Nunca sobre concurso, edital ou prova, e nunca páginas de apresentação institucional do órgão. Prefira jornal, agência oficial de notícias ou instituto de pesquisa, em página HTML comum — PDF, vídeo e enciclopédia servem mal.
 
-Para cada fonte devolva um trecho de 30 a 80 palavras copiado literalmente da página, o nome do veículo e a URL exata. Não invente fonte, número nem URL.
+Para cada resultado devolva o endereço, o veículo e o título da página. O título basta: não copie o corpo da matéria.
 
-Responda só com JSON: {"textos":[{"trecho":"...","veiculo":"...","url":"https://..."}]}`;
+Responda só com JSON: {"fontes":[{"url":"https://...","veiculo":"nome do veículo","titulo":"título da página"}]}`;
 
 export function montarPedidoFontes(p: { concurso: string; orientacao?: string }): string {
   // Descreve o CAMPO TEMATICO, nao o concurso: pedir "o concurso SEDES-DF"
@@ -91,7 +98,12 @@ export function montarPedidoFontes(p: { concurso: string; orientacao?: string })
     : `políticas públicas e problemas sociais da área em que atua o órgão "${p.concurso}"`;
   return `Assunto: ${assunto}
 
-Traga 3 fontes de veículos diferentes.`;
+Liste 5 endereços de veículos diferentes.`;
+}
+
+/** O assunto usado para escolher o paragrafo mais pertinente na pagina. */
+export function assuntoDaBusca(p: { concurso: string; orientacao?: string }): string {
+  return p.orientacao?.trim() || p.concurso;
 }
 
 /** Passo 2 — redacao da proposta, SEM busca, com as fontes ja conferidas. */

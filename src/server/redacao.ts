@@ -12,12 +12,13 @@ import {
   modeloGroqTexto,
   ErroGroq,
 } from "@/lib/groq";
-import { verificarCitacao } from "@/lib/verificar-citacao";
+import { extrairTrechoDaPagina } from "@/lib/verificar-citacao";
 import {
   PROMPT_FONTES,
   PROMPT_PROPOSTA,
   PROMPT_CORRECAO,
   montarPedidoFontes,
+  assuntoDaBusca,
   montarPedidoProposta,
   montarPedidoCorrecao,
   COMPETENCIAS,
@@ -113,16 +114,20 @@ export type RedacaoDTO = {
 
 // ---------------------------------------------------------------- geracao do tema
 
-const textoApoioSchema = z.object({
-  trecho: z.string(),
-  veiculo: z.string().nullish(),
+const fonteSchema = z.object({
   url: z.string(),
+  veiculo: z.string().nullish(),
+  // Pedimos o titulo so para OBRIGAR o modelo a de fato abrir a pagina: sem
+  // nada para relatar, ele respondia "nao consigo acessar a web" e devolvia
+  // lista vazia. O titulo em si nao e usado.
+  titulo: z.string().nullish(),
 });
 
-/** Passo 1: so as fontes. Aceita `textos` ou `textosApoio` — o modelo varia. */
+/** Passo 1: so os enderecos. O trecho e recortado por nos, da propria pagina. */
 const fontesSchema = z.object({
-  textos: z.array(textoApoioSchema).nullish(),
-  textosApoio: z.array(textoApoioSchema).nullish(),
+  fontes: z.array(fonteSchema).nullish(),
+  urls: z.array(fonteSchema).nullish(),
+  textos: z.array(fonteSchema).nullish(),
 });
 
 /** Passo 2: a proposta escrita a partir das fontes ja conferidas. */
@@ -188,10 +193,19 @@ async function gerar(input: {
       continue;
     }
 
-    const conferidas = await Promise.all(
-      candidatos.map(async (c) => ({ ...c, ...(await verificarCitacao(c.url, c.trecho)) }))
+    // O trecho vem da PAGINA, nao do modelo: por isso nao existe "citacao nao
+    // conferida" aqui — ou conseguimos ler a pagina e recortar um paragrafo,
+    // ou a fonte simplesmente nao entra.
+    const assunto = assuntoDaBusca({ concurso: concurso.nome, orientacao: input.orientacao });
+    const lidas = await Promise.all(
+      candidatos.map(async (c) => {
+        const r = await extrairTrechoDaPagina(c.url, assunto);
+        return "trecho" in r
+          ? { url: c.url, veiculo: c.veiculo, trecho: r.trecho, ok: true as const }
+          : { url: c.url, veiculo: c.veiculo, trecho: "", ok: false as const, motivo: r.erro };
+      })
     );
-    const validos = conferidas.filter((c) => c.conferido).slice(0, 2);
+    const validos = lidas.filter((c) => c.ok).slice(0, 2);
 
     if (validos.length > 0) {
       const proposta = await redigirProposta(concurso.nome, input, validos);
@@ -223,7 +237,7 @@ async function gerar(input: {
       return paraTemaDTO(criado, 0);
     }
 
-    ultimoMotivo = conferidas.map((c) => c.motivo ?? "não conferida").join("; ");
+    ultimoMotivo = lidas.map((c) => (c.ok ? "ok" : c.motivo)).join("; ");
     if (Date.now() - inicio > 28_000) break;
   }
 
@@ -256,52 +270,53 @@ async function buscarFontes(
     timeoutMs: orcamento,
     orcamentoMs: orcamento,
     temperatura: 0.6,
-    // 2200 e nao 3200: o Groq debita o max_tokens RESERVADO, e a busca sozinha
-    // pedia 7.272 de uma cota de 8.000 por minuto — nao sobrava nada para o
-    // passo 2 nem para a geracao de questoes, que dividem o mesmo balde.
-    maxTokens: 2200,
+    // A resposta agora e so uma lista de URLs: cabe folgada em 700 tokens, e
+    // reservar pouco e o que mantem a chamada dentro da cota por minuto.
+    maxTokens: 700,
     sistema: PROMPT_FONTES,
     usuario: montarPedidoFontes({ concurso: concursoNome, orientacao: input.orientacao }),
   });
 
-  // Trecho literal e longo, entao a resposta as vezes corta no meio e o
-  // envelope {"textos":[...]} nunca fecha. Nesse caso o parser de OBJETO falha,
-  // mas o de ARRAY resgata os itens que ja fecharam — melhor duas fontes
-  // aproveitadas do que a geracao inteira perdida por causa da terceira.
   let lista: unknown[];
   try {
     const obj = fontesSchema.safeParse(extrairObjetoJson(texto));
     if (!obj.success) throw new Error("envelope inesperado");
-    lista = obj.data.textos ?? obj.data.textosApoio ?? [];
+    lista = obj.data.fontes ?? obj.data.urls ?? obj.data.textos ?? [];
   } catch {
     try {
       lista = extrairArrayJson(texto);
     } catch {
-      // Nem objeto nem array aproveitavel: rodada perdida, quem chamou tenta
-      // de novo em vez de estourar para a usuaria.
       return [];
     }
   }
 
-  const itens = z.array(textoApoioSchema).safeParse(lista);
+  const itens = z.array(fonteSchema).safeParse(lista);
   if (!itens.success) return [];
 
-  // Duas citacoes da MESMA pagina nao sao dois textos de apoio.
   const vistas = new Set<string>();
   return itens.data
     .map((t) => ({
-      trecho: t.trecho.trim(),
-      veiculo: t.veiculo?.trim() || "Fonte não identificada",
+      veiculo: t.veiculo?.trim() || dominioDe(t.url),
       url: t.url.trim(),
+      trecho: "",
     }))
     .filter((t) => {
-      if (!t.trecho || !t.url) return false;
+      if (!t.url.startsWith("http")) return false;
       const chave = t.url.replace(/[#?].*$/, "");
       if (vistas.has(chave)) return false;
       vistas.add(chave);
       return true;
     })
-    .slice(0, 3);
+    .slice(0, 5);
+}
+
+/** Nome de exibicao quando o modelo nao informa o veiculo. */
+function dominioDe(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\d?\./, "");
+  } catch {
+    return "Fonte";
+  }
 }
 
 /**

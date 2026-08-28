@@ -56,6 +56,107 @@ function extrairTexto(html: string): string {
     .replace(/\s+/g, " ");
 }
 
+/**
+ * Baixa a pagina e extrai dela um paragrafo que sirva de texto de apoio.
+ *
+ * Existe porque pedir o TRECHO ao modelo de busca era o que inchava a resposta
+ * dele (e disparava 413) — e tambem era a porta pela qual entrava citacao
+ * inventada. Pedindo so a URL e recortando o paragrafo aqui, o trecho passa a
+ * ser real por construcao: ele vem da pagina que acabamos de ler.
+ */
+export async function extrairTrechoDaPagina(
+  url: string,
+  assunto: string
+): Promise<{ trecho: string } | { erro: string }> {
+  const pagina = await baixarPagina(url);
+  if ("erro" in pagina) return pagina;
+
+  // Paragrafos de verdade: nem legenda de foto, nem artigo inteiro.
+  const paragrafos = [...pagina.html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map((m) => limparTexto(m[1]))
+    .filter((t) => t.length >= 180 && t.length <= 900);
+
+  if (paragrafos.length === 0) return { erro: "página sem parágrafo aproveitável" };
+
+  // Escolhe o que mais fala do assunto pedido; empate fica com o primeiro, que
+  // costuma ser a abertura da materia.
+  const termos = normalizar(assunto)
+    .split(" ")
+    .filter((t) => t.length > 3);
+
+  let melhor = paragrafos[0];
+  let melhorNota = -1;
+  for (const p of paragrafos) {
+    const alvo = normalizar(p);
+    const nota = termos.reduce((soma, t) => soma + (alvo.includes(t) ? 1 : 0), 0);
+    if (nota > melhorNota) {
+      melhorNota = nota;
+      melhor = p;
+    }
+  }
+
+  // Corta em ~90 palavras sem partir frase no meio.
+  const palavras = melhor.split(/\s+/);
+  if (palavras.length > 90) {
+    const cortado = palavras.slice(0, 90).join(" ");
+    const ate = Math.max(cortado.lastIndexOf("."), cortado.lastIndexOf(";"));
+    melhor = ate > 120 ? cortado.slice(0, ate + 1) : cortado + "…";
+  }
+
+  return { trecho: melhor };
+}
+
+/** Baixa e decodifica a pagina. Compartilhado pela extracao e pela conferencia. */
+async function baixarPagina(url: string): Promise<{ html: string } | { erro: string }> {
+  let u: URL;
+  try {
+    u = new URL(url);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return { erro: "protocolo inesperado" };
+  } catch {
+    return { erro: "URL inválida" };
+  }
+
+  let resposta: Response;
+  try {
+    resposta = await fetch(u, {
+      redirect: "follow",
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      headers: {
+        "User-Agent": "Mozilla/5.0 (compatible; Gabarix/1.0; leitura de fonte)",
+        Accept: "text/html,application/xhtml+xml",
+      },
+    });
+  } catch {
+    return { erro: "não foi possível acessar a página" };
+  }
+
+  if (!resposta.ok) return { erro: `HTTP ${resposta.status}` };
+
+  const tipo = resposta.headers.get("content-type") ?? "";
+  if (!/text\/html|application\/xhtml/i.test(tipo)) {
+    return { erro: `formato não conferível (${tipo.split(";")[0] || "desconhecido"})` };
+  }
+
+  try {
+    const bytes = await resposta.arrayBuffer();
+    const charset = descobrirCharset(tipo, bytes);
+    try {
+      return { html: new TextDecoder(charset).decode(bytes) };
+    } catch {
+      return { html: new TextDecoder("utf-8").decode(bytes) };
+    }
+  } catch {
+    return { erro: "não foi possível ler a página" };
+  }
+}
+
+/** Tira tags e normaliza espaco, preservando acentuacao. */
+function limparTexto(html: string): string {
+  return extrairTexto(html)
+    .replace(/&#\d+;/g, " ")
+    .trim();
+}
+
 export type ResultadoConferencia = {
   conferido: boolean;
   /** Por que nao conferiu — vai para log, nao para a tela. */

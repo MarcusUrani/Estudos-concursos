@@ -53,11 +53,16 @@ export function modeloGroqComBusca(): string {
  * Medido: a busca da redacao consome ~7.600 dos 8.000 tokens/min do
  * gpt-oss-120b — e o compound-mini roteia justamente para ele. Resultado: o
  * passo seguinte, que so precisa de ~1.300 tokens, batia em 429 por causa do
- * passo anterior. O llama-3.3-70b tem 12.000 TPM proprios, entao os dois passos
- * deixam de disputar a mesma cota.
+ * passo anterior. Como a cota do Groq e POR MODELO, basta usar outro para os
+ * dois passos deixarem de disputar o mesmo balde.
+ *
+ * `gpt-oss-20b` e da mesma familia do padrao (previsivel com os prompts JSON
+ * daqui) e tem 8.000 TPM so seus. A escolha ficou entre ele e o qwen3.6-27b;
+ * os Llama sairam do catalogo — o `llama-3.3-70b-versatile`, que estava aqui
+ * antes, foi aposentado de um dia para o outro. Dai o env de escape.
  */
 export function modeloGroqTexto(): string {
-  return process.env.GROQ_MODEL_TEXTO?.trim() || "llama-3.3-70b-versatile";
+  return process.env.GROQ_MODEL_TEXTO?.trim() || "openai/gpt-oss-20b";
 }
 
 export class ErroGroq extends Error {}
