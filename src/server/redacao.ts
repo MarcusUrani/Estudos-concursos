@@ -9,6 +9,7 @@ import {
   extrairObjetoJson,
   extrairArrayJson,
   modeloGroqComBusca,
+  modeloGroqTexto,
   ErroGroq,
 } from "@/lib/groq";
 import { verificarCitacao } from "@/lib/verificar-citacao";
@@ -316,6 +317,8 @@ async function redigirProposta(
   textos: Candidato[]
 ): Promise<{ tema: string; comando: string }> {
   const { texto } = await conversarGroq({
+    // Cota separada da busca — ver `modeloGroqTexto`.
+    modelo: modeloGroqTexto(),
     temperatura: 0.7,
     maxTokens: 900,
     // Passo curto, mas com direito a esperar uma cota estourada: seria uma pena

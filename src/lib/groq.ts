@@ -46,6 +46,20 @@ export function modeloGroqComBusca(): string {
   return process.env.GROQ_MODEL_BUSCA?.trim() || "groq/compound-mini";
 }
 
+/**
+ * Modelo para escrever texto curto SEM busca, de proposito num balde de cota
+ * diferente do padrao.
+ *
+ * Medido: a busca da redacao consome ~7.600 dos 8.000 tokens/min do
+ * gpt-oss-120b — e o compound-mini roteia justamente para ele. Resultado: o
+ * passo seguinte, que so precisa de ~1.300 tokens, batia em 429 por causa do
+ * passo anterior. O llama-3.3-70b tem 12.000 TPM proprios, entao os dois passos
+ * deixam de disputar a mesma cota.
+ */
+export function modeloGroqTexto(): string {
+  return process.env.GROQ_MODEL_TEXTO?.trim() || "llama-3.3-70b-versatile";
+}
+
 export class ErroGroq extends Error {}
 
 type RespostaGroq = {
