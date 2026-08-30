@@ -3,6 +3,13 @@ import { NIVEIS, type Nivel } from "@/lib/utils";
 /* =============================================================================
    Prompt do gerador de questoes
 
+   ATENCAO ao mexer no EXEMPLO abaixo: o modelo copia o padrao dele, inclusive
+   os defeitos. O exemplo original trazia a correta com 78 caracteres e a menor
+   errada com 31 — e o banco saiu assim. Medido em 3.280 questoes: chutar sempre
+   a alternativa mais longa acertava 71% (o acaso e 20%), e em alguns assuntos
+   chegava a 91%. As cinco alternativas do exemplo agora tem tamanho parecido e
+   sao todas defensaveis
+
    O texto abaixo e o prompt do agente, definido pelo dono do produto. Fica
    isolado num arquivo proprio de proposito: e conteudo editorial, nao logica —
    quem ajusta o tom das questoes nao precisa mexer na action nem no client.
@@ -23,10 +30,10 @@ export const PROMPT_SISTEMA = `Você é um especialista em criar questões de co
     "enunciado": "O DF Brincar é um programa voltado a:",
     "alternativas": [
       { "texto": "garantir o direito ao lazer e ao desenvolvimento infantil por meio do brincar.", "correta": true },
-      { "texto": "regular o comércio de brinquedos no DF.", "correta": false },
-      { "texto": "fiscalizar parques e áreas de lazer privadas.", "correta": false },
-      { "texto": "promover competições esportivas entre escolas.", "correta": false },
-      { "texto": "organizar o transporte escolar.", "correta": false }
+      { "texto": "assegurar a oferta de vagas em creches públicas para crianças de zero a três anos.", "correta": false },
+      { "texto": "fiscalizar a adequação dos parquinhos instalados em condomínios residenciais.", "correta": false },
+      { "texto": "organizar competições esportivas escolares entre as regiões administrativas.", "correta": false },
+      { "texto": "conceder auxílio financeiro às famílias com crianças fora da escola.", "correta": false }
     ],
     "explicacao": "O DF Brincar promove o direito ao lazer, à convivência e ao desenvolvimento infantil.",
     "fonte": "Programa DF Social; Decreto nº 42.872/2021",
@@ -44,7 +51,9 @@ Processamento automático:
 - O campo subassunto é derivado do assunto bruto: se o raw conter " - ", a parte após o traço vira subassunto. Ex: "DF Brincar - Atividades" → assunto="DF Brincar", subassunto="Atividades"
 - Para os assuntos do DF Social, os canônicos são: Programa DF Social (Lei nº 7.008/2021 e Decreto nº 42.872/2021), DF Brincar, Incentiva DF, Agentes da Cidadania (Portaria nº 42/2023), Agentes de Cidadania Ambiental, DF Alfabetização, SOS Mulher
 
-5. texto de apoio — Se a questão depender de um texto (interpretação, análise de trecho, gramática sobre uma passagem), o texto COMPLETO tem que estar dentro do próprio campo "enunciado": primeiro o texto, uma linha em branco, depois o comando. Nunca escreva "o texto acima", "o trecho a seguir" ou equivalente sem que a passagem esteja ali — não existe anexo, não existe outro campo. O texto de apoio deve ter no mínimo 40 palavras. Escreva uma passagem própria, no estilo pedido; não reproduza de memória obras de autores reais nem atribua a passagem a uma pessoa real.
+5. distratores plausíveis — As quatro alternativas erradas precisam ser DEFENSÁVEIS para quem estudou o assunto por alto: erros reais de interpretação, competência de outro órgão, prazo trocado, conceito vizinho. É proibido usar alternativa absurda, cômica ou impossível ("treinamento militar para crianças", "privatização do espaço aéreo", "fazer justiça com as próprias mãos") — ela se descarta sem nenhum conhecimento e a questão deixa de avaliar.
+6. alternativas do mesmo tamanho — Todas as cinco devem ter comprimento parecido. Não escreva a correta longa e detalhada e as erradas curtas e secas: isso entrega a resposta pelo formato, e quem responde acerta sem ler o enunciado. Se a correta precisa de uma condição para ficar certa, dê condição equivalente às erradas.
+7. texto de apoio — Se a questão depender de um texto (interpretação, análise de trecho, gramática sobre uma passagem), o texto COMPLETO tem que estar dentro do próprio campo "enunciado": primeiro o texto, uma linha em branco, depois o comando. Nunca escreva "o texto acima", "o trecho a seguir" ou equivalente sem que a passagem esteja ali — não existe anexo, não existe outro campo. O texto de apoio deve ter no mínimo 40 palavras. Escreva uma passagem própria, no estilo pedido; não reproduza de memória obras de autores reais nem atribua a passagem a uma pessoa real.
 
 Responda APENAS com o array JSON, sem cercas de código, sem comentários e sem texto antes ou depois.`;
 
@@ -177,6 +186,40 @@ export function citaTextoAusente(enunciado: string): boolean {
   // 160 caracteres e a folga para o comando ("De acordo com o texto, ...?").
   const corpo = Math.max(entreAspas, maiorBloco, enunciado.length - 160);
   return corpo < 120;
+}
+
+/**
+ * Detecta a questao que se responde pelo TAMANHO da alternativa.
+ *
+ * E o defeito mais comum e mais grave do banco gerado por IA, e o mais dificil
+ * de enxergar lendo uma questao por vez. Medido em 3.280 questoes: escolher
+ * sempre a alternativa mais longa acertava 71%, contra 20% do acaso — em DF
+ * Brincar, Beneficios Eventuais e SOS Mulher chegava a 91%.
+ *
+ * Uma questao assim nao avalia nada: quem responde acerta sem ler o enunciado.
+ * O prompt pede alternativas equilibradas; esta funcao e quem cobra.
+ *
+ * O limiar de 1,15 nao foi escolhido no olho: e o menor que fecha a fresta.
+ * Filtrando o banco atual por varios fatores e remedindo o acerto do chute
+ * "marque a mais longa" no que sobra:
+ *
+ *     fator 1,50 -> sobra 56%     fator 1,15 -> sobra 27%
+ *     fator 1,35 -> sobra 48%     fator 1,10 -> sobra 20% (= acaso)
+ *     fator 1,25 -> sobra 40%
+ *
+ * Em 1,15 o chute pelo tamanho ja nao rende quase nada acima do acaso (20%),
+ * e ainda sobra folga para a correta que precisa legitimamente de mais texto.
+ * Descartar uma questao boa aqui custa barato — o modelo gera outra.
+ */
+export function corretaEntregaPeloTamanho(
+  alternativas: { texto: string; correta: boolean }[]
+): boolean {
+  const correta = alternativas.find((a) => a.correta);
+  const erradas = alternativas.filter((a) => !a.correta);
+  if (!correta || erradas.length === 0) return false;
+
+  const maiorErrada = Math.max(...erradas.map((e) => e.texto.trim().length));
+  return correta.texto.trim().length > maiorErrada * 1.15;
 }
 
 /**

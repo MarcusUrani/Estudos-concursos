@@ -13,6 +13,7 @@ import {
   normalizarNivel,
   derivarAssunto,
   citaTextoAusente,
+  corretaEntregaPeloTamanho,
 } from "@/lib/ia-prompt";
 
 /* =============================================================================
@@ -258,6 +259,15 @@ async function gerar(input: {
     // precisa estar nele.
     if (citaTextoAusente(enunciado)) {
       descartadas.push(`${pos}: manda ler um texto de apoio que não está no enunciado.`);
+      continue;
+    }
+
+    // Regra 6: alternativa correta muito mais longa entrega a resposta pelo
+    // formato — a questao passa a ser respondivel sem ler o enunciado.
+    if (corretaEntregaPeloTamanho(alts)) {
+      descartadas.push(
+        `${pos}: a alternativa correta é bem mais longa que as erradas — entrega a resposta pelo tamanho.`
+      );
       continue;
     }
 
