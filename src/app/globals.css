@@ -210,6 +210,12 @@ h3,
 .bolha-errada {
   --bolha-cor: var(--color-rose-600);
 }
+/* Pulada: marcada, porem sem cor de acerto nem de erro. Precisa ser distinta da
+   bolha VAZIA — vazia quer dizer "ainda nao cheguei ai", pulada quer dizer
+   "passei e nao respondi". Na fita, as duas apareceriam iguais sem isto. */
+.bolha-pulada {
+  --bolha-cor: var(--color-slate-600);
+}
 .bolha-atual {
   --bolha-cor: var(--color-indigo-600);
   transform: scale(1.35);

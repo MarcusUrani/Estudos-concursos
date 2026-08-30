@@ -9,7 +9,23 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 /** Botao + modal para reportar uma questao (gabarito errado, comentario errado, etc.). */
-export function BotaoReporte({ questaoId, className }: { questaoId: string; className?: string }) {
+export function BotaoReporte({
+  questaoId,
+  className,
+  onReportada,
+}: {
+  questaoId: string;
+  className?: string;
+  /**
+   * Chamado ao fechar o modal DEPOIS de um reporte bem-sucedido.
+   *
+   * No treino, serve para pular a questao: uma questao reportada ja sai das
+   * proximas sessoes de quem reportou, entao continuar respondendo ela seria
+   * incoerente. Fica opcional porque o mesmo botao aparece em telas onde nao ha
+   * para onde avancar.
+   */
+  onReportada?: () => void;
+}) {
   const [aberto, setAberto] = useState(false);
   const [motivos, setMotivos] = useState<string[]>([]);
   const [comentario, setComentario] = useState("");
@@ -22,6 +38,7 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
   }
 
   function fechar() {
+    const reportou = enviado;
     setAberto(false);
     // Reseta o estado depois da animacao de saida.
     setTimeout(() => {
@@ -29,6 +46,7 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
       setComentario("");
       setEnviado(false);
       setErro(null);
+      if (reportou) onReportada?.();
     }, 200);
   }
 
@@ -96,8 +114,9 @@ export function BotaoReporte({ questaoId, className }: { questaoId: string; clas
                   </div>
                   <p className="text-sm text-slate-300">
                     Reporte enviado. Obrigado por ajudar a melhorar o banco de questões!
+                    {onReportada && " Esta questão será pulada."}
                   </p>
-                  <Button onClick={fechar}>Fechar</Button>
+                  <Button onClick={fechar}>{onReportada ? "Fechar e pular" : "Fechar"}</Button>
                 </div>
               ) : (
                 <div className="space-y-4">

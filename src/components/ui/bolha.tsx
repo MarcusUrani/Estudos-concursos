@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export type EstadoBolha = "vazia" | "certa" | "errada" | "atual" | "marcada";
+export type EstadoBolha = "vazia" | "certa" | "errada" | "atual" | "marcada" | "pulada";
 
 const ESTADO: Record<EstadoBolha, string> = {
   vazia: "",
@@ -9,6 +9,7 @@ const ESTADO: Record<EstadoBolha, string> = {
   certa: "bolha-certa bolha-cheia",
   errada: "bolha-errada bolha-cheia",
   atual: "bolha-atual",
+  pulada: "bolha-pulada bolha-cheia",
 };
 
 const TAMANHO = {
@@ -54,8 +55,8 @@ export function FitaGabarito({
   total,
   className,
 }: {
-  /** `true` acerto, `false` erro, na ordem das respostas. */
-  resultados: boolean[];
+  /** `true` acerto, `false` erro, `null` pulada — na ordem em que ocorreram. */
+  resultados: (boolean | null)[];
   /** Indice (base 0) da questao em tela. */
   atual?: number;
   total: number;
@@ -65,16 +66,22 @@ export function FitaGabarito({
     <div
       className={cn("flex flex-wrap items-center gap-1.5", className)}
       role="img"
-      aria-label={`${resultados.filter(Boolean).length} acertos de ${resultados.length} respondidas, ${total} no total`}
+      aria-label={`${resultados.filter((r) => r === true).length} acertos e ${
+        resultados.filter((r) => r === false).length
+      } erros em ${resultados.filter((r) => r !== null).length} respondidas, ${
+        resultados.filter((r) => r === null).length
+      } puladas, ${total} no total`}
     >
       {Array.from({ length: total }, (_, i) => {
         const estado: EstadoBolha =
           i === atual
             ? "atual"
             : i < resultados.length
-              ? resultados[i]
-                ? "certa"
-                : "errada"
+              ? resultados[i] === null
+                ? "pulada"
+                : resultados[i]
+                  ? "certa"
+                  : "errada"
               : "vazia";
         return <Bolha key={i} estado={estado} tamanho="sm" />;
       })}

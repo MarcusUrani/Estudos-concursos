@@ -25,6 +25,7 @@ import {
   ArrowRight,
   RotateCcw,
   Trophy,
+  SkipForward,
 } from "lucide-react";
 
 export type AcaoFinal = { label: string; onClick: () => void };
@@ -52,19 +53,23 @@ export function TreinoSessao({
   const [acertos, setAcertos] = useState(acertosIniciais);
   const [fim, setFim] = useState(false);
 
-  // Historico de acerto/erro por questao, na ordem — alimenta a fita de gabarito.
-  // Ao RETOMAR uma sessao so conhecemos os totais, nao a ordem original: por isso
-  // a semente agrupa os acertos antes dos erros. O placar fica correto; a posicao
-  // exata de cada marca dentro do trecho ja respondido, nao.
-  const [resultados, setResultados] = useState<boolean[]>(() => [
+  // Historico por questao, na ordem — alimenta a fita de gabarito.
+  // `true` acerto, `false` erro, `null` pulada.
+  //
+  // Ao RETOMAR uma sessao so conhecemos os totais (indice e acertos), nao a
+  // ordem original nem quais foram puladas: por isso a semente agrupa os
+  // acertos antes dos erros e nao reconstroi pulos. O placar fica correto; a
+  // posicao exata de cada marca no trecho ja respondido, nao.
+  const [resultados, setResultados] = useState<(boolean | null)[]>(() => [
     ...Array<boolean>(acertosIniciais).fill(true),
     ...Array<boolean>(Math.max(0, indiceInicial - acertosIniciais)).fill(false),
   ]);
 
-  function proxima(acertou: boolean) {
-    const novoAcertos = acertou ? acertos + 1 : acertos;
-    if (acertou) setAcertos(novoAcertos);
-    setResultados((r) => [...r, acertou]);
+  /** `null` = pulada: avanca sem contar acerto nem erro. */
+  function avancar(resultado: boolean | null) {
+    const novoAcertos = resultado === true ? acertos + 1 : acertos;
+    if (resultado === true) setAcertos(novoAcertos);
+    setResultados((r) => [...r, resultado]);
     const novoIndice = indice + 1;
     if (novoIndice >= questoes.length) {
       setFim(true);
@@ -84,7 +89,12 @@ export function TreinoSessao({
   }
 
   if (fim) {
-    const pct = questoes.length ? Math.round((acertos / questoes.length) * 100) : 0;
+    // O aproveitamento e sobre o que foi RESPONDIDO: contar questao pulada como
+    // erro puniria quem preferiu nao chutar, que e justamente o comportamento
+    // que o botao de pular existe para permitir.
+    const puladas = resultados.filter((r) => r === null).length;
+    const respondidasFim = Math.max(0, questoes.length - puladas);
+    const pct = respondidasFim ? Math.round((acertos / respondidasFim) * 100) : 0;
     return (
       <PaginaLeitura>
         <Card>
@@ -95,11 +105,22 @@ export function TreinoSessao({
             <div>
               <h2 className="font-display text-2xl font-bold text-slate-100">Concluído!</h2>
               <p className="mt-1 text-slate-400">
-                Você acertou{" "}
-                <span className="tabular font-semibold text-emerald-400">
-                  {acertos} de {questoes.length}
-                </span>{" "}
-                ({pct}%).
+                {respondidasFim > 0 ? (
+                  <>
+                    Você acertou{" "}
+                    <span className="tabular font-semibold text-emerald-400">
+                      {acertos} de {respondidasFim}
+                    </span>{" "}
+                    ({pct}%).
+                  </>
+                ) : (
+                  "Você pulou todas as questões desta sessão."
+                )}
+                {puladas > 0 && (
+                  <span className="tabular block text-sm text-slate-500">
+                    {puladas} {puladas === 1 ? "pulada" : "puladas"}
+                  </span>
+                )}
               </p>
             </div>
 
@@ -146,7 +167,8 @@ export function TreinoSessao({
       total={questoes.length}
       resultados={resultados}
       favoritoInicial={favoritosIniciais?.[atual.id] ?? false}
-      onProxima={proxima}
+      onProxima={(acertou) => avancar(acertou)}
+      onPular={() => avancar(null)}
     />
   );
 }
@@ -158,13 +180,15 @@ function Questao({
   resultados,
   favoritoInicial,
   onProxima,
+  onPular,
 }: {
   questao: QuestaoDTO;
   indice: number;
   total: number;
-  resultados: boolean[];
+  resultados: (boolean | null)[];
   favoritoInicial: boolean;
   onProxima: (acertou: boolean) => void;
+  onPular: () => void;
 }) {
   const [selecionada, setSelecionada] = useState<string | null>(null);
   const [resultado, setResultado] = useState<ResultadoResposta | null>(null);
@@ -188,8 +212,9 @@ function Questao({
     });
   }
 
-  const respondidas = resultados.length;
-  const acertosSessao = resultados.filter(Boolean).length;
+  const respondidas = resultados.filter((r) => r !== null).length;
+  const acertosSessao = resultados.filter((r) => r === true).length;
+  const puladas = resultados.filter((r) => r === null).length;
 
   // Tudo que NAO e a questao mora no trilho: posicao, placar, classificacao e
   // as acoes sobre a questao. A coluna de leitura fica so com enunciado,
@@ -217,15 +242,20 @@ function Questao({
       {/* Em tela estreita o trilho vira cabeçalho da questão — o placar aqui
           empurraria o enunciado para fora da tela. A fita acima já mostra o
           mesmo desempenho sem ocupar linha. */}
-      {respondidas > 0 && (
+      {(respondidas > 0 || puladas > 0) && (
         <TrilhoBloco titulo="Placar" className="hidden xl:block">
           <div className="space-y-2">
             <TrilhoDado rotulo="Acertos" valor={acertosSessao} />
             <TrilhoDado rotulo="Erros" valor={respondidas - acertosSessao} />
-            <TrilhoDado
-              rotulo="Aproveitamento"
-              valor={`${Math.round((acertosSessao / respondidas) * 100)}%`}
-            />
+            {/* So faz sentido com denominador: pular a primeira questao deixava
+                `respondidas` em zero e a divisao virava NaN na tela. */}
+            {respondidas > 0 && (
+              <TrilhoDado
+                rotulo="Aproveitamento"
+                valor={`${Math.round((acertosSessao / respondidas) * 100)}%`}
+              />
+            )}
+            {puladas > 0 && <TrilhoDado rotulo="Puladas" valor={puladas} />}
           </div>
         </TrilhoBloco>
       )}
@@ -248,7 +278,10 @@ function Questao({
             <Star className={cn("h-4 w-4", favorito && "fill-amber-400 text-amber-400")} />
             {favorito ? "Favoritada" : "Favoritar"}
           </button>
-          <BotaoReporte questaoId={questao.id} />
+          {/* Reportar ja tira a questao das proximas sessoes desta pessoa; ficar
+              nela depois de reportar nao faz sentido, entao o fecho do modal
+              avanca. */}
+          <BotaoReporte questaoId={questao.id} onReportada={onPular} />
         </div>
       </TrilhoBloco>
     </>
@@ -374,14 +407,29 @@ function Questao({
           </AnimatePresence>
 
           {!resultado ? (
-            <Button
-              size="lg"
-              className="w-full"
-              onClick={confirmar}
-              disabled={!selecionada || pending}
-            >
-              {pending ? "Corrigindo..." : "Confirmar resposta"}
-            </Button>
+            // Pular fica AO LADO de confirmar, nao escondido no trilho: e uma
+            // saida da questao atual, do mesmo nivel de "responder". Secundario
+            // no peso visual para nao competir com a acao principal.
+            <div className="flex flex-wrap gap-3">
+              <Button
+                size="lg"
+                className="flex-1"
+                onClick={confirmar}
+                disabled={!selecionada || pending}
+              >
+                {pending ? "Corrigindo..." : "Confirmar resposta"}
+              </Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                onClick={onPular}
+                disabled={pending}
+                title="Passa para a próxima sem responder — não conta como erro"
+              >
+                <SkipForward className="h-4 w-4" />
+                Pular
+              </Button>
+            </div>
           ) : (
             <Button size="lg" className="w-full" onClick={() => onProxima(resultado.acertou)}>
               {indice + 1 >= total ? "Ver resultado" : "Próxima questão"}
