@@ -12,44 +12,95 @@
    escreveu, e busca so aumentaria a chance de alucinacao.
    ============================================================================= */
 
-/** As cinco competencias, 200 pontos cada. */
-export const COMPETENCIAS = [
+/* -----------------------------------------------------------------------------
+   Criterios da prova discursiva — edital SEDES-DF, item 13.3.4
+
+   Nao e o modelo do ENEM (cinco competencias de 200). Sao TRES criterios, cada
+   um valendo de 0 a 3 pontos inteiros, com pesos diferentes, e a nota final sai
+   de uma formula do edital:
+
+     [(CAC x 7) + (OT x 1,5) + (DLP x 1,5)] / 0,3
+
+   O peso do CAC e quase cinco vezes o dos outros dois: conteudo e atendimento
+   ao comando valem 70% da nota. Vale saber disso ao estudar.
+   ----------------------------------------------------------------------------- */
+
+export const CRITERIOS = [
   {
+    sigla: "CAC",
     numero: 1,
-    titulo: "Domínio da norma culta",
-    descricao: "Ortografia, concordância, regência, pontuação e registro formal.",
+    peso: 7,
+    titulo: "Conteúdo e Atendimento ao Comando",
+    descricao:
+      "Atendimento ao tema e ao comando; pertinência, consistência e suficiência das informações; encadeamento lógico.",
   },
   {
+    sigla: "OT",
     numero: 2,
-    titulo: "Compreensão do tema",
-    descricao: "Aderência ao tema e ao tipo textual dissertativo-argumentativo.",
+    peso: 1.5,
+    titulo: "Organização Textual",
+    descricao:
+      "Clareza, coerência, coesão, encadeamento das ideias e estrutura dissertativa.",
   },
   {
+    sigla: "DLP",
     numero: 3,
-    titulo: "Argumentação",
-    descricao: "Seleção, organização e defesa dos argumentos com repertório pertinente.",
-  },
-  {
-    numero: 4,
-    titulo: "Coesão e coerência",
-    descricao: "Encadeamento das ideias e uso dos mecanismos linguísticos.",
-  },
-  {
-    numero: 5,
-    titulo: "Proposta de intervenção",
-    descricao: "Solução detalhada, viável e respeitosa aos direitos humanos.",
+    peso: 1.5,
+    titulo: "Domínio da Língua Portuguesa",
+    descricao: "Padrão formal, ortografia, pontuação, morfossintaxe e propriedade vocabular.",
   },
 ] as const;
 
-export const NOTA_MAX_COMPETENCIA = 200;
-export const NOTA_MAX_TOTAL = COMPETENCIAS.length * NOTA_MAX_COMPETENCIA; // 1000
+/** Cada criterio vai de 0 a 3 pontos INTEIROS — o edital nao preve fracao. */
+export const NOTA_MAX_CRITERIO = 3;
+export const NOTA_MAX_TOTAL = 100;
 
-/** Minimo aceito para enviar. Abaixo disso nao ha texto para corrigir. */
-export const MIN_PALAVRAS = 80;
-/** Teto de seguranca: evita colar um livro inteiro dentro do prompt. */
-export const MAX_PALAVRAS = 900;
+/**
+ * Formula do item 13.3.4.4. Com os tres criterios no maximo:
+ * (3x7 + 3x1,5 + 3x1,5) / 0,3 = 30 / 0,3 = 100.
+ */
+export function notaFinal(notas: { numero: number; nota: number }[]): number {
+  const de = (n: number) => notas.find((x) => x.numero === n)?.nota ?? 0;
+  const cac = de(1);
+  const ot = de(2);
+  const dlp = de(3);
+
+  // Itens 13.3.4.5 "a" e "b": fuga ao tema ou descumprimento do comando zera a
+  // prova, e o mesmo vale para texto incompativel com a forma dissertativa. Sao
+  // exatamente as descricoes da nota 0 em CAC e em OT, entao qualquer um dos
+  // dois zerado zera o total — nao adianta somar o resto.
+  if (cac === 0 || ot === 0) return 0;
+
+  return (cac * 7 + ot * 1.5 + dlp * 1.5) / 0.3;
+}
+
+/* -----------------------------------------------------------------------------
+   Extensao: 20 a 30 LINHAS (item 13.1)
+
+   O edital conta linha de folha de resposta, nao palavra. Como aqui o texto e
+   digitado, a contagem e uma ESTIMATIVA: 70 caracteres por linha, contando cada
+   paragrafo separadamente, porque paragrafo sempre termina a linha em que esta.
+   E aproximacao, e a tela diz isso — mas serve para a pessoa treinar a
+   extensao, que e o que o edital cobra.
+   ----------------------------------------------------------------------------- */
+
+export const LINHAS_MIN = 20;
+export const LINHAS_MAX = 30;
+const CARACTERES_POR_LINHA = 70;
+
+export function estimarLinhas(texto: string): number {
+  const paragrafos = texto
+    .split(new RegExp(String.fromCharCode(10) + "+"))
+    .map((p) => p.trim())
+    .filter(Boolean);
+  return paragrafos.reduce(
+    (total, p) => total + Math.max(1, Math.ceil(p.length / CARACTERES_POR_LINHA)),
+    0
+  );
+}
 
 // ---------------------------------------------------------------- tema
+
 
 /* -----------------------------------------------------------------------------
    Duas chamadas, nao uma
@@ -135,22 +186,45 @@ export function montarPedidoProposta(p: {
 
 // ---------------------------------------------------------------- correcao
 
-export const PROMPT_CORRECAO = `Você é examinador de redação de concurso público e corrige textos dissertativo-argumentativos.
+export const PROMPT_CORRECAO = `Você é examinador de prova discursiva de concurso público e corrige segundo o edital da SEDES-DF (item 13.3.4). Não use o modelo do ENEM.
 
-Avalie CINCO competências, cada uma de 0 a 200, somando de 0 a 1000:
+Avalie TRÊS critérios. Cada um recebe 0, 1, 2 ou 3 pontos INTEIROS — não existe nota fracionada.
 
-1. Domínio da norma culta — ortografia, concordância, regência, pontuação, registro.
-2. Compreensão do tema e do tipo textual — aderência ao tema e ao comando; se fugir do tema, zere esta competência e explique.
-3. Argumentação — seleção, organização e defesa dos argumentos; repertório pertinente.
-4. Coesão e coerência — encadeamento das ideias e mecanismos linguísticos.
-5. Proposta de intervenção — detalhamento, viabilidade e respeito aos direitos humanos.
+CAC — Conteúdo e Atendimento ao Comando (peso 7)
+Avalia o atendimento ao tema e ao comando; a pertinência, consistência e suficiência das informações; o desenvolvimento com encadeamento lógico; e o enfrentamento dos aspectos exigidos na proposta.
+0 — fuga ao tema, não atendimento ao comando ou desenvolvimento manifestamente incompatível com a proposta.
+1 — atendimento insuficiente ao tema ou ao comando: abordagem superficial, incompleta, pouco pertinente ou com omissões relevantes.
+2 — atendimento adequado, com desenvolvimento pertinente e coerente, ainda que com limitações pontuais, omissões parciais ou aprofundamento insuficiente.
+3 — atendimento integral, com desenvolvimento consistente, pertinente, suficiente e logicamente encadeado.
 
-Seja rigoroso e calibrado: nota alta exige texto realmente bom, e a maioria das redações não é. Cada comentário deve citar TRECHO CURTO do texto do candidato entre aspas e dizer o que corrigir — comentário genérico não ajuda ninguém a melhorar. Escreva em segunda pessoa, falando com quem escreveu.
+OT — Organização Textual (peso 1,5)
+Avalia clareza, coerência, coesão, encadeamento das ideias e conformidade com a estrutura dissertativa.
+0 — texto desorganizado, incoerente, sem encadeamento lógico ou coesão; ideias desarticuladas ou incompatíveis com a estrutura dissertativa.
+1 — organização insuficiente, com limitações relevantes em clareza, coerência, coesão, encadeamento ou estruturação dissertativa.
+2 — organização adequada, com clareza, coerência, coesão, encadeamento lógico e estrutura dissertativa identificável, ainda que com limitações pontuais.
+3 — texto bem organizado, com clareza, coerência, coesão e encadeamento consistentes, e estrutura dissertativa clara e bem desenvolvida.
 
-Responda APENAS com JSON, sem cercas de código e sem texto antes ou depois:
+DLP — Domínio da Modalidade Escrita da Língua Portuguesa (peso 1,5)
+Avalia o padrão formal, a ortografia, a pontuação, a morfossintaxe e a propriedade vocabular.
+0 — erros graves e frequentes de grafia, pontuação, morfossintaxe ou propriedade vocabular; inadequação acentuada ao padrão formal.
+1 — erros frequentes; inadequação perceptível ao padrão formal.
+2 — domínio adequado, com erros pontuais e sem prejuízo relevante à correção linguística global.
+3 — domínio seguro e consistente, admitidos apenas lapsos isolados e assistemáticos.
+
+Regras:
+- Seja rigoroso e calibrado. Nota 3 exige o descritor cumprido por inteiro; na dúvida entre duas notas, fique com a menor e explique o que faltou para a maior.
+- Atribua 0 em CAC se houver fuga ao tema ou descumprimento do comando, e 0 em OT se o texto for incompatível com a forma dissertativa. Qualquer um dos dois zera a prova inteira, então só use quando for realmente o caso.
+- Todo comentário deve citar TRECHO CURTO do texto entre aspas e dizer o que corrigir. Comentário genérico não ensina nada.
+- Escreva em segunda pessoa, falando com quem escreveu.
+- Não calcule a nota final: ela é obtida por fórmula fora daqui.
+
+Responda APENAS com JSON, sem cercas de código:
 {
-  "competencias": [{ "numero": 1, "nota": 0, "comentario": "..." }],
-  "total": 0,
+  "criterios": [
+    { "sigla": "CAC", "nota": 0, "comentario": "..." },
+    { "sigla": "OT", "nota": 0, "comentario": "..." },
+    { "sigla": "DLP", "nota": 0, "comentario": "..." }
+  ],
   "resumo": "dois ou três períodos sobre o desempenho geral",
   "pontosFortes": ["..."],
   "aMelhorar": ["..."]
@@ -160,13 +234,13 @@ export function montarPedidoCorrecao(p: {
   tema: string;
   comando: string;
   texto: string;
-  palavras: number;
+  linhas: number;
 }): string {
   return [
     `TEMA: ${p.tema}`,
     `COMANDO: ${p.comando}`,
     "",
-    `REDAÇÃO DO CANDIDATO (${p.palavras} palavras):`,
+    `REDAÇÃO DO CANDIDATO (aproximadamente ${p.linhas} linhas):`,
     p.texto,
   ].join("\n");
 }

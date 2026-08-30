@@ -21,10 +21,11 @@ import {
   assuntoDaBusca,
   montarPedidoProposta,
   montarPedidoCorrecao,
-  COMPETENCIAS,
-  NOTA_MAX_COMPETENCIA,
-  MIN_PALAVRAS,
-  MAX_PALAVRAS,
+  CRITERIOS,
+  NOTA_MAX_CRITERIO,
+  notaFinal,
+  estimarLinhas,
+  LINHAS_MIN,
 } from "@/lib/redacao-prompt";
 
 /* =============================================================================
@@ -70,9 +71,6 @@ async function exigirUsuario(): Promise<string> {
   return session.user.id;
 }
 
-function palavrasDe(texto: string): number {
-  return texto.trim().split(/\s+/).filter(Boolean).length;
-}
 
 // ---------------------------------------------------------------- tipos
 
@@ -96,7 +94,15 @@ export type TemaDTO = {
   minhasRedacoes: number;
 };
 
-export type CompetenciaDTO = { numero: number; nota: number; comentario: string };
+export type CriterioDTO = {
+  numero: number;
+  sigla: string;
+  titulo: string;
+  peso: number;
+  /** 0 a 3, inteiro. */
+  nota: number;
+  comentario: string;
+};
 
 export type RedacaoDTO = {
   id: string;
@@ -105,11 +111,13 @@ export type RedacaoDTO = {
   texto: string;
   palavras: number;
   enviadaEm: string;
+  /** Nota de 0 a 100 pela formula do edital. Pode ter casas decimais. */
   total: number | null;
+  linhas: number;
   resumo: string | null;
   pontosFortes: string[];
   aMelhorar: string[];
-  competencias: CompetenciaDTO[];
+  criterios: CriterioDTO[];
 };
 
 // ---------------------------------------------------------------- geracao do tema
@@ -412,15 +420,16 @@ export async function listarTemasRedacao(concursoId: string | null): Promise<Tem
 
 // ---------------------------------------------------------------- envio e correcao
 
-const competenciaSchema = z.object({
-  numero: z.coerce.number(),
+const criterioSchema = z.object({
+  sigla: z.string().nullish(),
+  numero: z.coerce.number().nullish(),
   nota: z.coerce.number(),
   comentario: z.string().nullish(),
 });
 
 const correcaoSchema = z.object({
-  competencias: z.array(competenciaSchema),
-  total: z.coerce.number().nullish(),
+  criterios: z.array(criterioSchema).nullish(),
+  competencias: z.array(criterioSchema).nullish(),
   resumo: z.string().nullish(),
   pontosFortes: z.array(z.string()).nullish(),
   aMelhorar: z.array(z.string()).nullish(),
@@ -445,14 +454,16 @@ async function corrigir(input: {
   const userId = await exigirUsuario();
 
   const texto = input.texto?.trim() ?? "";
-  const palavras = palavrasDe(texto);
-  if (palavras < MIN_PALAVRAS) {
+  const linhas = estimarLinhas(texto);
+
+  // Item 13.3.4.5 "e": abaixo do minimo de linhas a prova recebe zero. Aqui
+  // barramos antes de gastar uma correcao — a pessoa ja sabe o resultado, e ler
+  // o aviso ensina o mesmo que receber o zero.
+  if (linhas < LINHAS_MIN) {
     throw new Error(
-      `A redação precisa de pelo menos ${MIN_PALAVRAS} palavras — esta tem ${palavras}.`
+      `O edital exige no mínimo ${LINHAS_MIN} linhas e esta redação tem cerca de ${linhas}. ` +
+        "Na prova real, texto abaixo do mínimo recebe nota zero."
     );
-  }
-  if (palavras > MAX_PALAVRAS) {
-    throw new Error(`A redação passou de ${MAX_PALAVRAS} palavras — esta tem ${palavras}.`);
   }
 
   const tema = await prisma.temaRedacao.findUnique({
@@ -471,7 +482,7 @@ async function corrigir(input: {
       tema: tema.tema,
       comando: tema.comando,
       texto,
-      palavras,
+      linhas,
     }),
   });
 
@@ -480,30 +491,39 @@ async function corrigir(input: {
     throw new ErroGroq("A correção veio em formato inesperado. Tente enviar novamente.");
   }
 
-  // Sempre as cinco competencias, sempre dentro da faixa. O modelo as vezes
-  // pula uma ou estoura o teto; aqui a escala e garantida.
-  const notas = COMPETENCIAS.map((c) => {
-    const achada = parsed.data.competencias.find((x) => Math.round(x.numero) === c.numero);
+  // Sempre os tres criterios, sempre inteiros de 0 a 3. O modelo as vezes pula
+  // um, manda fracao ou estoura o teto; aqui a escala do edital e garantida.
+  const devolvidos = parsed.data.criterios ?? parsed.data.competencias ?? [];
+  const notas = CRITERIOS.map((c) => {
+    const achado = devolvidos.find(
+      (x) =>
+        x.sigla?.trim().toUpperCase() === c.sigla ||
+        (x.numero != null && Math.round(x.numero) === c.numero)
+    );
     return {
       numero: c.numero,
-      nota: Math.min(NOTA_MAX_COMPETENCIA, Math.max(0, Math.round(achada?.nota ?? 0))),
-      comentario: achada?.comentario?.trim() || "Sem comentário para esta competência.",
+      nota: Math.min(NOTA_MAX_CRITERIO, Math.max(0, Math.round(achado?.nota ?? 0))),
+      comentario: achado?.comentario?.trim() || "Sem comentário para este critério.",
     };
   });
 
-  // O total e SOMADO aqui, nao aceito do modelo: ele erra a conta com alguma
-  // frequencia, e uma nota que nao bate com as partes destroi a confianca em
-  // toda a correcao.
-  const total = notas.reduce((soma, n) => soma + n.nota, 0);
+  // A nota final sai da FORMULA do edital, nunca do modelo: ele erra conta com
+  // frequencia, e aqui a conta tem peso diferente por criterio e ainda regra de
+  // zeramento. Nota que nao bate com as partes destroi a confianca na correcao.
+  const total = notaFinal(notas);
 
   const criada = await prisma.redacao.create({
     data: {
       texto,
-      palavras,
+      // A coluna `palavras` guarda a estimativa de LINHAS: o edital conta linha,
+      // nao palavra. Renomear a coluna exigiria migration sem ganho nenhum.
+      palavras: linhas,
       userId,
       temaId: tema.id,
       corrigidaEm: new Date(),
-      total,
+      // A coluna e inteira; o valor exato com casas decimais e recalculado a
+      // partir dos criterios em `paraRedacaoDTO`.
+      total: Math.round(total),
       resumo: parsed.data.resumo?.trim() || null,
       pontosFortes:
         (parsed.data.pontosFortes ?? []).map((s) => s.trim()).filter(Boolean).join("\n") || null,
@@ -536,23 +556,38 @@ type RedacaoComRelacoes = {
 };
 
 function paraRedacaoDTO(r: RedacaoComRelacoes): RedacaoDTO {
-  const linhas = (s: string | null) => (s ? s.split("\n").filter(Boolean) : []);
+  const emLinhas = (s: string | null) =>
+    s ? s.split(String.fromCharCode(10)).filter(Boolean) : [];
+
+  const criterios: CriterioDTO[] = CRITERIOS.map((c) => {
+    const salvo = r.competencias.find((x) => x.numero === c.numero);
+    return {
+      numero: c.numero,
+      sigla: c.sigla,
+      titulo: c.titulo,
+      peso: c.peso,
+      nota: salvo?.nota ?? 0,
+      comentario: salvo?.comentario ?? "",
+    };
+  });
+
   return {
     id: r.id,
     temaId: r.temaId,
     tema: r.tema.tema,
     texto: r.texto,
     palavras: r.palavras,
+    // A coluna `palavras` guarda a estimativa de LINHAS — ver o comentario na
+    // gravacao. Exposto com o nome certo aqui.
+    linhas: r.palavras,
     enviadaEm: r.enviadaEm.toISOString(),
-    total: r.total,
+    // Recalculado a partir dos criterios: a coluna guarda so o inteiro
+    // arredondado, e a formula do edital produz valor quebrado (66,67 etc.).
+    total: r.total === null ? null : notaFinal(criterios),
     resumo: r.resumo,
-    pontosFortes: linhas(r.pontosFortes),
-    aMelhorar: linhas(r.aMelhorar),
-    competencias: r.competencias.map((c) => ({
-      numero: c.numero,
-      nota: c.nota,
-      comentario: c.comentario,
-    })),
+    pontosFortes: emLinhas(r.pontosFortes),
+    aMelhorar: emLinhas(r.aMelhorar),
+    criterios,
   };
 }
 

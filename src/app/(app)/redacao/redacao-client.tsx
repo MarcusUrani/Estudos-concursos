@@ -31,17 +31,27 @@ import {
 const inputCls =
   "w-full rounded-sm border border-slate-700 bg-slate-950/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
 
-const MIN_PALAVRAS = 80;
-const MAX_PALAVRAS = 900;
-const NOTA_MAX = 1000;
+// Extensao e escala vem do edital da SEDES-DF (itens 13.1 e 13.3.4).
+const LINHAS_MIN = 20;
+const LINHAS_MAX = 30;
+const CARACTERES_POR_LINHA = 70;
+const NOTA_MAX = 100;
+const NOTA_MAX_CRITERIO = 3;
 
-const COMP_TITULOS: Record<number, string> = {
-  1: "Domínio da norma culta",
-  2: "Compreensão do tema",
-  3: "Argumentação",
-  4: "Coesão e coerência",
-  5: "Proposta de intervenção",
-};
+/** Mesma estimativa do servidor: paragrafo sempre termina a linha em que esta. */
+function estimarLinhas(texto: string): number {
+  return texto
+    .split(new RegExp(String.fromCharCode(10) + "+"))
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .reduce((total, p) => total + Math.max(1, Math.ceil(p.length / CARACTERES_POR_LINHA)), 0);
+}
+
+const fmtNota = new Intl.NumberFormat("pt-BR", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+const fmtPeso = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 
 const fmtData = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
 
@@ -283,11 +293,8 @@ function Escrever({
   const [erro, setErro] = useState<string | null>(null);
   const [enviando, start] = useTransition();
 
-  const palavras = useMemo(
-    () => texto.trim().split(/\s+/).filter(Boolean).length,
-    [texto]
-  );
-  const podeEnviar = palavras >= MIN_PALAVRAS && palavras <= MAX_PALAVRAS;
+  const linhas = useMemo(() => estimarLinhas(texto), [texto]);
+  const podeEnviar = linhas >= LINHAS_MIN;
 
   function enviar() {
     setErro(null);
@@ -315,15 +322,22 @@ function Escrever({
 
       <TrilhoBloco titulo="Sua redação">
         <div className="space-y-2">
-          <TrilhoDado rotulo="Palavras" valor={palavras} />
-          <TrilhoDado rotulo="Mínimo" valor={MIN_PALAVRAS} />
+          <TrilhoDado rotulo="Linhas (aprox.)" valor={linhas} />
+          <TrilhoDado rotulo="Exigido" valor={`${LINHAS_MIN} a ${LINHAS_MAX}`} />
         </div>
         <div className="mt-3">
           <Progress
-            value={Math.min(100, (palavras / MIN_PALAVRAS) * 100)}
-            barClassName={podeEnviar ? "bg-emerald-500" : "bg-indigo-500"}
+            value={Math.min(100, (linhas / LINHAS_MIN) * 100)}
+            barClassName={
+              linhas > LINHAS_MAX ? "bg-amber-500" : podeEnviar ? "bg-emerald-500" : "bg-indigo-500"
+            }
           />
         </div>
+        {linhas > LINHAS_MAX && (
+          <p className="mt-2 text-xs leading-relaxed text-amber-300">
+            Passou de {LINHAS_MAX} linhas. Na prova, o que exceder é desconsiderado.
+          </p>
+        )}
         {erro && <p className="mt-3 text-xs text-rose-300">{erro}</p>}
         <Button className="mt-3 w-full" onClick={enviar} disabled={!podeEnviar || enviando}>
           <Send className="h-4 w-4" />
@@ -393,10 +407,10 @@ function Escrever({
             <span
               className={cn(
                 "tabular text-xs",
-                palavras > MAX_PALAVRAS ? "text-rose-300" : "text-slate-500"
+                linhas > LINHAS_MAX ? "text-amber-300" : "text-slate-500"
               )}
             >
-              {palavras} / {MAX_PALAVRAS} palavras
+              ~{linhas} de {LINHAS_MIN}–{LINHAS_MAX} linhas
             </span>
           </CardHeader>
           <CardContent className="p-5">
@@ -437,14 +451,20 @@ function Resultado({ redacao, onVoltar }: { redacao: RedacaoDTO; onVoltar: () =>
         <Card>
           <CardHeader className="flex flex-wrap items-baseline justify-between gap-2">
             <CardTitle className="text-base">Correção</CardTitle>
-            <p className="etiqueta">{redacao.palavras} palavras</p>
+            <p className="etiqueta">~{redacao.linhas} linhas</p>
           </CardHeader>
           <CardContent className="px-5 py-6">
             <p className="etiqueta">Nota final</p>
             <p className="tabular mt-1 text-5xl font-bold leading-none text-slate-100">
-              {total}
+              {fmtNota.format(total)}
               <span className="text-2xl text-slate-500"> / {NOTA_MAX}</span>
             </p>
+            {total === 0 && (
+              <p className="mt-2 text-sm text-rose-300">
+                Nota zero: fuga ao tema, descumprimento do comando ou texto incompatível com a
+                forma dissertativa zeram a prova inteira, segundo o edital.
+              </p>
+            )}
             <div className="mt-4">
               <Progress value={(total / NOTA_MAX) * 100} barClassName={faixaCor(total / NOTA_MAX)} />
             </div>
@@ -456,25 +476,34 @@ function Resultado({ redacao, onVoltar }: { redacao: RedacaoDTO; onVoltar: () =>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Competências</CardTitle>
+            <CardTitle className="text-base">Critérios do edital</CardTitle>
           </CardHeader>
           <CardContent className="space-y-5 px-5 py-5">
-            {redacao.competencias.map((c) => (
+            {redacao.criterios.map((c) => (
               <div key={c.numero}>
-                <div className="mb-1.5 flex items-baseline justify-between gap-3">
-                  <p className="text-sm font-medium text-slate-200">
-                    <span className="tabular text-slate-500">C{c.numero}</span>{" "}
-                    {COMP_TITULOS[c.numero] ?? "Competência"}
+                <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <p className="min-w-0 text-sm font-medium text-slate-200">
+                    <span className="tabular text-slate-500">{c.sigla}</span> {c.titulo}{" "}
+                    <span className="tabular text-xs text-slate-500">
+                      (peso {fmtPeso.format(c.peso)})
+                    </span>
                   </p>
                   <p className="tabular shrink-0 text-sm font-semibold text-slate-100">
                     {c.nota}
-                    <span className="text-slate-500">/200</span>
+                    <span className="text-slate-500">/{NOTA_MAX_CRITERIO}</span>
                   </p>
                 </div>
-                <Progress value={(c.nota / 200) * 100} barClassName={faixaCor(c.nota / 200)} />
+                <Progress
+                  value={(c.nota / NOTA_MAX_CRITERIO) * 100}
+                  barClassName={faixaCor(c.nota / NOTA_MAX_CRITERIO)}
+                />
                 <p className="mt-2 text-xs leading-relaxed text-slate-400">{c.comentario}</p>
               </div>
             ))}
+            <p className="border-t border-slate-800 pt-3 text-xs leading-relaxed text-slate-500">
+              Nota final = [(CAC × 7) + (OT × 1,5) + (DLP × 1,5)] ÷ 0,3 — item 13.3.4.4 do edital.
+              O CAC sozinho vale 70% da nota.
+            </p>
           </CardContent>
         </Card>
 
@@ -580,7 +609,7 @@ function Historico({
                 <Progress value={(total / NOTA_MAX) * 100} barClassName={faixaCor(total / NOTA_MAX)} />
               </div>
               <p className="tabular mt-2 text-xs text-slate-500">
-                {fmtData.format(new Date(r.enviadaEm))} · {r.palavras} palavras
+                {fmtData.format(new Date(r.enviadaEm))} · ~{r.linhas} linhas
               </p>
             </button>
           );
