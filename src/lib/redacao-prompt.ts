@@ -212,6 +212,7 @@ Avalia o padrão formal, a ortografia, a pontuação, a morfossintaxe e a propri
 3 — domínio seguro e consistente, admitidos apenas lapsos isolados e assistemáticos.
 
 Regras:
+- Quando o pedido trouxer o CONTEÚDO PROGRAMÁTICO do concurso, use-o para julgar a pertinência e a consistência do repertório dentro do CAC. Confira se o que a pessoa afirma sobre lei, programa ou conceito daquele conteúdo está CORRETO: erro conceitual em matéria do programa é falha de conteúdo e derruba o CAC. Aponte também a oportunidade perdida — o item do programa que sustentaria o argumento e ficou de fora. Nunca exija a citação de um item específico nem baixe nota por não citar: a nota é do texto, não da lista.
 - Seja rigoroso e calibrado. Nota 3 exige o descritor cumprido por inteiro; na dúvida entre duas notas, fique com a menor e explique o que faltou para a maior.
 - Atribua 0 em CAC se houver fuga ao tema ou descumprimento do comando, e 0 em OT se o texto for incompatível com a forma dissertativa. Qualquer um dos dois zera a prova inteira, então só use quando for realmente o caso.
 - Todo comentário deve citar TRECHO CURTO do texto entre aspas e dizer o que corrigir. Comentário genérico não ensina nada.
@@ -235,12 +236,41 @@ export function montarPedidoCorrecao(p: {
   comando: string;
   texto: string;
   linhas: number;
+  /**
+   * Conteudo programatico do concurso, uma linha por materia. Serve ao CAC:
+   * o criterio de peso 7 avalia "pertinencia, consistencia e suficiencia das
+   * informacoes", e sem saber o que o edital cobra o corretor julga repertorio
+   * no vacuo — elogia citacao generica e deixa passar erro conceitual em lei
+   * que a pessoa vai ter na prova.
+   */
+  conteudo?: string[];
 }): string {
-  return [
-    `TEMA: ${p.tema}`,
-    `COMANDO: ${p.comando}`,
-    "",
-    `REDAÇÃO DO CANDIDATO (aproximadamente ${p.linhas} linhas):`,
-    p.texto,
-  ].join("\n");
+  const partes = [`TEMA: ${p.tema}`, `COMANDO: ${p.comando}`];
+
+  if (p.conteudo?.length) {
+    partes.push(
+      "",
+      "CONTEÚDO PROGRAMÁTICO DO CONCURSO (referência para julgar o repertório, não checklist):",
+      ...p.conteudo
+    );
+  }
+
+  partes.push("", `REDAÇÃO DO CANDIDATO (aproximadamente ${p.linhas} linhas):`, p.texto);
+  return partes.join(String.fromCharCode(10));
+}
+
+/**
+ * Comando padrao para texto trazido de fora.
+ *
+ * Quem cola uma redacao ja escrita informa o TEMA, nao o comando — o comando
+ * original pode nem existir. Este e o enunciado dissertativo-argumentativo
+ * classico de concurso, e e ele que o CAC vai cobrar. A tela mostra o comando
+ * para a pessoa saber contra o que esta sendo avaliada.
+ */
+export function comandoPadrao(tema: string): string {
+  return (
+    `Com base no tema "${tema}", redija um texto dissertativo-argumentativo, ` +
+    "posicionando-se a respeito e fundamentando o ponto de vista com argumentos " +
+    "consistentes e repertório pertinente ao conteúdo do cargo."
+  );
 }

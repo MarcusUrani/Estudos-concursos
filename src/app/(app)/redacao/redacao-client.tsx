@@ -5,6 +5,7 @@ import {
   gerarTemaRedacao,
   listarTemasRedacao,
   enviarRedacao,
+  corrigirRedacaoExterna,
   type TemaDTO,
   type RedacaoDTO,
 } from "@/server/redacao";
@@ -26,6 +27,8 @@ import {
   Send,
   History,
   FileText,
+  ClipboardCheck,
+  type LucideIcon,
 } from "lucide-react";
 
 const inputCls =
@@ -55,7 +58,57 @@ const fmtPeso = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
 
 const fmtData = new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" });
 
-type Vista = "temas" | "escrever" | "resultado" | "historico";
+type Vista = "temas" | "escrever" | "resultado" | "historico" | "externa";
+
+/** As tres telas de entrada. `escrever` e `resultado` sao passos, nao abas. */
+type Aba = "temas" | "externa" | "historico";
+
+const ABAS: { id: Aba; rotulo: string; icone: LucideIcon }[] = [
+  { id: "temas", rotulo: "Propostas", icone: Sparkles },
+  { id: "externa", rotulo: "Corrigir meu texto", icone: ClipboardCheck },
+  { id: "historico", rotulo: "Minhas redações", icone: History },
+];
+
+function Abas({
+  atual,
+  onTrocar,
+  quantasRedacoes,
+}: {
+  atual: Vista;
+  onTrocar: (a: Aba) => void;
+  quantasRedacoes: number;
+}) {
+  return (
+    <div role="tablist" className="flex flex-wrap gap-1 border-b border-slate-800">
+      {ABAS.map((a) => {
+        const ativa = a.id === atual;
+        return (
+          <button
+            key={a.id}
+            type="button"
+            role="tab"
+            aria-selected={ativa}
+            onClick={() => onTrocar(a.id)}
+            className={cn(
+              // -mb-px encosta a borda da aba ativa exatamente na borda do
+              // contêiner, senão sobram dois traços paralelos.
+              "-mb-px flex items-center gap-2 border-b-2 px-3 py-2.5 text-sm transition-colors",
+              ativa
+                ? "border-indigo-600 font-medium text-slate-100"
+                : "border-transparent text-slate-400 hover:text-slate-200"
+            )}
+          >
+            <a.icone className="h-4 w-4" />
+            {a.rotulo}
+            {a.id === "historico" && quantasRedacoes > 0 && (
+              <span className="tabular text-xs text-slate-500">({quantasRedacoes})</span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function RedacaoClient({
   concursos,
@@ -73,6 +126,9 @@ export function RedacaoClient({
   const [redacoes, setRedacoes] = useState(redacoesIniciais);
 
   const [vista, setVista] = useState<Vista>("temas");
+  // De qual aba a pessoa saiu para ver um resultado — e para la que o botao
+  // "voltar" da correcao devolve.
+  const [origem, setOrigem] = useState<Aba>("temas");
   const [temaAtivo, setTemaAtivo] = useState<TemaDTO | null>(null);
   const [resultado, setResultado] = useState<RedacaoDTO | null>(null);
 
@@ -123,6 +179,7 @@ export function RedacaoClient({
           setTemas((prev) =>
             prev.map((t) => (t.id === r.temaId ? { ...t, minhasRedacoes: t.minhasRedacoes + 1 } : t))
           );
+          setOrigem("temas");
           setResultado(r);
           setVista("resultado");
         }}
@@ -136,39 +193,67 @@ export function RedacaoClient({
         redacao={resultado}
         onVoltar={() => {
           setResultado(null);
-          setVista("temas");
+          setVista(origem);
         }}
       />
     );
   }
 
+  const abas = (
+    <Abas
+      atual={vista}
+      onTrocar={(a) => {
+        setErro(null);
+        setVista(a);
+      }}
+      quantasRedacoes={redacoes.length}
+    />
+  );
+
   if (vista === "historico") {
     return (
-      <Historico
-        redacoes={redacoes}
-        onAbrir={(r) => {
-          setResultado(r);
-          setVista("resultado");
-        }}
-        onVoltar={() => setVista("temas")}
-      />
+      <div className="space-y-5">
+        {abas}
+        <Historico
+          redacoes={redacoes}
+          onAbrir={(r) => {
+            setOrigem("historico");
+            setResultado(r);
+            setVista("resultado");
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (vista === "externa") {
+    return (
+      <div className="space-y-5">
+        {abas}
+        <CorrigirExterna
+          concursos={concursos}
+          concursoId={concursoId}
+          onConcurso={trocarConcurso}
+          onCorrigida={(r) => {
+            setRedacoes((prev) => [r, ...prev]);
+            setOrigem("externa");
+            setResultado(r);
+            setVista("resultado");
+          }}
+        />
+      </div>
     );
   }
 
   return (
     <div className="space-y-5">
+      {abas}
       <Card>
         <CardHeader className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Sparkles className="h-4 w-4 text-indigo-400" />
             Nova proposta
           </CardTitle>
-          {redacoes.length > 0 && (
-            <Button variant="ghost" size="sm" onClick={() => setVista("historico")}>
-              <History className="h-4 w-4" />
-              Minhas redações ({redacoes.length})
-            </Button>
-          )}
         </CardHeader>
         <CardContent className="space-y-4 p-6">
           <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-xs leading-relaxed text-slate-400">
@@ -433,6 +518,153 @@ function Escrever({
   );
 }
 
+// ---------------------------------------------------------------- texto de fora
+
+/* -----------------------------------------------------------------------------
+   Corrigir uma redacao escrita fora da plataforma
+
+   O fluxo normal comeca na proposta gerada aqui, e quem ja escreveu para um
+   tema de outro lugar ficava sem correcao. Aqui a pessoa informa o tema, o
+   concurso e cola o texto.
+
+   O concurso importa mais do que parece: e dele que sai o conteudo programatico
+   que o corretor usa para julgar o repertorio no CAC — o criterio de peso 7.
+   ----------------------------------------------------------------------------- */
+
+function CorrigirExterna({
+  concursos,
+  concursoId,
+  onConcurso,
+  onCorrigida,
+}: {
+  concursos: ConcursoDTO[];
+  concursoId: string;
+  onConcurso: (id: string) => void;
+  onCorrigida: (r: RedacaoDTO) => void;
+}) {
+  const [tema, setTema] = useState("");
+  const [texto, setTexto] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, start] = useTransition();
+
+  const linhas = useMemo(() => estimarLinhas(texto), [texto]);
+  const temTema = tema.trim().length >= 5;
+  const podeEnviar = temTema && linhas >= LINHAS_MIN && !!concursoId;
+
+  function enviar() {
+    setErro(null);
+    start(async () => {
+      try {
+        const r = await corrigirRedacaoExterna({ concursoId, tema, texto });
+        if (!r.ok) {
+          setErro(r.erro);
+          return;
+        }
+        onCorrigida(r.dados);
+      } catch (e) {
+        setErro(e instanceof Error ? e.message : "Não foi possível corrigir a redação.");
+      }
+    });
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <ClipboardCheck className="h-4 w-4 text-indigo-400" />
+          Corrigir uma redação que você já escreveu
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4 p-6">
+        <div className="rounded-sm border border-slate-800 bg-slate-950/40 p-3 text-xs leading-relaxed text-slate-400">
+          A correção usa os mesmos critérios do edital —{" "}
+          <span className="font-medium text-slate-200">CAC, OT e DLP</span>, de 0 a 3 cada, com a
+          nota final pela fórmula do item 13.3.4.4. O conteúdo programático do concurso escolhido
+          entra na avaliação do CAC: é por ele que o corretor julga se o repertório é pertinente e
+          se o que você afirmou sobre cada lei ou programa está correto.
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p className="mb-1.5 text-sm font-medium text-slate-300">Concurso</p>
+            <select
+              value={concursoId}
+              onChange={(e) => onConcurso(e.target.value)}
+              disabled={enviando}
+              className={inputCls}
+            >
+              {concursos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <p className="mb-1.5 text-sm font-medium text-slate-300">Tema</p>
+            <Input
+              value={tema}
+              onChange={(e) => setTema(e.target.value)}
+              disabled={enviando}
+              placeholder="O tema sobre o qual você escreveu"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-2">
+            <p className="text-sm font-medium text-slate-300">Corpo da redação</p>
+            <span
+              className={cn(
+                "tabular text-xs",
+                linhas > LINHAS_MAX
+                  ? "text-amber-300"
+                  : linhas >= LINHAS_MIN
+                    ? "text-emerald-300"
+                    : "text-slate-500"
+              )}
+            >
+              ~{linhas} de {LINHAS_MIN}–{LINHAS_MAX} linhas
+            </span>
+          </div>
+          <textarea
+            value={texto}
+            onChange={(e) => setTexto(e.target.value)}
+            rows={18}
+            disabled={enviando}
+            className={cn(
+              inputCls,
+              "resize-y text-[1.0625rem] leading-[1.7]",
+              enviando && "opacity-60"
+            )}
+            placeholder="Cole aqui o texto que você escreveu…"
+          />
+          {linhas > 0 && linhas < LINHAS_MIN && (
+            <p className="mt-2 text-xs leading-relaxed text-amber-300">
+              O edital exige no mínimo {LINHAS_MIN} linhas. Abaixo disso a prova recebe zero, então
+              a correção não é enviada.
+            </p>
+          )}
+          {linhas > LINHAS_MAX && (
+            <p className="mt-2 text-xs leading-relaxed text-amber-300">
+              Passou de {LINHAS_MAX} linhas. Na prova, o que excede é desconsiderado.
+            </p>
+          )}
+        </div>
+
+        {erro && <p className="rounded-sm bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{erro}</p>}
+
+        <div className="flex justify-end">
+          <Button onClick={enviar} disabled={!podeEnviar || enviando}>
+            <Send className="h-4 w-4" />
+            {enviando ? "Corrigindo…" : "Enviar para correção"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 // ---------------------------------------------------------------- resultado
 
 function faixaCor(pct: number) {
@@ -557,7 +789,7 @@ function Resultado({ redacao, onVoltar }: { redacao: RedacaoDTO; onVoltar: () =>
         <div className="flex justify-center">
           <Button variant="secondary" onClick={onVoltar}>
             <ArrowLeft className="h-4 w-4" />
-            Voltar às propostas
+            Voltar
           </Button>
         </div>
       </div>
@@ -570,23 +802,22 @@ function Resultado({ redacao, onVoltar }: { redacao: RedacaoDTO; onVoltar: () =>
 function Historico({
   redacoes,
   onAbrir,
-  onVoltar,
 }: {
   redacoes: RedacaoDTO[];
   onAbrir: (r: RedacaoDTO) => void;
-  onVoltar: () => void;
 }) {
+  if (redacoes.length === 0) {
+    return (
+      <Card>
+        <CardContent className="p-8 text-center text-sm text-slate-400">
+          Você ainda não enviou nenhuma redação.
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-3">
-        <p className="font-display text-base font-semibold text-slate-100">
-          Minhas redações ({redacoes.length})
-        </p>
-        <Button variant="ghost" size="sm" onClick={onVoltar}>
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Button>
-      </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
         {redacoes.map((r) => {
@@ -601,7 +832,7 @@ function Historico({
               <div className="flex items-center justify-between gap-3">
                 <p className="min-w-0 truncate text-sm font-semibold text-slate-100">{r.tema}</p>
                 <span className="tabular shrink-0 text-sm font-bold text-slate-100">
-                  {total}
+                  {fmtNota.format(total)}
                   <span className="text-slate-500">/{NOTA_MAX}</span>
                 </span>
               </div>

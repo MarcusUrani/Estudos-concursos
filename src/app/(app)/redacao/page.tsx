@@ -25,7 +25,7 @@ export default async function RedacaoPage() {
     <PaginaSessao>
       <Cabecalho
         titulo="Redação"
-        descricao="Gere uma proposta para o concurso, escreva sob o comando e receba a correção comentada, de 0 a 1000."
+        descricao="Gere uma proposta com textos de apoio reais ou traga uma redação já escrita. A correção segue os critérios do edital: CAC, OT e DLP, com nota final de 0 a 100."
       />
       <RedacaoClient
         concursos={concursos}

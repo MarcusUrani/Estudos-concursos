@@ -257,6 +257,10 @@ model TemaRedacao {
   comando  String
   banca    String?
   criadoEm DateTime @default(now())
+  // `true` = tema que a propria pessoa trouxe de fora para corrigir um texto ja
+  // escrito. Nao entra na lista de propostas do concurso: aquela lista e
+  // conteudo compartilhado e curado, este aqui e insumo de uma correcao so.
+  externo  Boolean  @default(false)
 
   concursoId String?
   concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)

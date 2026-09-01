@@ -25,6 +25,7 @@ import {
   NOTA_MAX_CRITERIO,
   notaFinal,
   estimarLinhas,
+  comandoPadrao,
   LINHAS_MIN,
 } from "@/lib/redacao-prompt";
 
@@ -405,7 +406,9 @@ export async function listarTemasRedacao(concursoId: string | null): Promise<Tem
   if (!concursoId) return [];
 
   const temas = await prisma.temaRedacao.findMany({
-    where: { concursoId },
+    // `externo` e o tema que alguem trouxe de fora para corrigir um texto
+    // proprio. Nao e proposta curada do concurso e nao entra nesta lista.
+    where: { concursoId, externo: false },
     orderBy: { criadoEm: "desc" },
     take: 30,
     include: {
@@ -447,43 +450,63 @@ export async function enviarRedacao(input: {
   }
 }
 
-async function corrigir(input: {
-  temaId: string;
-  texto: string;
-}): Promise<RedacaoDTO> {
-  const userId = await exigirUsuario();
+/* -----------------------------------------------------------------------------
+   Conteudo programatico do concurso
 
-  const texto = input.texto?.trim() ?? "";
-  const linhas = estimarLinhas(texto);
+   O CAC vale 70% da nota e avalia "pertinencia, consistencia e suficiencia das
+   informacoes". Julgar isso sem saber o que o concurso cobra e julgar no vacuo:
+   o corretor elogia repertorio generico e deixa passar erro conceitual numa lei
+   que a pessoa vai ter na prova objetiva.
 
-  // Item 13.3.4.5 "e": abaixo do minimo de linhas a prova recebe zero. Aqui
-  // barramos antes de gastar uma correcao — a pessoa ja sabe o resultado, e ler
-  // o aviso ensina o mesmo que receber o zero.
-  if (linhas < LINHAS_MIN) {
-    throw new Error(
-      `O edital exige no mínimo ${LINHAS_MIN} linhas e esta redação tem cerca de ${linhas}. ` +
-        "Na prova real, texto abaixo do mínimo recebe nota zero."
-    );
-  }
+   Entao a correcao recebe a arvore de materias e assuntos do proprio concurso —
+   a mesma que alimenta o treino. Nao vira checklist: o prompt diz explicitamente
+   para nao exigir citacao de item nenhum. Serve para o corretor saber o que e
+   pertinente ali e o que esta factualmente errado.
+   ----------------------------------------------------------------------------- */
 
-  const tema = await prisma.temaRedacao.findUnique({
-    where: { id: input.temaId },
-    select: { id: true, tema: true, comando: true },
+async function conteudoProgramatico(concursoId: string | null): Promise<string[]> {
+  if (!concursoId) return [];
+  const materias = await prisma.materia.findMany({
+    where: { concursoId },
+    orderBy: { ordem: "asc" },
+    select: {
+      nome: true,
+      assuntos: { orderBy: { ordem: "asc" }, select: { nome: true } },
+    },
   });
-  if (!tema) throw new Error("Tema não encontrado.");
+  return materias
+    .filter((m) => m.assuntos.length > 0)
+    .map((m) => `- ${m.nome}: ${m.assuntos.map((a) => a.nome).join("; ")}`);
+}
 
+type Avaliacao = {
+  notas: { numero: number; nota: number; comentario: string }[];
+  resumo: string | null;
+  pontosFortes: string | null;
+  aMelhorar: string | null;
+};
+
+/**
+ * Uma correcao: chama o modelo e devolve as notas ja na escala do edital.
+ *
+ * Compartilhada pelos dois caminhos — a redacao escrita sobre proposta da
+ * plataforma e a que a pessoa trouxe pronta. Sao a mesma prova para o corretor;
+ * so muda de onde veio o tema.
+ */
+async function avaliar(p: {
+  tema: string;
+  comando: string;
+  texto: string;
+  linhas: number;
+  conteudo: string[];
+}): Promise<Avaliacao> {
   const { texto: bruto } = await conversarGroq({
     // Correcao NAO usa busca: e leitura fechada do que a pessoa escreveu, e
     // busca so abriria espaco para o modelo inventar contexto.
     temperatura: 0.3,
     maxTokens: 2500,
     sistema: PROMPT_CORRECAO,
-    usuario: montarPedidoCorrecao({
-      tema: tema.tema,
-      comando: tema.comando,
-      texto,
-      linhas,
-    }),
+    usuario: montarPedidoCorrecao(p),
   });
 
   const parsed = correcaoSchema.safeParse(extrairObjetoJson(bruto));
@@ -507,29 +530,62 @@ async function corrigir(input: {
     };
   });
 
+  const umaPorLinha = (xs: string[] | null | undefined) =>
+    (xs ?? [])
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .join(String.fromCharCode(10)) || null;
+
+  return {
+    notas,
+    resumo: parsed.data.resumo?.trim() || null,
+    pontosFortes: umaPorLinha(parsed.data.pontosFortes),
+    aMelhorar: umaPorLinha(parsed.data.aMelhorar),
+  };
+}
+
+/**
+ * Item 13.3.4.5 "e": abaixo do minimo de linhas a prova recebe zero. Barramos
+ * antes de gastar a correcao — a pessoa ja sabe o resultado, e ler o aviso
+ * ensina o mesmo que receber o zero.
+ */
+function exigirExtensao(linhas: number): void {
+  if (linhas < LINHAS_MIN) {
+    throw new Error(
+      `O edital exige no mínimo ${LINHAS_MIN} linhas e esta redação tem cerca de ${linhas}. ` +
+        "Na prova real, texto abaixo do mínimo recebe nota zero."
+    );
+  }
+}
+
+async function gravar(p: {
+  userId: string;
+  temaId: string;
+  texto: string;
+  linhas: number;
+  avaliacao: Avaliacao;
+}): Promise<RedacaoDTO> {
   // A nota final sai da FORMULA do edital, nunca do modelo: ele erra conta com
   // frequencia, e aqui a conta tem peso diferente por criterio e ainda regra de
   // zeramento. Nota que nao bate com as partes destroi a confianca na correcao.
-  const total = notaFinal(notas);
+  const total = notaFinal(p.avaliacao.notas);
 
   const criada = await prisma.redacao.create({
     data: {
-      texto,
+      texto: p.texto,
       // A coluna `palavras` guarda a estimativa de LINHAS: o edital conta linha,
       // nao palavra. Renomear a coluna exigiria migration sem ganho nenhum.
-      palavras: linhas,
-      userId,
-      temaId: tema.id,
+      palavras: p.linhas,
+      userId: p.userId,
+      temaId: p.temaId,
       corrigidaEm: new Date(),
       // A coluna e inteira; o valor exato com casas decimais e recalculado a
       // partir dos criterios em `paraRedacaoDTO`.
       total: Math.round(total),
-      resumo: parsed.data.resumo?.trim() || null,
-      pontosFortes:
-        (parsed.data.pontosFortes ?? []).map((s) => s.trim()).filter(Boolean).join("\n") || null,
-      aMelhorar:
-        (parsed.data.aMelhorar ?? []).map((s) => s.trim()).filter(Boolean).join("\n") || null,
-      competencias: { create: notas },
+      resumo: p.avaliacao.resumo,
+      pontosFortes: p.avaliacao.pontosFortes,
+      aMelhorar: p.avaliacao.aMelhorar,
+      competencias: { create: p.avaliacao.notas },
     },
     include: {
       competencias: { orderBy: { numero: "asc" } },
@@ -539,6 +595,94 @@ async function corrigir(input: {
 
   revalidatePath("/redacao");
   return paraRedacaoDTO(criada);
+}
+
+async function corrigir(input: { temaId: string; texto: string }): Promise<RedacaoDTO> {
+  const userId = await exigirUsuario();
+
+  const texto = input.texto?.trim() ?? "";
+  const linhas = estimarLinhas(texto);
+  exigirExtensao(linhas);
+
+  const tema = await prisma.temaRedacao.findUnique({
+    where: { id: input.temaId },
+    select: { id: true, tema: true, comando: true, concursoId: true },
+  });
+  if (!tema) throw new Error("Tema não encontrado.");
+
+  const avaliacao = await avaliar({
+    tema: tema.tema,
+    comando: tema.comando,
+    texto,
+    linhas,
+    conteudo: await conteudoProgramatico(tema.concursoId),
+  });
+
+  return gravar({ userId, temaId: tema.id, texto, linhas, avaliacao });
+}
+
+/* -----------------------------------------------------------------------------
+   Redacao trazida de fora
+
+   Quem ja escreveu sobre um tema que nao saiu daqui nao tinha como aproveitar a
+   correcao — toda redacao exige um tema no banco. Esta acao cria esse tema a
+   partir do que a pessoa informou, marcado como `externo` para nao virar
+   proposta do concurso, e corrige pelos mesmos criterios do edital.
+   ----------------------------------------------------------------------------- */
+
+export async function corrigirRedacaoExterna(input: {
+  concursoId: string;
+  tema: string;
+  texto: string;
+}): Promise<Resultado<RedacaoDTO>> {
+  try {
+    return { ok: true, dados: await corrigirExterna(input) };
+  } catch (e) {
+    return falha("corrigirRedacaoExterna", e);
+  }
+}
+
+async function corrigirExterna(input: {
+  concursoId: string;
+  tema: string;
+  texto: string;
+}): Promise<RedacaoDTO> {
+  const userId = await exigirUsuario();
+
+  const tema = input.tema?.trim() ?? "";
+  const texto = input.texto?.trim() ?? "";
+  if (tema.length < 5) throw new Error("Informe o tema da redação.");
+
+  const linhas = estimarLinhas(texto);
+  exigirExtensao(linhas);
+
+  const concurso = await prisma.concurso.findUnique({
+    where: { id: input.concursoId },
+    select: { id: true },
+  });
+  if (!concurso) throw new Error("Selecione um concurso válido.");
+
+  // O comando e nosso: quem cola um texto pronto informa o TEMA, e o comando
+  // original pode nem existir. E contra este comando que o CAC vai medir, entao
+  // a tela mostra ele junto do resultado.
+  const comando = comandoPadrao(tema);
+
+  const avaliacao = await avaliar({
+    tema,
+    comando,
+    texto,
+    linhas,
+    conteudo: await conteudoProgramatico(concurso.id),
+  });
+
+  // O tema so e gravado depois de a correcao dar certo: se a chamada falhar,
+  // nao fica tema orfao no banco.
+  const criado = await prisma.temaRedacao.create({
+    data: { tema, comando, externo: true, concursoId: concurso.id, autorId: userId },
+    select: { id: true },
+  });
+
+  return gravar({ userId, temaId: criado.id, texto, linhas, avaliacao });
 }
 
 type RedacaoComRelacoes = {
