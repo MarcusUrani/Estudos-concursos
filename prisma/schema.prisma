@@ -27,6 +27,9 @@ model User {
   sessoes      SessaoEmAndamento[]
   redacoes     Redacao[]
   temasRedacao TemaRedacao[]
+
+  notificacoesLidas    NotificacaoLida[]
+  notificacoesEnviadas Notificacao[]     @relation("NotificacoesEnviadas")
 }
 
 // Concurso = topo da hierarquia de conteudo. Cada concurso tem suas proprias
@@ -44,6 +47,7 @@ model Concurso {
   simulados    Simulado[]
   sessoes      SessaoEmAndamento[]
   temasRedacao TemaRedacao[]
+  notificacoes Notificacao[]
 }
 
 // Sessao (treino/simulado/flashcards) iniciada mas nao concluida. Guarda o
@@ -325,4 +329,47 @@ model CompetenciaNota {
   redacao   Redacao @relation(fields: [redacaoId], references: [id], onDelete: Cascade)
 
   @@unique([redacaoId, numero])
+}
+
+// ===================== Notificacoes =====================
+// Recado do sistema para quem estuda: novidade, atualizacao, manutencao, aviso.
+// Escrito pelo admin, lido por todo mundo — nao ha resposta nem conversa.
+
+model Notificacao {
+  id       String   @id @default(cuid())
+  tipo     String // ver TIPOS em src/lib/notificacoes.ts
+  titulo   String
+  corpo    String
+  criadaEm DateTime @default(now())
+
+  // Alcance. NULO = todo mundo; preenchido = so quem esta estudando aquele
+  // concurso. Nao existe matricula neste app: o concurso do usuario e o que ele
+  // tem selecionado no seletor, entao e por ele que o alcance e decidido.
+  concursoId String?
+  concurso   Concurso? @relation(fields: [concursoId], references: [id], onDelete: Cascade)
+
+  // Quem escreveu. SetNull para que apagar um admin nao apague o comunicado que
+  // ele mandou para todo mundo.
+  autorId String?
+  autor   User?   @relation("NotificacoesEnviadas", fields: [autorId], references: [id], onDelete: SetNull)
+
+  leituras NotificacaoLida[]
+
+  @@index([concursoId, criadaEm])
+}
+
+// Marca de leitura por pessoa. A ausencia de linha e o "nao lida" — assim uma
+// notificacao nova ja nasce nao lida para todo mundo, sem precisar criar uma
+// linha por usuario a cada envio.
+model NotificacaoLida {
+  id     String   @id @default(cuid())
+  lidaEm DateTime @default(now())
+
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificacaoId String
+  notificacao   Notificacao @relation(fields: [notificacaoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificacaoId])
+  @@index([userId])
 }

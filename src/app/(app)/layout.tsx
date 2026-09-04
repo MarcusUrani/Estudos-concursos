@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { Nav } from "@/components/nav";
 import { listarConcursos, getConcursoAtualId } from "@/server/concurso";
 import { podeAcessarRevisao } from "@/lib/acesso";
+import { contarNaoLidas } from "@/server/notificacoes";
 
 export default async function AppLayout({
   children,
@@ -12,9 +13,10 @@ export default async function AppLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [concursos, concursoAtualId] = await Promise.all([
+  const [concursos, concursoAtualId, naoLidas] = await Promise.all([
     listarConcursos(),
     getConcursoAtualId(),
+    contarNaoLidas(),
   ]);
 
   return (
@@ -25,6 +27,7 @@ export default async function AppLayout({
         podeRevisar={podeAcessarRevisao(session.user.email)}
         concursos={concursos}
         concursoAtualId={concursoAtualId}
+        naoLidas={naoLidas}
       />
       {/* `overflow-x-clip` e trava de seguranca, nao a correcao: se algum
           conteudo furar a largura, ele e cortado em vez de tornar a PAGINA

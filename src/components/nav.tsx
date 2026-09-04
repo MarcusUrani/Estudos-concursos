@@ -20,6 +20,8 @@ import {
   ShieldAlert,
   FolderPlus,
   PenLine,
+  Bell,
+  Megaphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MarcaSimbolo } from "@/components/ui/marca";
@@ -45,9 +47,13 @@ const links = [
   // cadastro manual e material de estudo continuam so para admin, dentro da
   // propria pagina.
   { href: "/conteudo", label: "Conteúdo", icon: FolderPlus },
+  { href: "/notificacoes", label: "Notificações", icon: Bell },
 ];
 
-function Marca({ concursos, concursoAtualId }: Pick<NavProps, "concursos" | "concursoAtualId">) {
+function Marca({
+  concursos,
+  concursoAtualId,
+}: Pick<NavProps, "concursos" | "concursoAtualId">) {
   return (
     <div className="flex items-center gap-2.5">
       {/* Bloco solido de tinta, sem brilho: um carimbo, nao um icone de app.
@@ -66,17 +72,36 @@ function Marca({ concursos, concursoAtualId }: Pick<NavProps, "concursos" | "con
   );
 }
 
+/** Bolinha com o numero de nao lidas. Some quando zera — contador com "0" e
+ *  ruido: informa que nao ha nada para informar. */
+function Contador({ n, className }: { n: number; className?: string }) {
+  if (n <= 0) return null;
+  return (
+    <span
+      className={cn(
+        "tabular flex h-5 min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1.5",
+        "text-[0.6875rem] font-bold leading-none text-white",
+        className,
+      )}
+    >
+      {n > 9 ? "9+" : n}
+    </span>
+  );
+}
+
 function ItemLink({
   href,
   label,
   Icon,
   ativo,
+  contador = 0,
   onClick,
 }: {
   href: string;
   label: string;
   Icon: React.ElementType;
   ativo: boolean;
+  contador?: number;
   onClick?: () => void;
 }) {
   return (
@@ -89,11 +114,12 @@ function ItemLink({
         "flex items-center gap-3 border-l-2 py-2 pl-3 pr-3 text-sm transition-colors",
         ativo
           ? "border-indigo-600 bg-indigo-600/8 font-semibold text-slate-100"
-          : "border-transparent text-slate-400 hover:border-slate-700 hover:text-slate-200"
+          : "border-transparent text-slate-400 hover:border-slate-700 hover:text-slate-200",
       )}
     >
       <Icon className="h-4 w-4 shrink-0" />
       <span>{label}</span>
+      <Contador n={contador} className="ml-auto" />
     </Link>
   );
 }
@@ -118,15 +144,28 @@ type NavProps = {
   podeRevisar?: boolean;
   concursos: ConcursoDTO[];
   concursoAtualId: string | null;
+  /** Notificacoes do sistema ainda nao lidas por quem esta logado. */
+  naoLidas?: number;
 };
 
-export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtualId }: NavProps) {
+export function Nav({
+  nome,
+  isAdmin,
+  podeRevisar = true,
+  concursos,
+  concursoAtualId,
+  naoLidas = 0,
+}: NavProps) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
 
   const base = podeRevisar ? links : links.filter((l) => l.href !== "/revisao");
   const itens = isAdmin
-    ? [...base, { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert }]
+    ? [
+        ...base,
+        { href: "/admin/reportes", label: "Reportes", icon: ShieldAlert },
+        { href: "/admin/notificacoes", label: "Enviar aviso", icon: Megaphone },
+      ]
     : base;
 
   return (
@@ -135,15 +174,37 @@ export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtua
       <header className="sticky top-0 z-30 border-b border-slate-800 bg-slate-950 md:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <Marca concursos={concursos} concursoAtualId={concursoAtualId} />
-          <button
-            type="button"
-            onClick={() => setAberto((v) => !v)}
-            aria-label={aberto ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={aberto}
-            className="flex h-10 w-10 items-center justify-center rounded-sm text-slate-300 transition-colors hover:bg-slate-800"
-          >
-            {aberto ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Fora do menu retratil de proposito: aviso que so aparece depois
+                de dois toques nao avisa nada. Aqui o numero fica visivel em
+                qualquer tela, e o destino esta a um toque. */}
+            <Link
+              href="/notificacoes"
+              onClick={() => setAberto(false)}
+              aria-label={
+                naoLidas > 0
+                  ? `Notificações, ${naoLidas} não ${naoLidas === 1 ? "lida" : "lidas"}`
+                  : "Notificações"
+              }
+              className="relative flex h-10 w-10 items-center justify-center rounded-sm text-slate-300 transition-colors hover:bg-slate-800"
+            >
+              <Bell className="h-5 w-5" />
+              <Contador n={naoLidas} className="absolute right-1 top-1" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setAberto((v) => !v)}
+              aria-label={aberto ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={aberto}
+              className="flex h-10 w-10 items-center justify-center rounded-sm text-slate-300 transition-colors hover:bg-slate-800"
+            >
+              {aberto ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
 
         {aberto && (
@@ -156,6 +217,7 @@ export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtua
                   label={label}
                   Icon={Icon}
                   ativo={pathname.startsWith(href)}
+                  contador={href === "/notificacoes" ? naoLidas : 0}
                   onClick={() => setAberto(false)}
                 />
               ))}
@@ -185,6 +247,7 @@ export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtua
               label={label}
               Icon={Icon}
               ativo={pathname.startsWith(href)}
+              contador={href === "/notificacoes" ? naoLidas : 0}
             />
           ))}
         </nav>
@@ -192,7 +255,9 @@ export function Nav({ nome, isAdmin, podeRevisar = true, concursos, concursoAtua
         <div className="mt-auto flex flex-col gap-2 px-4">
           <div className="border-t border-slate-800 pt-3">
             <p className="etiqueta">Conectada como</p>
-            <p className="mt-1 truncate text-sm font-medium text-slate-200">{nome}</p>
+            <p className="mt-1 truncate text-sm font-medium text-slate-200">
+              {nome}
+            </p>
           </div>
           <BotaoFeedback className="justify-start" />
           <ThemeToggle className="justify-start" />
