@@ -5,7 +5,7 @@ import { listarLegislacoes, type LegislacaoResumo } from "@/server/legislacao";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Pagina, Cabecalho } from "@/components/ui/pagina";
-import { BookText, ArrowRight, BellRing } from "lucide-react";
+import { BookText, ArrowRight, BellRing, NotebookPen } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,7 @@ export default async function EstudarPage() {
     <Pagina className="space-y-8">
       <Cabecalho
         titulo="Estudar por legislação"
-        descricao="Os temas estão organizados por matéria. Cada tema reúne um resumo derivado das questões, a leitura dos pontos-chave e a prática das questões relacionadas."
+        descricao="Os temas estão organizados por matéria. Cada tema reúne o resumo derivado das questões, o material de estudo, o seu próprio resumo e a prática das questões relacionadas."
       />
 
       {grupos.map((g) => (
@@ -51,12 +51,26 @@ export default async function EstudarPage() {
                         <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-indigo-500/15 text-indigo-300">
                           <BookText className="h-5 w-5" />
                         </div>
-                        {podeRevisar && l.revisoesPendentes > 0 && (
-                          <Badge variant="warning" className="flex items-center gap-1">
-                            <BellRing className="h-3 w-3" />
-                            {l.revisoesPendentes}
-                          </Badge>
-                        )}
+                        <div className="flex flex-wrap items-center justify-end gap-1.5">
+                          {/* Marca onde ela ja escreveu o resumo dela: e o que
+                              distingue o tema em que ela ja passou de verdade. */}
+                          {l.temResumoPessoal && (
+                            <Badge
+                              variant="success"
+                              className="flex items-center gap-1"
+                              title="Você escreveu um resumo deste tema"
+                            >
+                              <NotebookPen className="h-3 w-3" />
+                              Resumo
+                            </Badge>
+                          )}
+                          {podeRevisar && l.revisoesPendentes > 0 && (
+                            <Badge variant="warning" className="flex items-center gap-1">
+                              <BellRing className="h-3 w-3" />
+                              {l.revisoesPendentes}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold leading-tight text-slate-100">{l.nome}</h3>

@@ -15,6 +15,8 @@ export type LegislacaoResumo = {
   totalQuestoes: number;
   respondidas: number;
   revisoesPendentes: number;
+  /** A pessoa ja escreveu o resumo dela deste tema. */
+  temResumoPessoal: boolean;
 };
 
 export type SecaoResumo = {
@@ -53,7 +55,9 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
   });
 
   // Progresso por assunto: questoes distintas respondidas e revisoes vencidas.
-  const [respostas, revisoes] = await Promise.all([
+  // Os resumos proprios entram aqui para a lista poder marcar onde a pessoa ja
+  // escreveu o dela — so os ids, o texto nao interessa nesta tela.
+  const [respostas, revisoes, resumosProprios] = await Promise.all([
     prisma.resposta.findMany({
       where: { userId, questao: { concursoId } },
       select: { questaoId: true, questao: { select: { assuntoId: true } } },
@@ -63,7 +67,12 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
       where: { userId, proximaData: { lte: agora }, questao: { concursoId } },
       select: { questao: { select: { assuntoId: true } } },
     }),
+    prisma.resumoPessoal.findMany({
+      where: { userId, assunto: { concursoId } },
+      select: { assuntoId: true },
+    }),
   ]);
+  const comResumoProprio = new Set(resumosProprios.map((r) => r.assuntoId));
 
   const respPorAssunto = new Map<string, number>();
   for (const r of respostas) {
@@ -84,6 +93,7 @@ export async function listarLegislacoes(): Promise<LegislacaoResumo[]> {
     totalQuestoes: a._count.questoes,
     respondidas: respPorAssunto.get(a.id) ?? 0,
     revisoesPendentes: revPorAssunto.get(a.id) ?? 0,
+    temResumoPessoal: comResumoProprio.has(a.id),
   }));
 }
 

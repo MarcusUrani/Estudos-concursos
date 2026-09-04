@@ -30,6 +30,7 @@ model User {
 
   notificacoesLidas    NotificacaoLida[]
   notificacoesEnviadas Notificacao[]     @relation("NotificacoesEnviadas")
+  resumosPessoais      ResumoPessoal[]
 }
 
 // Concurso = topo da hierarquia de conteudo. Cada concurso tem suas proprias
@@ -98,8 +99,9 @@ model Assunto {
   materiaId  String?
   materia    Materia?  @relation(fields: [materiaId], references: [id], onDelete: SetNull)
 
-  subassuntos Subassunto[]
-  questoes    Questao[]
+  subassuntos     Subassunto[]
+  questoes        Questao[]
+  resumosPessoais ResumoPessoal[]
 
   @@unique([concursoId, nome])
 }
@@ -371,5 +373,27 @@ model NotificacaoLida {
   notificacao   Notificacao @relation(fields: [notificacaoId], references: [id], onDelete: Cascade)
 
   @@unique([userId, notificacaoId])
+  @@index([userId])
+}
+
+// ===================== Resumo do estudante =====================
+// O caderno da pessoa. Nao se confunde com `Assunto.resumo`, que e o material
+// escrito pelo admin e igual para todo mundo: este aqui e privado, um por
+// pessoa por assunto, e reescrito quantas vezes ela quiser.
+
+model ResumoPessoal {
+  id           String   @id @default(cuid())
+  texto        String
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assuntoId String
+  assunto   Assunto @relation(fields: [assuntoId], references: [id], onDelete: Cascade)
+
+  // Um resumo por pessoa por assunto: escrever de novo atualiza o que existe,
+  // nao empilha versao. E o que "atualizar conforme quiser" quer dizer.
+  @@unique([userId, assuntoId])
   @@index([userId])
 }

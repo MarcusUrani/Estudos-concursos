@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { TreinoSessao } from "@/components/treino-sessao";
 import type { LegislacaoDetalhe } from "@/server/legislacao";
 import type { QuestaoDTO } from "@/server/treino";
+import type { ResumoPessoalDTO } from "@/server/resumo-pessoal";
+import { MeuResumo } from "@/components/meu-resumo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,10 +27,12 @@ export function EstudarClient({
   detalhe,
   relacionadas,
   favoritos,
+  meuResumo,
 }: {
   detalhe: LegislacaoDetalhe;
   relacionadas: QuestaoDTO[];
   favoritos: string[];
+  meuResumo: ResumoPessoalDTO | null;
 }) {
   const router = useRouter();
   const [aba, setAba] = useState<Aba>("resumo");
@@ -86,8 +90,12 @@ export function EstudarClient({
       </div>
 
       {aba === "resumo" ? (
-        <PaginaLeitura trilho={trilho}>
+        // O trilho daqui e referencia (bases legais), nao cabecalho: no
+        // celular ele vai para depois da leitura.
+        <PaginaLeitura trilho={trilho} trilhoAbaixo>
         <div className="space-y-4">
+          <MeuResumo assuntoId={detalhe.id} inicial={meuResumo} />
+
           {detalhe.resumo && (
             <Card className="border-indigo-700/40 bg-indigo-500/5">
               <CardContent className="space-y-2 p-5">

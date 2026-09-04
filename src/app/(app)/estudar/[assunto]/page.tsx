@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getLegislacao } from "@/server/legislacao";
+import { getResumoPessoal } from "@/server/resumo-pessoal";
 import { montarTreino } from "@/server/treino";
 import { EstudarClient } from "./estudar-client";
 
@@ -16,6 +17,8 @@ export default async function LegislacaoPage({
 
   const detalhe = await getLegislacao(assuntoId);
   if (!detalhe) notFound();
+
+  const meuResumo = await getResumoPessoal(assuntoId);
 
   // Questoes relacionadas para praticar dentro da propria leitura.
   const relacionadas = await montarTreino({
@@ -37,6 +40,7 @@ export default async function LegislacaoPage({
       detalhe={detalhe}
       relacionadas={relacionadas}
       favoritos={favoritos.map((f) => f.questaoId)}
+      meuResumo={meuResumo}
     />
   );
 }

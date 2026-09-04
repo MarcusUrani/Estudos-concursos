@@ -103,10 +103,21 @@ export function PaginaSessao({
  *  ele e cabecalho de sessao, que e como ja funcionava. */
 export function PaginaLeitura({
   trilho,
+  trilhoAbaixo,
   children,
   className,
 }: {
   trilho?: React.ReactNode;
+  /**
+   * Manda o trilho para DEPOIS do conteudo em tela estreita.
+   *
+   * O padrao (antes) vale quando o trilho e cabecalho de sessao: progresso,
+   * contagem, o botao que encerra. Mas quando ele e REFERENCIA — a lista de
+   * bases legais de uma lei, que pode ter dezenas de itens — vir antes empurra
+   * a leitura para fora da primeira tela, e no celular a pessoa rola trinta
+   * etiquetas antes de chegar ao texto que veio ler.
+   */
+  trilhoAbaixo?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
@@ -124,7 +135,12 @@ export function PaginaLeitura({
         // `order-first` em tela estreita: o progresso da sessao vem antes da
         // questao, como um cabecalho. Em `xl` volta a ordem do DOM e ele assume
         // a margem direita, grudado enquanto o enunciado rola.
-        <aside className="order-first min-w-0 xl:order-0 xl:sticky xl:top-8 xl:self-start">
+        <aside
+          className={cn(
+            "min-w-0 xl:order-0 xl:sticky xl:top-8 xl:self-start",
+            !trilhoAbaixo && "order-first"
+          )}
+        >
           <div className="space-y-5 xl:border-l xl:border-slate-800 xl:pl-6">{trilho}</div>
         </aside>
       )}
